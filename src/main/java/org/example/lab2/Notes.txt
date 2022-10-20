@@ -1,0 +1,65 @@
+//    public static double myFunction1(double x) {
+//        return 2 * pow(x, 2) + 3 * x - 8;
+//    }
+//
+//    public static double myFunction2(double x, double y) {
+//        return -5 * pow(x, 2) * y + 2 * x * pow(y, 2) + 10;
+//    }
+//    public static double calculate(int n, boolean is2D) {
+//        List<Double> pc = pc(n);
+//        List<Double> w = w(n);
+//        double result = 0;
+//        if (!is2D) {
+//            for (int i = 0; i < n; i++) {
+//                result += myFunction1(pc.get(i)) * w.get(i);
+//            }
+//        }
+//        if (is2D) {
+//            for (int i = 0; i < n; i++) {
+//                for (int j = 0; j < n; j++) {
+//                    result += myFunction2(pc.get(i), pc.get(j)) * w.get(i) * w.get(j);
+//                }
+//            }
+//        }
+//
+//        return result;
+//    }
+//
+//        public static double calculate(List<Double> pc, List<Double> w, boolean is2D, int n) {
+//        double result = 0;
+//        if (!is2D) {
+//            for (int i = 0; i < n; i++) {
+//                result += myFunction1(pc.get(i)) * w.get(i);
+//            }
+//        }
+//        if (is2D) {
+//            for (int i = 0; i < n; i++) {
+//                for (int j = 0; j < n; j++) {
+//                    result += myFunction2(pc.get(i), pc.get(j)) * w.get(i) * w.get(j);
+//                }
+//            }
+//        }
+//
+//        return result;
+//    }
+
+
+
+
+@FunctionalInterface
+public interface FourFunction<T,U,V,W,R>{
+    public R apply(T t, U u, V v, W w);
+}
+
+    public static void main(String[] args) {
+        FourFunction<Double,Double,Double,String,String> fourFunction = (t,u,v,w) -> {
+            double result = t * u*v;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("Result: ");
+            stringBuilder.append(w);
+            stringBuilder.append(result);
+            return stringBuilder.toString();
+        };
+        System.out.println(fourFunction.apply(5.0, 5.0, 5.0, "Mnozenie"));
+
+    }
