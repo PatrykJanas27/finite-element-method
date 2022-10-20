@@ -9,22 +9,22 @@ import static java.lang.Math.pow;
 
 public class IntegrateService {
 
-    public static double calculate(Function<Double, Double> uniFunction, int n) {
-        List<Double> pc = pc(n);
-        List<Double> w = w(n);
+    public static double calculate(Function<Double, Double> uniFunction, int numberOfNodes) {
+        List<Double> pc = pc(numberOfNodes);
+        List<Double> w = w(numberOfNodes);
         double result = 0;
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < numberOfNodes; i++) {
             result += uniFunction.apply(pc.get(i)) * w.get(i);
         }
         return result;
     }
 
-    public static double calculate(BiFunction<Double, Double, Double> biFunction, int n) {
-        List<Double> pc = pc(n);
-        List<Double> w = w(n);
+    public static double calculate(BiFunction<Double, Double, Double> biFunction, int numberOfNodes) {
+        List<Double> pc = pc(numberOfNodes);
+        List<Double> w = w(numberOfNodes);
         double result = 0;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
+        for (int i = 0; i < numberOfNodes; i++) {
+            for (int j = 0; j < numberOfNodes; j++) {
                 result += biFunction.apply(pc.get(i), pc.get(j)) * w.get(i) * w.get(j);
             }
         }
@@ -61,9 +61,9 @@ public class IntegrateService {
         return pc;
     }
 
-    public static List<Double> w(int numberOfK) {
+    public static List<Double> w(int numberOfNodes) {
         List<Double> w = new ArrayList<>();
-        switch (numberOfK) {
+        switch (numberOfNodes) {
             case 2 -> {
                 w.add(1.0);
                 w.add(1.0);
