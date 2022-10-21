@@ -7,11 +7,20 @@ import java.util.function.Function;
 
 import static java.lang.Math.pow;
 
+@SuppressWarnings("DuplicatedCode")
 public class IntegrateService {
 
     public static double calculate(Function<Double, Double> uniFunction, int numberOfNodes) {
         List<Double> pc = pc(numberOfNodes);
         List<Double> w = w(numberOfNodes);
+        double result = 0;
+        for (int i = 0; i < numberOfNodes; i++) {
+            result += uniFunction.apply(pc.get(i)) * w.get(i);
+        }
+        return result;
+    }
+
+    public static double calculate(Function<Double, Double> uniFunction, List<Double> pc, List<Double> w, int numberOfNodes) {
         double result = 0;
         for (int i = 0; i < numberOfNodes; i++) {
             result += uniFunction.apply(pc.get(i)) * w.get(i);
@@ -31,9 +40,19 @@ public class IntegrateService {
         return result;
     }
 
-    public static List<Double> pc(int numberOfK) {
+    public static double calculate(BiFunction<Double, Double, Double> biFunction, List<Double> pc, List<Double> w, int numberOfNodes) {
+        double result = 0;
+        for (int i = 0; i < numberOfNodes; i++) {
+            for (int j = 0; j < numberOfNodes; j++) {
+                result += biFunction.apply(pc.get(i), pc.get(j)) * w.get(i) * w.get(j);
+            }
+        }
+        return result;
+    }
+
+    public static List<Double> pc(int numberOfNodes) {
         List<Double> pc = new ArrayList<>();
-        switch (numberOfK) {
+        switch (numberOfNodes) {
             case 2 -> {
                 pc.add(-1 / (pow(3, 0.5)));
                 pc.add(1 / (pow(3, 0.5)));
@@ -56,7 +75,7 @@ public class IntegrateService {
                 pc.add(0.538469);
                 pc.add(0.906180);
             }
-            default -> throw new IllegalArgumentException("There is not defined that number of 'K'");
+            default -> throw new IllegalArgumentException("There is not defined that numberOfNodes");
         }
         return pc;
     }
@@ -86,7 +105,7 @@ public class IntegrateService {
                 w.add(0.478629);
                 w.add(0.236927);
             }
-            default -> throw new IllegalArgumentException("There is not defined that number of 'K'");
+            default -> throw new IllegalArgumentException("There is not defined that numberOfNodes");
         }
         return w;
     }
