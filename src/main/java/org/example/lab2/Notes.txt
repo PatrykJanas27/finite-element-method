@@ -63,3 +63,6 @@ public interface FourFunction<T,U,V,W,R>{
         System.out.println(fourFunction.apply(5.0, 5.0, 5.0, "Mnozenie"));
 
     }
+
+    //        Function<Double, Double> uniFunction1 = x -> -5 * pow(x, 2) + 2 * x - 8;
+    //        BiFunction<Double, Double, Double> biFunction1 = (x, y) -> 3 * pow(x, 2) * y + 2 * x * pow(y, 2) + 2;
