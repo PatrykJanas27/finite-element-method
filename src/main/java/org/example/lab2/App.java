@@ -23,9 +23,8 @@ public class App {
     }
 
     private static void showResult(BiFunction<Double, Double, Double> biFunction) {
-        System.out.println("Bi Result for n = 2: " + IntegrateService.calculate(biFunction, 2));
-        System.out.println("Bi Result for n = 3: " + IntegrateService.calculate(biFunction, 3));
-        System.out.println("Bi Result for n = 4: " + IntegrateService.calculate(biFunction, 4));
-        System.out.println("Bi Result for n = 5: " + IntegrateService.calculate(biFunction, 5));
+        for (int i = 2; i <= 5; i++) {
+            System.out.println("Uni Result for n = " + i + ": " + IntegrateService.calculate(biFunction, i));
+        }
     }
 }

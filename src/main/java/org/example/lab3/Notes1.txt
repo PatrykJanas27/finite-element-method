@@ -1,0 +1,16 @@
+        double x1 = 2;
+        double x2 = 7;
+        int numberOfNodes = 2;
+
+        List<Double> pc = new ArrayList<>();
+        pc.add(calculatePc(-1 / sqrt(3)));
+        pc.add(calculatePc(1 / sqrt(3)));
+
+        List<Double> w = new ArrayList<>();
+        w.add(geometricModel(x1, x2));
+        w.add(geometricModel(x1, x2));
+
+        Function<Double, Double> uniFunction1 = x -> x + 3;
+        Function<Double, Double> uniFunction2 = x -> pow(x, 2) + 3 * x + 2;
+        System.out.println(IntegrateService.calculate(uniFunction1, pc, w, numberOfNodes));
+        System.out.println(IntegrateService.calculate(uniFunction2, pc, w, numberOfNodes));

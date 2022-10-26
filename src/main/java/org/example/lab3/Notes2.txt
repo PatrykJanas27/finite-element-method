@@ -1,0 +1,10 @@
+        Function<Double, Double> uniFunction1 = x -> x + 3;
+        Function<Double, Double> uniFunction2 = x -> pow(x, 2) + 3 * x + 2;
+        double x1 = 2;
+        double x2 = 7;
+
+        int numberOfNodes = 2;
+        List<Double> pc = calculatePc(numberOfNodes);
+        List<Double> w = calculateW(x1, x2, numberOfNodes);
+        System.out.println(IntegrateService.calculate(uniFunction1, pc, w, numberOfNodes));
+        System.out.println(IntegrateService.calculate(uniFunction2, pc, w, numberOfNodes));
