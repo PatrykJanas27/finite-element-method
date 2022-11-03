@@ -20,11 +20,7 @@ public class ServicePc {
 
     public static List<Double> calculatePc(int numberOfNodes){
         List<Double> pc = IntegrateService.pc(numberOfNodes);
-        List<Double> resultPc = new ArrayList<>();
-        for (Double aDouble : pc) {
-            resultPc.add(calculatePc(aDouble));
-        }
-        return resultPc;
+        return pc.stream().map(ServicePc::calculatePc).toList();
     }
 
     public static double calculateN1(double x) {

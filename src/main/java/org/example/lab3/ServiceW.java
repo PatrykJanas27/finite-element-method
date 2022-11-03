@@ -15,12 +15,7 @@ public class ServiceW {
     }
 
     public static List<Double> calculateW(double x1, double x2, int numberOfNodes) {
-        List<Double> w = IntegrateService.w(numberOfNodes);
-        List<Double> resultW = new ArrayList<>();
-        for (Double aDouble : w) {
-            resultW.add(aDouble * geometricModel(x1, x2));
-        }
-        return resultW;
+        return IntegrateService.w(numberOfNodes).stream().map(a->a*geometricModel(x1,x2)).toList();
     }
 
     public static double geometricModel(double x1, double x2) {
