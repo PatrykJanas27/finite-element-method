@@ -1,9 +1,6 @@
 package org.example.lab1;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,4 +24,5 @@ public class Grid {
                 ", EL=" + EL +
                 '}';
     }
+
 }
