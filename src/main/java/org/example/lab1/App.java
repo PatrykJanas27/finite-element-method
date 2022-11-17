@@ -16,7 +16,7 @@ public class App {
         readFile(FILE_NAME1);
     }
 
-    private static void readFile(String fileName) throws FileNotFoundException {
+    public static Grid readFile(String fileName) throws FileNotFoundException {
         GlobalData globalData = new GlobalData();
         Grid grid = new Grid();
         try (Scanner scanner = new Scanner(new File(fileName))) {
@@ -36,6 +36,7 @@ public class App {
 
         System.out.println(globalData);
         System.out.println(grid);
+        return grid;
     }
 
     private static void readBcDataFromFile(Grid grid, Scanner scanner, String line) {
