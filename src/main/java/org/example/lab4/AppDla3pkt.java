@@ -7,14 +7,14 @@ import java.util.function.Function;
 
 import static java.lang.Math.sqrt;
 
-public class App {
+public class AppDla3pkt {
     public static double[][] dlaPc1 = new double[2][2];
 
     public static void main(String[] args) throws FileNotFoundException {
         double[][] firstTable = calculateAndShowFirstArray();
         double[][] secondTable = calculateAndShowSecondArray();
-        calculateAndShowThirdArray();
-        calculateAndShowFourthArray();
+        double[][] thirdTable = calculateAndShowThirdArray();
+        double[][] fourthTable = calculateAndShowFourthArray();
 
 
         //det[j] dla pc1
@@ -41,54 +41,136 @@ public class App {
             }
             System.out.println();
         }
+        //80.0 0.0
+        //0.0 80.0
+        ////===================tutaj dla 3 punktowego teraz
 
-        double[][] table1DlaPc1 = getTable1DlaPc1(firstTable, secondTable);
-        double[][] table2DlaPc1 = getTable2DlaPc1(firstTable, secondTable);
+        double[][] table1DlaPc1 = getTable1DlaPc1(thirdTable, fourthTable);
+        double[][] table2DlaPc1 = getTable2DlaPc1(thirdTable, fourthTable);
+
+        System.out.println("table 1");
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 4; j++) {
+                System.out.print(table1DlaPc1[i][j] + " ");
+            }
+            System.out.println();
+        }
+
+        System.out.println("table 2");
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 4; j++) {
+                System.out.print(table2DlaPc1[i][j] + " ");
+            }
+            System.out.println();
+        }
 
 
-
-
-        double[][] w = new double[][]{{1.0, 1.0}, {1.0, 1.0}};
-        for (int i = 0; i < 4; i++) {
+        double[] w = new double[]{5.0 / 9.0, 8.0 / 9, 5.0 / 9};
+        //Obliczanie macierzy H dla pierwszego punktu całkowania
+        for (int i = 0; i < 9; i++) {
             double[][] Hpc = calculateHpc(table1DlaPc1, table2DlaPc1, detJ, i);
             System.out.println("Hpc" + (i + 1) + ": ");
             showHpc(Hpc);
-
         }
-        double H[][] = new double[4][4];
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                for (int k = 0; k < 4; k++) {
-                    H[i][j] += calculateHpc(table1DlaPc1, table2DlaPc1, detJ, k)[i][j];
-                }
-            }
-        }
-        System.out.println("H:");
-        showHpc(H);
 
-
-        //need this
         double[][] Hpc1 = calculateHpc(table1DlaPc1, table2DlaPc1, detJ, 0);
         double[][] Hpc2 = calculateHpc(table1DlaPc1, table2DlaPc1, detJ, 1);
         double[][] Hpc3 = calculateHpc(table1DlaPc1, table2DlaPc1, detJ, 2);
         double[][] Hpc4 = calculateHpc(table1DlaPc1, table2DlaPc1, detJ, 3);
+        double[][] Hpc5 = calculateHpc(table1DlaPc1, table2DlaPc1, detJ, 4);
+        double[][] Hpc6 = calculateHpc(table1DlaPc1, table2DlaPc1, detJ, 5);
+        double[][] Hpc7 = calculateHpc(table1DlaPc1, table2DlaPc1, detJ, 6);
+        double[][] Hpc8 = calculateHpc(table1DlaPc1, table2DlaPc1, detJ, 7);
+        double[][] Hpc9 = calculateHpc(table1DlaPc1, table2DlaPc1, detJ, 8);
 
         //suma dla HPC
         double[][] sumaHpc = new double[4][4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                sumaHpc[i][j] = Hpc1[i][j] + Hpc2[i][j] + Hpc3[i][j] + Hpc4[i][j];
-            }
-        }
+                sumaHpc[i][j] = Hpc1[i][j] * w[0] * w[0]
+                        + Hpc2[i][j] * w[0] * w[1]
+                        + Hpc3[i][j] * w[0] * w[2]
+                        + Hpc4[i][j] * w[1] * w[0]
+                        + Hpc5[i][j] * w[1] * w[1]
+                        + Hpc6[i][j] * w[1] * w[2]
+                        + Hpc7[i][j] * w[2] * w[0]
+                        + Hpc8[i][j] * w[2] * w[1]
+                        + Hpc9[i][j] * w[2] * w[2];
 
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                sumaHpc[i][j] = Hpc1[i][j] + Hpc2[i][j] + Hpc3[i][j] + Hpc4[i][j];
             }
         }
         System.out.println("Suma Hpc: ");
         showHpc(sumaHpc);
 
+//            double H[][] = new double[4][4];
+//            for (int i = 0; i < 4; i++) {
+//                for (int j = 0; j < 4; j++) {
+//                    for (int k = 0; k < 9; k++) {
+//                        H[i][j] += calculateHpc(table1DlaPc1, table2DlaPc1, detJ, k)[i][j];
+//                    }
+//                }
+//            }
+//            System.out.println("H:");
+//            showHpc(H);
+        dla4Punktowego(detJ);
+
+    }
+
+    private static void dla4Punktowego(double detJ) {
+        double[][] fifthTable = calculateAndShowFifthArray();
+        double[][] sixthTable = calculateAndShowSixthArray();
+        double[][] dlaFifthTable = getTable1DlaPc1(fifthTable, sixthTable);
+        double[][] dlaSixthTable = getTable2DlaPc1(fifthTable, sixthTable);
+
+        double[] wDla4Punktowego = new double[]{0.347855, 0.652145, 0.652145, 0.347855};
+        //Obliczanie macierzy H dla pierwszego punktu całkowania
+        for (int i = 0; i < 16; i++) {
+            double[][] Hpc = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, i);
+            System.out.println("Hpc" + (i + 1) + ": ");
+            showHpc(Hpc);
+        }
+
+        double[][] Hpc1 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 0);
+        double[][] Hpc2 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 1);
+        double[][] Hpc3 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 2);
+        double[][] Hpc4 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 3);
+        double[][] Hpc5 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 4);
+        double[][] Hpc6 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 5);
+        double[][] Hpc7 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 6);
+        double[][] Hpc8 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 7);
+        double[][] Hpc9 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 8);
+        double[][] Hpc10 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 9);
+        double[][] Hpc11 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 10);
+        double[][] Hpc12 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 11);
+        double[][] Hpc13 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 12);
+        double[][] Hpc14 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 13);
+        double[][] Hpc15 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 14);
+        double[][] Hpc16 = calculateHpc(dlaFifthTable, dlaSixthTable, detJ, 15);
+
+        //suma dla HPC
+        double[][] sumaHpc = new double[4][4];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                sumaHpc[i][j] = Hpc1[i][j] * wDla4Punktowego[0] * wDla4Punktowego[0]
+                        + Hpc2[i][j] * wDla4Punktowego[0] * wDla4Punktowego[1]
+                        + Hpc3[i][j] * wDla4Punktowego[0] * wDla4Punktowego[2]
+                        + Hpc4[i][j] * wDla4Punktowego[0] * wDla4Punktowego[3]
+                        + Hpc5[i][j] * wDla4Punktowego[1] * wDla4Punktowego[0]
+                        + Hpc6[i][j] * wDla4Punktowego[1] * wDla4Punktowego[1]
+                        + Hpc7[i][j] * wDla4Punktowego[1] * wDla4Punktowego[2]
+                        + Hpc8[i][j] * wDla4Punktowego[1] * wDla4Punktowego[3]
+                        + Hpc9[i][j] * wDla4Punktowego[2] * wDla4Punktowego[0]
+                        + Hpc10[i][j] * wDla4Punktowego[2] * wDla4Punktowego[1]
+                        + Hpc11[i][j] * wDla4Punktowego[2] * wDla4Punktowego[2]
+                        + Hpc12[i][j] * wDla4Punktowego[2] * wDla4Punktowego[3]
+                        + Hpc13[i][j] * wDla4Punktowego[3] * wDla4Punktowego[0]
+                        + Hpc14[i][j] * wDla4Punktowego[3] * wDla4Punktowego[1]
+                        + Hpc15[i][j] * wDla4Punktowego[3] * wDla4Punktowego[2]
+                        + Hpc16[i][j] * wDla4Punktowego[3] * wDla4Punktowego[3];
+            }
+        }
+        System.out.println("Suma Hpc: ");
+        showHpc(sumaHpc);
     }
 
     private static void showHpc(double[][] hpc2) {
@@ -129,8 +211,8 @@ public class App {
 
     private static double[][] getTable2DlaPc1(double[][] firstTable, double[][] secondTable) {
 //        System.out.println("table2DlaPc1: ");
-        double[][] table2DlaPc1 = new double[4][4];
-        for (int i = 0; i < 4; i++) {
+        double[][] table2DlaPc1 = new double[firstTable.length][4];
+        for (int i = 0; i < firstTable.length; i++) {
             for (int j = 0; j < 4; j++) {
                 table2DlaPc1[i][j] = dlaPc1[1][0] * firstTable[i][j] + dlaPc1[1][1] * secondTable[i][j];
 //                System.out.print(table2DlaPc1[i][j] + ", ");
@@ -143,8 +225,8 @@ public class App {
     private static double[][] getTable1DlaPc1(double[][] firstTable, double[][] secondTable) {
 //        System.out.println("======dlaHpc2=====");
 //        System.out.println("table1DlaPc1: ");
-        double[][] table1DlaPc1 = new double[4][4];
-        for (int i = 0; i < 4; i++) {
+        double[][] table1DlaPc1 = new double[firstTable.length][4];
+        for (int i = 0; i < firstTable.length; i++) {
             for (int j = 0; j < 4; j++) {
                 table1DlaPc1[i][j] = dlaPc1[0][0] * firstTable[i][j] + dlaPc1[0][1] * secondTable[i][j];
 //                System.out.print(table1DlaPc1[i][j] + ", ");
@@ -209,7 +291,59 @@ public class App {
 //        }
 //    }
 
-    private static void calculateAndShowFourthArray() {
+    private static double[][] calculateAndShowSixthArray() {
+        //Czwarta tabela od gory
+        double[] ksi = new double[]{
+                -0.861136, -0.339981, 0.339981, 0.861136,
+                -0.861136, -0.339981, 0.339981, 0.861136,
+                -0.861136, -0.339981, 0.339981, 0.861136,
+                -0.861136, -0.339981, 0.339981, 0.861136
+        };
+        double[][] table4 = new double[16][4];
+        List<Function<Double, Double>> functions = new ArrayList<>() {
+            {
+                add(eta -> 0.25 * (eta - 1));
+                add(eta -> 0.25 * (-eta - 1));
+                add(eta -> 0.25 * (eta + 1));
+                add(eta -> 0.25 * (1 - eta));
+            }
+        };
+        for (int i = 0; i < 16; i++) {
+            for (int j = 0; j < 4; j++) {
+                table4[i][j] = functions.get(j).apply(ksi[i]); //[i] w dol, [j] w prawo
+            }
+        }
+        System.out.println("SixthArray");
+        showArray(ksi, table4, 16, 4);
+        return table4;
+    }
+    private static double[][] calculateAndShowFifthArray() {
+    //piąta tabela od góry
+    double[] eta = new double[]{
+            -0.861136, -0.861136, -0.861136, -0.861136,
+            -0.339981, -0.339981, -0.339981, -0.339981,
+            0.339981, 0.339981, 0.339981, 0.339981,
+            0.861136, 0.861136, 0.861136, 0.861136
+    };
+    double[][] table4 = new double[16][4];
+    List<Function<Double, Double>> functions = new ArrayList<>() {
+        {
+            add(ksi -> 0.25 * (ksi - 1));
+            add(ksi -> 0.25 * (1 - ksi));
+            add(ksi -> 0.25 * (ksi + 1));
+            add(ksi -> 0.25 * (-ksi - 1));
+        }
+    };
+    for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 4; j++) {
+            table4[i][j] = functions.get(j).apply(eta[i]); //[i] w dol, [j] w prawo
+        }
+    }
+    System.out.println("FifthArray");
+    showArray(eta, table4, 16, 4);
+    return table4;
+}
+    private static double[][] calculateAndShowFourthArray() {
         //Czwarta tabela od gory
         double[] ksi = new double[]{
                 -sqrt(3.0 / 5), 0, sqrt(3.0 / 5), -sqrt(3.0 / 5), 0, sqrt(3.0 / 5), -sqrt(3.0 / 5), 0, sqrt(3.0 / 5)
@@ -230,9 +364,10 @@ public class App {
         }
         System.out.println("FourthArray");
         showArray(ksi, table4, 9, 4);
+        return table4;
     }
 
-    private static void calculateAndShowThirdArray() {
+    private static double[][] calculateAndShowThirdArray() {
         //Trzecia tabela od gory
         double[] eta = new double[]{
                 -sqrt(3.0 / 5), -sqrt(3.0 / 5), -sqrt(3.0 / 5),
@@ -255,6 +390,7 @@ public class App {
         }
         System.out.println("ThirdArray");
         showArray(eta, table4, 9, 4);
+        return table4;
     }
 
     private static double[][] calculateAndShowSecondArray() {
