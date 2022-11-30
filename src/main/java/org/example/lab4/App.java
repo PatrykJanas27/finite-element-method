@@ -44,6 +44,9 @@ public class App {
 
         double[][] table1DlaPc1 = getTable1DlaPc1(firstTable, secondTable);
         double[][] table2DlaPc1 = getTable2DlaPc1(firstTable, secondTable);
+        System.out.println("Dwie tabele: ");
+        MatrixService.showTable2D(table1DlaPc1);
+        MatrixService.showTable2D(table2DlaPc1);
 
 
 
