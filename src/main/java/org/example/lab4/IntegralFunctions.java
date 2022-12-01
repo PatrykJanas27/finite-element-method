@@ -29,7 +29,6 @@ public class IntegralFunctions {
                 table4[i][j] = functions.get(j).apply(ksi[i]); //[i] w dol, [j] w prawo
             }
         }
-        System.out.println("SixthArray");
         return table4;
     }
 
@@ -55,7 +54,6 @@ public class IntegralFunctions {
                 table4[i][j] = functions.get(j).apply(eta[i]); //[i] w dol, [j] w prawo
             }
         }
-        System.out.println("FifthArray");
         return table4;
     }
 
@@ -78,7 +76,6 @@ public class IntegralFunctions {
                 table4[i][j] = functions.get(j).apply(ksi[i]); //[i] w dol, [j] w prawo
             }
         }
-        System.out.println("FourthArray");
         return table4;
     }
 
@@ -103,7 +100,6 @@ public class IntegralFunctions {
                 table4[i][j] = functions.get(j).apply(eta[i]); //[i] w dol, [j] w prawo
             }
         }
-        System.out.println("ThirdArray");
         return table4;
     }
 
@@ -124,7 +120,6 @@ public class IntegralFunctions {
                 table4[i][j] = functions.get(j).apply(ksi[i]); //[i] w dol, [j] w prawo
             }
         }
-        System.out.println("SecondArray");
         return table4;
     }
 
@@ -145,7 +140,6 @@ public class IntegralFunctions {
                 table4[i][j] = functions.get(j).apply(eta[i]); //[i] w dol, [j] w prawo
             }
         }
-        System.out.println("FirstArray");
         return table4;
     }
 

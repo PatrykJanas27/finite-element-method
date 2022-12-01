@@ -1,5 +1,7 @@
 package org.example.lab4;
 
+import org.example.lab4.exceptions.MatrixException;
+
 public class DeterminantService {
 
     public static double[][] getMatrix2x2MultipliedBy1DividedByDeterminant(double[][] matrix2x2, double determinant) {
