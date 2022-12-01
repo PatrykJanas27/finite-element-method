@@ -8,7 +8,7 @@ public class GaussianQuadrature {
                 return new double[]{1.0, 1.0};
             }
             case 3 -> {
-                return new double[]{5.0/9.0, 8.0/9.0, 5.0/9.0 };
+                return new double[]{5.0 / 9.0, 8.0 / 9.0, 5.0 / 9.0};
             }
             case 4 -> {
                 return new double[]{0.347855, 0.652145, 0.652145, 0.347855};

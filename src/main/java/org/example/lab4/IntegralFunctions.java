@@ -32,6 +32,7 @@ public class IntegralFunctions {
         System.out.println("SixthArray");
         return table4;
     }
+
     public static double[][] calculateAndShowFifthArray() {
         //piąta tabela od góry
         double[] eta = new double[]{
@@ -105,6 +106,7 @@ public class IntegralFunctions {
         System.out.println("ThirdArray");
         return table4;
     }
+
     public static double[][] calculateAndShowSecondArray() {
         //Druga tabela od gory
         double[] ksi = new double[]{(-1 / sqrt(3)), (1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3))};

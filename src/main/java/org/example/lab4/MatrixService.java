@@ -7,7 +7,7 @@ import java.util.function.Function;
 import static java.lang.Math.sqrt;
 
 public class MatrixService {
-    public static void showTable2D(double[][] table2D){
+    public static void showTable2D(double[][] table2D) {
         for (int i = 0; i < table2D.length; i++) {
             for (int j = 0; j < table2D[i].length; j++) {
                 System.out.printf("|\t%-22f|", table2D[i][j]);
@@ -16,16 +16,16 @@ public class MatrixService {
         }
     }
 
-    public static double[] getPcx(){
+    public static double[] getPcx() {
         return new double[]{0, 0.025, 0.025, 0};
     }
 
-    public static double[] getPcy(){
+    public static double[] getPcy() {
         return new double[]{0, 0, 0.025, 0.025};
     }
 
 
-    public static double[][] getMainMatrix(){
+    public static double[][] getMainMatrix() {
         double[] eta = new double[]{(-1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3)), (1 / sqrt(3))};
         double[] ksi = new double[]{(-1 / sqrt(3)), (1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3))};
         double[][] table1 = new double[4][4];
