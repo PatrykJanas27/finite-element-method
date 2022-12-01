@@ -16,12 +16,47 @@ public class AppDla3pkt {
         double determinant = DeterminantService.getDeterminant2x2(mainMatrix); // 0,00015625
         mainMatrix = DeterminantService.getMatrix2x2MultipliedBy1DividedByDeterminant(mainMatrix, determinant);
 
+
+        double[][] matrixHForTwoPointIntegration = getMatrixHForTwoPointIntegration(determinant);
+        System.out.println("MatrixHForTwoPointIntegration: ");
+        MatrixService.showTable2D(matrixHForTwoPointIntegration);
         double[][] matrixHForThreePointIntegration = getMatrixHForThreePointIntegration(determinant);
         System.out.println("MatrixHForThreePointIntegration: ");
         MatrixService.showTable2D(matrixHForThreePointIntegration);
         double[][] matrixHForFourPointIntegration = getMatrixHForFourPointIntegration(determinant);
         System.out.println("MatrixHForFourPointIntegration: ");
         MatrixService.showTable2D(matrixHForFourPointIntegration);
+    }
+
+    private static double[][] getMatrixHForTwoPointIntegration(double determinant) {
+        double[][] tableOfKsiIntegral = IntegralFunctions.calculateAndShowFirstArray();
+        double[][] tableOfEtaIntegral = IntegralFunctions.calculateAndShowSecondArray();
+        //===================Two point integration==========
+        double[][] tableOfKsiIntegralByM = getTableOfKsi1IntegralMultipliedByMatrix(tableOfKsiIntegral, tableOfEtaIntegral);
+        double[][] tableOfEtaIntegralByM = getTableOfEta2IntegralMultipliedByMatrix(tableOfKsiIntegral, tableOfEtaIntegral);
+//        System.out.println("tableOfKsiIntegralByM 1: ");
+//        MatrixService.showTable2D(tableOfKsiIntegralByM);
+//        System.out.println("tableOfEtaIntegralByM 2:");
+//        MatrixService.showTable2D(tableOfEtaIntegralByM);
+        //===================WeightsOfPoints=======
+        double[] weightsOfPoints = GaussianQuadrature.getWeights(2); //{1.0, 1.0}
+        //===================Calculating tables of H for tree point integration (there will be 9 tables)==========
+        double[][] Hpc1 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 0);
+        double[][] Hpc2 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 1);
+        double[][] Hpc3 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 2);
+        double[][] Hpc4 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 3);
+
+        //===================tables' summing to H=======
+        double[][] mainH = new double[4][4];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                mainH[i][j] = Hpc1[i][j] * weightsOfPoints[0] * weightsOfPoints[0]
+                        + Hpc2[i][j] * weightsOfPoints[0] * weightsOfPoints[1]
+                        + Hpc3[i][j] * weightsOfPoints[0] * weightsOfPoints[0]
+                        + Hpc4[i][j] * weightsOfPoints[0] * weightsOfPoints[1];
+            }
+        }
+        return mainH;
     }
 
     private static double[][] getMatrixHForThreePointIntegration(double determinant) {
@@ -136,7 +171,7 @@ public class AppDla3pkt {
         double[][] Hpc = new double[4][4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                Double value = 30 * (table1DlaH[i][j] + table2DlaH[i][j]) * detJ;
+                double value = 30 * (table1DlaH[i][j] + table2DlaH[i][j]) * detJ;
 //                value = BigDecimal.valueOf(value)
 //                        .setScale(3, RoundingMode.HALF_UP)
 //                        .doubleValue();

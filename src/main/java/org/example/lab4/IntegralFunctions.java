@@ -105,4 +105,47 @@ public class IntegralFunctions {
         System.out.println("ThirdArray");
         return table4;
     }
+    public static double[][] calculateAndShowSecondArray() {
+        //Druga tabela od gory
+        double[] ksi = new double[]{(-1 / sqrt(3)), (1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3))};
+        double[][] table4 = new double[4][4];
+        List<Function<Double, Double>> functions = new ArrayList<>() {
+            {
+                add(eta -> 0.25 * (eta - 1));
+                add(eta -> 0.25 * (-eta - 1));
+                add(eta -> 0.25 * (eta + 1));
+                add(eta -> 0.25 * (1 - eta));
+            }
+        };
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                table4[i][j] = functions.get(j).apply(ksi[i]); //[i] w dol, [j] w prawo
+            }
+        }
+        System.out.println("SecondArray");
+        return table4;
+    }
+
+    public static double[][] calculateAndShowFirstArray() {
+        //Pierwsza tabela od gory
+        double[] eta = new double[]{(-1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3)), (1 / sqrt(3))};
+        double[][] table4 = new double[4][4];
+        List<Function<Double, Double>> functions = new ArrayList<>() {
+            {
+                add(ksi -> 0.25 * (ksi - 1));
+                add(ksi -> 0.25 * (1 - ksi));
+                add(ksi -> 0.25 * (ksi + 1));
+                add(ksi -> 0.25 * (-ksi - 1));
+            }
+        };
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                table4[i][j] = functions.get(j).apply(eta[i]); //[i] w dol, [j] w prawo
+            }
+        }
+        System.out.println("FirstArray");
+        return table4;
+    }
+
+
 }
