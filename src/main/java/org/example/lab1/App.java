@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+import static org.example.lab5.Aggregation.calculateAggregation;
+
 public class App {
 
     private static final String FILE_NAME1 = "src/main/resources/lab1/Test1_4_4.txt";
@@ -35,24 +37,30 @@ public class App {
         System.out.println("size: " + elements.size());
         System.out.println("element 9: " + elements.get(8));
         double[][] HG4 = new double[9][9];
-        for (int e = 0; e < elements.size(); e++) {
-            System.out.println("element: " + (e+1));
-            Element element = elements.get(e);
-            System.out.println("element id: " + element);
-            double[] pcx = new double[4];
-            double[] pcy = new double[4];
+        double[] pcx = new double[4];
+        double[] pcy = new double[4];
+//        for (int e = 0; e < elements.size(); e++) {
+//            System.out.println("element: " + (e+1));
+//            Element element = elements.get(e);
+//            System.out.println("element id: " + element);
+        Element element = elements.get(0);
             for (int i = 0; i < nodes.size(); i++) { // < 4
                 for (int j = 0; j < 4; j++) { // 4 wspolrzedne x i y
-                    pcx[j] = nodes.get(element.getID().get(j)-1).getX();
-                    pcy[j] = nodes.get(element.getID().get(j)-1).getY();
+                    pcx[j] = nodes.get(element.getID().get(j) - 1).getX();
+                    pcy[j] = nodes.get(element.getID().get(j) - 1).getY();
                 }
             }
-            double[][] mainMatrix = MatrixService.getMainMatrix(pcx, pcy);
-            double[][] matrixHForTwoPointIntegration1 = MatrixHService.getMatrixHForTwoPointIntegration1(mainMatrix);
-            MatrixService.showTable2D(matrixHForTwoPointIntegration1);
-        }
+//        }
+        double[][] mainMatrix = MatrixService.getMainMatrix(pcx, pcy);
+        double[][] matrixHForTwoPointIntegration1 = MatrixHService.getMatrixHForTwoPointIntegrationWithGlobalData(mainMatrix , globalData);
+        MatrixService.showTable2D(matrixHForTwoPointIntegration1);
 
-    }
+        double[][] aggregation = calculateAggregation(grid, elements, matrixHForTwoPointIntegration1);
+
+        System.out.println("Aggregation: ");
+        MatrixService.showTable2Dshort(aggregation);
+
+}
 
     public static void readFile(String fileName, Grid grid, GlobalData globalData) throws FileNotFoundException {
         try (Scanner scanner = new Scanner(new File(fileName))) {
@@ -71,6 +79,7 @@ public class App {
         }
 
     }
+
     public static Grid readFile(String fileName) throws FileNotFoundException {
         GlobalData globalData = new GlobalData();
         Grid grid = new Grid();

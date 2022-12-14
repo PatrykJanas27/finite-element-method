@@ -2,9 +2,7 @@ package org.example.lab4;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static java.lang.Math.sqrt;
 
@@ -12,7 +10,18 @@ public class MatrixService {
     public static void showTable2D(double[][] table2D) {
         for (int i = 0; i < table2D.length; i++) {
             for (int j = 0; j < table2D[i].length; j++) {
-                System.out.printf("|\t%-22f|", table2D[i][j]);
+//                System.out.printf("|\t%-22f|", table2D[i][j]);
+                System.out.printf("|\t%-10.3f|", table2D[i][j]);
+            }
+            System.out.println();
+        }
+    }
+
+    public static void showTable2Dshort(double[][] table2D) {
+        for (int i = 0; i < table2D.length; i++) {
+            for (int j = 0; j < table2D[i].length; j++) {
+//                System.out.printf("%-10f|", table2D[i][j]);
+                System.out.printf("\t%-6.2f|", table2D[i][j]);
             }
             System.out.println();
         }
@@ -64,7 +73,9 @@ public class MatrixService {
             mainMatrix[1][1] += table2[0][j] * pcy[j];
         }
         return mainMatrix;
-    }public static double[][] getMainMatrix(double[] pcx, double[] pcy) {
+    }
+
+    public static double[][] getMainMatrix(double[] pcx, double[] pcy) {
         double[] eta = new double[]{(-1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3)), (1 / sqrt(3))};
         double[] ksi = new double[]{(-1 / sqrt(3)), (1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3))};
         double[][] table1 = new double[4][4];

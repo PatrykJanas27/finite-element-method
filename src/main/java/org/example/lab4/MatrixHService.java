@@ -1,8 +1,10 @@
 package org.example.lab4;
 
+import org.example.lab1.GlobalData;
+
 public class MatrixHService {
 
-    public static double[][] getMatrixHForTwoPointIntegration1(double[][] mainMatrix) {
+    public static double[][] getMatrixHForTwoPointIntegrationWithGlobalData(double[][] mainMatrix, GlobalData globalData) {
         //===================Calculation for determinant===========
         double determinant = DeterminantService.getDeterminant2x2(mainMatrix); // 0,00015625
         mainMatrix = DeterminantService.getMatrix2x2MultipliedBy1DividedByDeterminant(mainMatrix, determinant);
@@ -19,10 +21,10 @@ public class MatrixHService {
         //===================WeightsOfPoints=======
         double[] weightsOfPoints = GaussianQuadrature.getWeights(2); //{1.0, 1.0}
         //===================Calculating tables of H for tree point integration (there will be 9 tables)==========
-        double[][] Hpc1 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 0);
-        double[][] Hpc2 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 1);
-        double[][] Hpc3 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 2);
-        double[][] Hpc4 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 3);
+        double[][] Hpc1 = calculateHpcWithGlobalData(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, globalData, 0);
+        double[][] Hpc2 = calculateHpcWithGlobalData(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant,globalData, 1);
+        double[][] Hpc3 = calculateHpcWithGlobalData(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant,globalData, 2);
+        double[][] Hpc4 = calculateHpcWithGlobalData(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant,globalData, 3);
 
         //===================tables' summing to H=======
         double[][] mainH = new double[4][4];
@@ -179,6 +181,24 @@ public class MatrixHService {
         return mainH;
     }
 
+    private static double[][] calculateHpcWithGlobalData(double[][] table1DlaPc1, double[][] table2DlaPc1, double detJ, GlobalData globalData, int whichPc) {
+        double[][] table1DlaH = new double[4][4];
+        double[][] table2DlaH = new double[4][4];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                table1DlaH[i][j] = table1DlaPc1[whichPc][i] * table1DlaPc1[whichPc][j];//zmiana dla Hpc2
+                table2DlaH[i][j] = table2DlaPc1[whichPc][i] * table2DlaPc1[whichPc][j];
+            }
+        }
+        double[][] Hpc = new double[4][4];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                Hpc[i][j] = globalData.getConductivity() * (table1DlaH[i][j] + table2DlaH[i][j]) * detJ; //TODO read from file conductivity
+            }
+        }
+        return Hpc;
+    }
+
 
     private static double[][] calculateHpc(double[][] table1DlaPc1, double[][] table2DlaPc1, double detJ, int whichPc) {
         double[][] table1DlaH = new double[4][4];
@@ -192,7 +212,7 @@ public class MatrixHService {
         double[][] Hpc = new double[4][4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                Hpc[i][j] = 30 * (table1DlaH[i][j] + table2DlaH[i][j]) * detJ;
+                Hpc[i][j] = 30 * (table1DlaH[i][j] + table2DlaH[i][j]) * detJ; //TODO read from file conductivity
             }
         }
         return Hpc;
