@@ -21,7 +21,4 @@ public class Aggregation {
         }
         return aggregation;
     }
-
-
-
 }

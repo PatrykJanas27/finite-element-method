@@ -2,10 +2,13 @@ package org.example.lab1;
 
 import org.example.lab4.MatrixHService;
 import org.example.lab4.MatrixService;
+import org.example.lab6.BorderConditionService;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 import static org.example.lab5.Aggregation.calculateAggregation;
 
@@ -44,15 +47,15 @@ public class App {
 //            Element element = elements.get(e);
 //            System.out.println("element id: " + element);
         Element element = elements.get(0);
-            for (int i = 0; i < nodes.size(); i++) { // < 4
-                for (int j = 0; j < 4; j++) { // 4 wspolrzedne x i y
-                    pcx[j] = nodes.get(element.getID().get(j) - 1).getX();
-                    pcy[j] = nodes.get(element.getID().get(j) - 1).getY();
-                }
+        for (int i = 0; i < nodes.size(); i++) { // < 4
+            for (int j = 0; j < 4; j++) { // 4 wspolrzedne x i y
+                pcx[j] = nodes.get(element.getID().get(j) - 1).getX();
+                pcy[j] = nodes.get(element.getID().get(j) - 1).getY();
             }
+        }
 //        }
         double[][] mainMatrix = MatrixService.getMainMatrix(pcx, pcy);
-        double[][] matrixHForTwoPointIntegration1 = MatrixHService.getMatrixHForTwoPointIntegrationWithGlobalData(mainMatrix , globalData);
+        double[][] matrixHForTwoPointIntegration1 = MatrixHService.getMatrixHForTwoPointIntegrationWithGlobalData(mainMatrix, globalData);
         MatrixService.showTable2D(matrixHForTwoPointIntegration1);
 
         double[][] aggregation = calculateAggregation(grid, elements, matrixHForTwoPointIntegration1);
@@ -60,7 +63,11 @@ public class App {
         System.out.println("Aggregation: ");
         MatrixService.showTable2Dshort(aggregation);
 
-}
+
+        System.out.println("Calculating Matrix Hbc");
+        BorderConditionService.calculateMatrixHbc(grid);
+
+    }
 
     public static void readFile(String fileName, Grid grid, GlobalData globalData) throws FileNotFoundException {
         try (Scanner scanner = new Scanner(new File(fileName))) {
