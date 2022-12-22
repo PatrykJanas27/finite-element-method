@@ -13,12 +13,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Element {
-    private List<Integer> ID = new ArrayList<>();
+    private List<Integer> IDs = new ArrayList<>();
 
     @Override
     public String toString() {
         return "\n" + "Element{" +
-                "ID=" + ID +
+                "ID=" + IDs +
                 '}';
     }
 }

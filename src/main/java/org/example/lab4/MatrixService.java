@@ -103,7 +103,6 @@ public class MatrixService {
             }
         }
 
-
         double[][] mainMatrix = new double[2][2];
         for (int j = 0; j < 4; j++) {
             mainMatrix[0][0] += table1[0][j] * pcx[j];

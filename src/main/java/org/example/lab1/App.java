@@ -26,17 +26,16 @@ public class App {
         readFile(FILE_NAME1, grid, globalData);
         System.out.println(globalData);
         System.out.println(grid);
-        List<Element> elements = grid.getEL();
+        List<Element> elements = grid.getElements();
 
-        List<Node> nodes = grid.getND();
+        List<Node> nodes = grid.getNodes();
 
         System.out.println(elements.get(0));
-        System.out.println(elements.get(0).getID());
-        System.out.println(nodes.get(elements.get(0).getID().get(0)));
-        System.out.println(nodes.get(elements.get(0).getID().get(1)));
-        System.out.println(nodes.get(elements.get(0).getID().get(2)));
-        System.out.println(nodes.get(elements.get(0).getID().get(3)));
-        Element element0 = elements.get(0);
+        System.out.println(elements.get(0).getIDs());
+        System.out.println(nodes.get(elements.get(0).getIDs().get(0)));
+        System.out.println(nodes.get(elements.get(0).getIDs().get(1)));
+        System.out.println(nodes.get(elements.get(0).getIDs().get(2)));
+        System.out.println(nodes.get(elements.get(0).getIDs().get(3)));
         System.out.println("size: " + elements.size());
         System.out.println("element 9: " + elements.get(8));
         double[][] HG4 = new double[9][9];
@@ -49,24 +48,27 @@ public class App {
         Element element = elements.get(0);
         for (int i = 0; i < nodes.size(); i++) { // < 4
             for (int j = 0; j < 4; j++) { // 4 wspolrzedne x i y
-                pcx[j] = nodes.get(element.getID().get(j) - 1).getX();
-                pcy[j] = nodes.get(element.getID().get(j) - 1).getY();
+                pcx[j] = nodes.get(element.getIDs().get(j) - 1).getX();
+                pcy[j] = nodes.get(element.getIDs().get(j) - 1).getY();
             }
         }
 //        }
+
+        //****************** Here for matrix H
         double[][] mainMatrix = MatrixService.getMainMatrix(pcx, pcy);
         double[][] matrixHForTwoPointIntegration1 = MatrixHService.getMatrixHForTwoPointIntegrationWithGlobalData(mainMatrix, globalData);
-        MatrixService.showTable2D(matrixHForTwoPointIntegration1);
-
-        double[][] aggregation = calculateAggregation(grid, elements, matrixHForTwoPointIntegration1);
-
-        System.out.println("Aggregation: ");
-        MatrixService.showTable2Dshort(aggregation);
+        System.out.println("matrixHForTwoPointIntegration1: ");
+        MatrixService.showTable2D(matrixHForTwoPointIntegration1); //TODO MatrixH is always the same for every element?
 
 
+        //************************ Here for HBC
         System.out.println("Calculating Matrix Hbc");
-        BorderConditionService.calculateMatrixHbc(grid);
+        BorderConditionService.calculateMatrixHbc(grid, matrixHForTwoPointIntegration1, globalData);
 
+
+//        double[][] aggregation = calculateAggregation(grid, matrixHForTwoPointIntegration1);
+//        System.out.println("Aggregation: ");
+//        MatrixService.showTable2Dshort(aggregation);
     }
 
     public static void readFile(String fileName, Grid grid, GlobalData globalData) throws FileNotFoundException {
@@ -113,7 +115,7 @@ public class App {
     private static void readBcDataFromFile(Grid grid, Scanner scanner, String line) {
         if (line.equals("*BC")) {
             String[] BCs = scanner.nextLine().split(",");
-            List<Node> nd = grid.getND();
+            List<Node> nd = grid.getNodes();
             for (int i = 0; i < BCs.length; i++) {
                 int BCsNodeNumber = Integer.parseInt(BCs[i].trim());
                 nd.get(BCsNodeNumber - 1).setBC(true);
@@ -138,7 +140,7 @@ public class App {
                 elementNumbers.add(e4);
                 elements.add(new Element(elementNumbers));
             }
-            grid.setEL(elements);
+            grid.setElements(elements);
         }
     }
 
@@ -150,7 +152,7 @@ public class App {
                 String[] nextNode = line.split(",");
                 nodes.add(new Node(Double.parseDouble(nextNode[1]), Double.parseDouble(nextNode[2])));
             }
-            grid.setND(nodes);
+            grid.setNodes(nodes);
         }
     }
 

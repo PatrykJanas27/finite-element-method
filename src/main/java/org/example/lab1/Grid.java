@@ -12,16 +12,16 @@ import java.util.List;
 public class Grid {
     private int nodesNumber;
     private int elementsNumber;
-    private List<Node> ND = new ArrayList<>();
-    private List<Element> EL = new ArrayList<>();
+    private List<Node> nodes = new ArrayList<>();
+    private List<Element> elements = new ArrayList<>();
 
     @Override
     public String toString() {
         return "Grid{" +
                 "nodesNumber=" + nodesNumber +
                 ", elementsNumber=" + elementsNumber +
-                ", ND=" + ND +
-                ", EL=" + EL +
+                ", ND=" + nodes +
+                ", EL=" + elements +
                 '}';
     }
 

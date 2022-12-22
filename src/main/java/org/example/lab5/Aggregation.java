@@ -7,16 +7,17 @@ import java.util.List;
 
 public class Aggregation {
 
-    public static double[][] calculateAggregation(Grid grid, List<Element> elements, double[][] matrixHForTwoPointIntegration1) {
+    public static double[][] calculateAggregation(Grid grid, double[][] matrixHForTwoPointIntegration1) {
+        List<Element> elements = grid.getElements();
         double[][] aggregation = new double[grid.getNodesNumber()][grid.getNodesNumber()];
         for (int e = 0; e < elements.size(); e++) {
             Element element = elements.get(e);
             for (int i = 0; i < 4; i++) {
-                System.out.print(element.getID().get(i) + ", ");
+//                System.out.print(element.getIDs().get(i) + ", ");
                 for (int j = 0; j < 4; j++) {
-                    aggregation[element.getID().get(i) - 1][element.getID().get(j) - 1] += matrixHForTwoPointIntegration1[i][j];
+                    aggregation[element.getIDs().get(i) - 1][element.getIDs().get(j) - 1] += matrixHForTwoPointIntegration1[i][j];
                 }
-                System.out.println();
+//                System.out.println();
             }
         }
         return aggregation;
