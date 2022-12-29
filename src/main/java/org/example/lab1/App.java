@@ -62,13 +62,22 @@ public class App {
 
 
         //************************ Here for HBC
-        System.out.println("Calculating Matrix Hbc");
-        BorderConditionService.calculateMatrixHbc(grid, matrixHForTwoPointIntegration1, globalData);
+        double[][] globalAggregationHBC = BorderConditionService.calculateMatrixHbc(grid, matrixHForTwoPointIntegration1, globalData);
+        System.out.println("globalAggregationHBC: ");
+        MatrixService.showTable2Dshort(globalAggregationHBC);
 
+        double[][] globalAggregationH = calculateAggregation(grid, matrixHForTwoPointIntegration1);
+        System.out.println("globalAggregationH: ");
+        MatrixService.showTable2Dshort(globalAggregationH);
 
-//        double[][] aggregation = calculateAggregation(grid, matrixHForTwoPointIntegration1);
-//        System.out.println("Aggregation: ");
-//        MatrixService.showTable2Dshort(aggregation);
+        double[][] globalAggregationHplusHBC = new double[16][16];
+        for (int i = 0; i < 16; i++) {
+            for (int j = 0; j < 16; j++) {
+                globalAggregationHplusHBC[i][j] = globalAggregationHBC[i][j] + globalAggregationH[i][j];
+            }
+        }
+        System.out.println("globalAggregationHplusHBC: ");
+        MatrixService.showTable2Dshort(globalAggregationHplusHBC);
     }
 
     public static void readFile(String fileName, Grid grid, GlobalData globalData) throws FileNotFoundException {

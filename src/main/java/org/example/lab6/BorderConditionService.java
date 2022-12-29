@@ -1,20 +1,21 @@
 package org.example.lab6;
 
+import lombok.Getter;
 import org.example.lab1.Element;
 import org.example.lab1.GlobalData;
 import org.example.lab1.Grid;
 import org.example.lab1.Node;
 import org.example.lab4.MatrixService;
-import org.example.lab5.Aggregation;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
 public class BorderConditionService {
-    private double[][] globalH = new double[16][16];
+    private static double[][] globalAggregationHBC = new double[16][16];
 
-    public static void calculateMatrixHbc(Grid grid, double[][] matrixHForTwoPointIntegration1, GlobalData globalData) {
+
+    public static double[][] calculateMatrixHbc(Grid grid, double[][] matrixHForTwoPointIntegration1, GlobalData globalData) {
         double[][] ksiEta = new double[][]{
                 {-(1 / Math.sqrt(3)), -1},
                 {(1 / Math.sqrt(3)), -1},
@@ -50,117 +51,70 @@ public class BorderConditionService {
         List<Node> nodes = grid.getNodes();
 
 
-        Element element1 = elements.get(0);
-        Element element2 = elements.get(1);
-        double[] detJWallElement1 = calculateDetJForElement(nodes, element1); // TODO there is 4 detJ for one element, should it be?
-        double[] detJWallElement2 = calculateDetJForElement(nodes, element2); // TODO there is 4 detJ for one element, should it be?
-        for (double v : detJWallElement1) {
-            System.out.println("detJ for element1: " + v);
-        }
-        for (double v : detJWallElement2) {
-            System.out.println("detJ for element1: " + v);
-        }
-
 //        double detJ = 0.0166667;
         double alfaFactor = globalData.getAlfa(); // here alfa factor has to be read from file
-        double[][] BCwall1E1 = new double[4][4]; //pow1
-        double[][] BCwall2E1 = new double[4][4]; //pow2 from pdf
-        double[][] BCwall3E1 = new double[4][4]; //pow3
-        double[][] BCwall4E1 = new double[4][4]; //pow4
-        double[][] BCwall1E2 = new double[4][4]; //pow1
-        double[][] BCwall2E2 = new double[4][4]; //pow2 from pdf
-        double[][] BCwall3E2 = new double[4][4]; //pow3
-        double[][] BCwall4E2 = new double[4][4]; //pow4
-        double[] w = new double[]{1.0, 1.0};
+        double[][][] BCwall1E1 = new double[16][4][4]; //pow1
+        double[][][] BCwall2E1 = new double[16][4][4]; //pow1
+        double[][][] BCwall3E1 = new double[16][4][4]; //pow1
+        double[][][] BCwall4E1 = new double[16][4][4]; //pow1
 
-        for (int n = 0; n < 2; n++) { //here is a loop for pc1 and pc2
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    BCwall1E1[i][j] += w[n] * alfaFactor * beforeHbc1[n][i] * w[n] * beforeHbc1[n][j];
-                    BCwall2E1[i][j] += w[n] * alfaFactor * beforeHbc2[n][i] * w[n] * beforeHbc2[n][j];
-                    BCwall3E1[i][j] += w[n] * alfaFactor * beforeHbc3[n][i] * w[n] * beforeHbc3[n][j];
-                    BCwall4E1[i][j] += w[n] * alfaFactor * beforeHbc4[n][i] * w[n] * beforeHbc4[n][j];
-                    BCwall1E2[i][j] += w[n] * alfaFactor * beforeHbc1[n][i] * w[n] * beforeHbc1[n][j];
-                    BCwall2E2[i][j] += w[n] * alfaFactor * beforeHbc2[n][i] * w[n] * beforeHbc2[n][j];
-                    BCwall3E2[i][j] += w[n] * alfaFactor * beforeHbc3[n][i] * w[n] * beforeHbc3[n][j];
-                    BCwall4E2[i][j] += w[n] * alfaFactor * beforeHbc4[n][i] * w[n] * beforeHbc4[n][j];
+        double[] w = new double[]{1.0, 1.0};
+        for (int e = 0; e < 16; e++) {
+            for (int n = 0; n < 2; n++) { //here is a loop for pc1 and pc2
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 4; j++) {
+                        BCwall1E1[e][i][j] += w[n] * alfaFactor * beforeHbc1[n][i] * w[n] * beforeHbc1[n][j];
+                        BCwall2E1[e][i][j] += w[n] * alfaFactor * beforeHbc2[n][i] * w[n] * beforeHbc2[n][j];
+                        BCwall3E1[e][i][j] += w[n] * alfaFactor * beforeHbc3[n][i] * w[n] * beforeHbc3[n][j];
+                        BCwall4E1[e][i][j] += w[n] * alfaFactor * beforeHbc4[n][i] * w[n] * beforeHbc4[n][j];
+                    }
                 }
             }
         }
-//        for (int i = 0; i < 4; i++) {
-//            for (int j = 0; j < 4; j++) {
-//                BCwall1E1[i][j] *= detJ;
-//                BCwall2E1[i][j] *= detJ;
-//                BCwall3E1[i][j] *= detJ;
-//                BCwall4E1[i][j] *= detJ;
+        int elementMax = 9;
+        for (int element = 0; element < elementMax; element++) {
+            Element element1 = elements.get(element);
+            double[] detJWallElement1 = calculateDetJForElement(nodes, element1); // TODO there is 4 detJ for one element, should it be?
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    BCwall1E1[element][i][j] *= detJWallElement1[0];
+                    BCwall2E1[element][i][j] *= detJWallElement1[1];
+                    BCwall3E1[element][i][j] *= detJWallElement1[2];
+                    BCwall4E1[element][i][j] *= detJWallElement1[3];
+                }
+            }
+
+            //calculating border conditions for elements
+            //**** check which node has border condition (BC) for first element***
+//            for (int i = 0; i < 9; i++) {
+//                System.out.println("element " + (i + 1) + ": ");
+//                for (int j = 0; j < 4; j++) {
+//                    System.out.println(nodes.get((elements.get(i).getIDs().get(j)) - 1).isBC());
+//                }
 //            }
-//        }
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                BCwall1E1[i][j] *= detJWallElement1[0];
-                BCwall2E1[i][j] *= detJWallElement1[1];
-                BCwall3E1[i][j] *= detJWallElement1[2];
-                BCwall4E1[i][j] *= detJWallElement1[3];
-                BCwall1E2[i][j] *= detJWallElement1[0];
-                BCwall2E2[i][j] *= detJWallElement1[1];
-                BCwall3E2[i][j] *= detJWallElement1[2];
-                BCwall4E2[i][j] *= detJWallElement1[3];
+            //***** Element 1 and his IDs
+//            List<Integer> e1IDs = element1.getIDs();
+            List<Integer> e1IDs = elements.get(elementMax - 1 - element).getIDs(); // FIXME here is a big change!!!!!!!
+            // FIXME element9 licz dla niego H lokalne + HBC lokalne, a w agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
+
+            System.out.println("element " + (element + 1) + ": " + e1IDs); // 1, 2, 6, 5
+
+            //***** Here is localHBC for -> first element
+            double[][] localHbcForElement = calculateAndGetLocalHbc(
+                    BCwall1E1[0], BCwall2E1[0], BCwall3E1[0], BCwall4E1[0], nodes, e1IDs);
+            System.out.println("localHbcForElement: ");
+            MatrixService.showTable2Dshort(localHbcForElement);
+            e1IDs = element1.getIDs(); // FIXME here is a big change!!!!!!!!!!!!!!!!!!!!!!!!
+            // FIXME  // element9 licz dla niego H lokalne + HBC lokalne, a w agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    globalAggregationHBC[e1IDs.get(i) - 1][e1IDs.get(j) - 1] += localHbcForElement[i][j]; // without + !!! just =
+                }
             }
         }
-        System.out.println("BCwall1E1: ");
-        MatrixService.showTable2D(BCwall1E1);
-        System.out.println("BCwall2E1: ");
-        MatrixService.showTable2D(BCwall2E1);
-        System.out.println("BCwall3E1: ");
-        MatrixService.showTable2D(BCwall3E1);
-        System.out.println("BCwall4E1: ");
-        MatrixService.showTable2D(BCwall4E1);
-        System.out.println("BCwall1E2: ");
-        MatrixService.showTable2D(BCwall1E2);
-        System.out.println("BCwall2E2: ");
-        MatrixService.showTable2D(BCwall2E2);
-        System.out.println("BCwall3E2: ");
-        MatrixService.showTable2D(BCwall3E2);
-        System.out.println("BCwall4E2: ");
-        MatrixService.showTable2D(BCwall4E2);
-
-        //calculating border conditions for elements
 
 
-
-        //**** check which node has border condition (BC) for first element***
-
-        for (int i = 0; i < 9; i++) {
-            System.out.println("element " + (i + 1) + ": ");
-            for (int j = 0; j < 4; j++) {
-                System.out.println(nodes.get((elements.get(i).getIDs().get(j)) - 1).isBC());
-            }
-        }
-        //***** Element 1 and his IDs
-        List<Integer> e1IDs = elements.get(0).getIDs();
-        List<Integer> e2IDs = elements.get(1).getIDs();
-        System.out.println("element 1: " + e1IDs); // 1, 2, 6, 5
-        System.out.println("element 2: " + e2IDs); // 1, 2, 6, 5
-        double[][] aggregationForElements = new double[16][16];
-        //******
-
-        //***** Here is aggregation for ->first element
-        double[][] aggregationForElement1 = calcualteHbcAndGetAggregationForElement(
-                grid, matrixHForTwoPointIntegration1, BCwall1E1, BCwall2E1, BCwall3E1, BCwall4E1, nodes, e1IDs);
-        double[][] aggregationForElement2 = calcualteHbcAndGetAggregationForElement(
-                grid, matrixHForTwoPointIntegration1, BCwall1E1, BCwall2E1, BCwall3E1, BCwall4E1, nodes, e2IDs);
-
-        //**** Here is aggregation for *ALL* elements
-        for (int i = 0; i < 16; i++) {
-            for (int j = 0; j < 16; j++) {
-                aggregationForElements[i][j] += aggregationForElement1[i][j] +  aggregationForElement2[i][j];
-            }
-        }
-        //***************************
-
-
-        System.out.println("aggregationForElements: ");
-        MatrixService.showTable2Dshort(aggregationForElements);
+        return globalAggregationHBC;
     }
 
     private static double[] calculateDetJForElement(List<Node> nodes, Element element1) {
@@ -170,10 +124,10 @@ public class BorderConditionService {
         Integer id2 = element1IDs.get(1);
         Integer id3 = element1IDs.get(2);
         Integer id4 = element1IDs.get(3);
-        Node node1 = nodes.get(id1-1); // has to be id minus 1
-        Node node2 = nodes.get(id2-1);
-        Node node3 = nodes.get(id3-1);
-        Node node4 = nodes.get(id4-1);
+        Node node1 = nodes.get(id1 - 1); // has to be id minus 1
+        Node node2 = nodes.get(id2 - 1);
+        Node node3 = nodes.get(id3 - 1);
+        Node node4 = nodes.get(id4 - 1);
         double x1 = node1.getX();
         double y1 = node1.getY();
         double x2 = node2.getX();
@@ -183,41 +137,43 @@ public class BorderConditionService {
         double y4 = node4.getY();
         double x4 = node4.getX();
         //for horizontal walls __
-        if(y1 == y2){
-            detJWall[0] = (Math.abs(x1 - x2))/2.0;
+        if (y1 == y2) {
+            detJWall[0] = (Math.abs(x1 - x2)) / 2.0;
             System.out.println("detJWall1" + detJWall[0]);
         }
-        if(y1 != y2) {
-            detJWall[0] = (Math.sqrt(Math.pow(Math.abs(y2 - y1),2) + Math.pow(Math.abs(x1 - x2),2)))/2.0;
+        if (y1 != y2) {
+            detJWall[0] = (Math.sqrt(Math.pow(Math.abs(y2 - y1), 2) + Math.pow(Math.abs(x1 - x2), 2))) / 2.0;
         }
-        if(y3 == y4){
-            detJWall[2] = (Math.abs(x3 - x4))/2.0;
+        if (y3 == y4) {
+            detJWall[2] = (Math.abs(x3 - x4)) / 2.0;
         }
-        if(y3 != y4) {
-            detJWall[2] = (Math.sqrt(Math.pow(Math.abs(y4 - y3),2) + Math.pow(Math.abs(x3 - x4),2)))/2.0;
+        if (y3 != y4) {
+            detJWall[2] = (Math.sqrt(Math.pow(Math.abs(y4 - y3), 2) + Math.pow(Math.abs(x3 - x4), 2))) / 2.0;
         }
         //for vertical walls |
-        if(x2 == x3){
-            detJWall[1] = (Math.abs(y2 - y3))/2.0;
+        if (x2 == x3) {
+            detJWall[1] = (Math.abs(y2 - y3)) / 2.0;
         }
-        if(x2 != x3) {
-            detJWall[1] = (Math.sqrt(Math.pow(Math.abs(x3 - x2),2) + Math.pow(Math.abs(y2 - y3),2)))/2.0;
+        if (x2 != x3) {
+            detJWall[1] = (Math.sqrt(Math.pow(Math.abs(x3 - x2), 2) + Math.pow(Math.abs(y2 - y3), 2))) / 2.0;
         }
-        if(x1 == x4){
-            detJWall[3] = (Math.abs(y1 - y4))/2.0;
+        if (x1 == x4) {
+            detJWall[3] = (Math.abs(y1 - y4)) / 2.0;
         }
-        if(x1 != x4) {
-            detJWall[3] = (Math.sqrt(Math.pow(Math.abs(x4 - x1),2) + Math.pow(Math.abs(y1 - y4),2)))/2.0;
+        if (x1 != x4) {
+            detJWall[3] = (Math.sqrt(Math.pow(Math.abs(x4 - x1), 2) + Math.pow(Math.abs(y1 - y4), 2))) / 2.0;
         }
         //***
         return detJWall;
     }
 
 
-    private static double[][] calcualteHbcAndGetAggregationForElement(Grid grid, double[][] matrixHForTwoPointIntegration1, double[][] BCwall1, double[][] BCwall2, double[][] BCwall3, double[][] BCwall4, List<Node> nodes, List<Integer> e1IDs) {
+    private static double[][] calculateAndGetLocalHbc(
+            double[][] BCwall1, double[][] BCwall2, double[][] BCwall3, double[][] BCwall4,
+            List<Node> nodes, List<Integer> eIDs) {
         //Conditions, check if node has border condition ***********************
         double[][] localBC1 = new double[4][4];
-        if (nodes.get((e1IDs.get(0)) - 1).isBC() && nodes.get((e1IDs.get(1)) - 1).isBC()) { //top right && top left ^^
+        if (nodes.get((eIDs.get(0)) - 1).isBC() && nodes.get((eIDs.get(1)) - 1).isBC()) { //top right && top left ^^
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
                     localBC1[i][j] = BCwall3[i][j]; //FIXME here how to do that?
@@ -226,7 +182,7 @@ public class BorderConditionService {
         }
 
         double[][] localBC2 = new double[4][4];
-        if (nodes.get((e1IDs.get(1)) - 1).isBC() && nodes.get((e1IDs.get(2)) - 1).isBC()) { //top left && bottom left |<- |
+        if (nodes.get((eIDs.get(1)) - 1).isBC() && nodes.get((eIDs.get(2)) - 1).isBC()) { //top left && bottom left |<- |
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
                     localBC2[i][j] = BCwall4[i][j];
@@ -235,7 +191,7 @@ public class BorderConditionService {
         }
 
         double[][] localBC3 = new double[4][4];
-        if (nodes.get((e1IDs.get(2)) - 1).isBC() && nodes.get((e1IDs.get(3)) - 1).isBC()) { //bottom left && bottom right __
+        if (nodes.get((eIDs.get(2)) - 1).isBC() && nodes.get((eIDs.get(3)) - 1).isBC()) { //bottom left && bottom right __
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
                     localBC3[i][j] = BCwall1[i][j];
@@ -244,21 +200,21 @@ public class BorderConditionService {
         }
 
         double[][] localBC4 = new double[4][4];
-        if (nodes.get((e1IDs.get(3)) - 1).isBC() && nodes.get((e1IDs.get(0)) - 1).isBC()) { //bottom right && top right | ->|
+        if (nodes.get((eIDs.get(3)) - 1).isBC() && nodes.get((eIDs.get(0)) - 1).isBC()) { //bottom right && top right | ->|
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
                     localBC4[i][j] = BCwall2[i][j];
                 }
             }
         }
-        System.out.println("Hbc wall local1: ");
-        MatrixService.showTable2Dshort(localBC1);
-        System.out.println("Hbc local2: ");
-        MatrixService.showTable2Dshort(localBC2);
-        System.out.println("Hbc local3: ");
-        MatrixService.showTable2Dshort(localBC3);
-        System.out.println("Hbc local4: ");
-        MatrixService.showTable2Dshort(localBC4);
+//        System.out.println("Hbc wall local1: ");
+//        MatrixService.showTable2Dshort(localBC1);
+//        System.out.println("Hbc wall local2: ");
+//        MatrixService.showTable2Dshort(localBC2);
+//        System.out.println("Hbc wall local3: ");
+//        MatrixService.showTable2Dshort(localBC3);
+//        System.out.println("Hbc wall local4: ");
+//        MatrixService.showTable2Dshort(localBC4);
         //************************ now we have 4 matrix, every for one side of wall
 
         //*******
@@ -268,23 +224,11 @@ public class BorderConditionService {
                 localHbc[i][j] += localBC1[i][j] + localBC2[i][j] + localBC3[i][j] + localBC4[i][j];
             }
         }
-        System.out.println("Hbc local: ");
-        MatrixService.showTable2Dshort(localHbc);
+//        System.out.println("Hbc local: ");
+//        MatrixService.showTable2Dshort(localHbc);
         //*******
 
-        //******* Summing localHBC + localH **
-        double[][] localHBC_plus_localH = new double[4][4];
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                localHBC_plus_localH[i][j] += localBC1[i][j] + localBC2[i][j] + localBC3[i][j] + localBC4[i][j] + matrixHForTwoPointIntegration1[i][j];
-            }
-        }
-        System.out.println("Hbc local + H: ");
-        MatrixService.showTable2Dshort(localHBC_plus_localH);
-        //*******
-
-        double[][] aggregationForElement1 = Aggregation.calculateAggregation(grid, localHBC_plus_localH);
-        return aggregationForElement1;
+        return localHbc;
     }
 
     public static Double geometricModelsN(int whichOneFrom1To4, double ksi, double eta) {
