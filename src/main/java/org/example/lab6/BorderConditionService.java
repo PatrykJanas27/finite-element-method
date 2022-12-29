@@ -48,13 +48,16 @@ public class BorderConditionService {
         MatrixService.showTable2D(beforeHbc4);
         List<Element> elements = grid.getElements();
         List<Node> nodes = grid.getNodes();
-        // detJ for wall1
+
 
         Element element1 = elements.get(0);
-        double detJWall[] = calculateDetJForElement(nodes, element1);
+        double[] detJWallElement1 = calculateDetJForElement(nodes, element1); // TODO there is 4 detJ for one element, should it be?
+        for (double v : detJWallElement1) {
+            System.out.println("detJ for element1: " + v);
+        }
 
 //        double detJ = 0.0166667;
-        double alfaFactor = globalData.getAlfa();
+        double alfaFactor = globalData.getAlfa(); // here alfa factor has to be read from file
         double[][] BCwall1 = new double[4][4]; //pow1
         double[][] BCwall2 = new double[4][4]; //pow2 from pdf
         double[][] BCwall3 = new double[4][4]; //pow3
@@ -81,10 +84,10 @@ public class BorderConditionService {
 //        }
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                BCwall1[i][j] *= detJWall[0];
-                BCwall2[i][j] *= detJWall[1];
-                BCwall3[i][j] *= detJWall[2];
-                BCwall4[i][j] *= detJWall[3];
+                BCwall1[i][j] *= detJWallElement1[0];
+                BCwall2[i][j] *= detJWallElement1[1];
+                BCwall3[i][j] *= detJWallElement1[2];
+                BCwall4[i][j] *= detJWallElement1[3];
             }
         }
         System.out.println("BCwall1: ");
