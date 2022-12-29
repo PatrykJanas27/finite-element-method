@@ -51,53 +51,78 @@ public class BorderConditionService {
 
 
         Element element1 = elements.get(0);
+        Element element2 = elements.get(1);
         double[] detJWallElement1 = calculateDetJForElement(nodes, element1); // TODO there is 4 detJ for one element, should it be?
+        double[] detJWallElement2 = calculateDetJForElement(nodes, element2); // TODO there is 4 detJ for one element, should it be?
         for (double v : detJWallElement1) {
+            System.out.println("detJ for element1: " + v);
+        }
+        for (double v : detJWallElement2) {
             System.out.println("detJ for element1: " + v);
         }
 
 //        double detJ = 0.0166667;
         double alfaFactor = globalData.getAlfa(); // here alfa factor has to be read from file
-        double[][] BCwall1 = new double[4][4]; //pow1
-        double[][] BCwall2 = new double[4][4]; //pow2 from pdf
-        double[][] BCwall3 = new double[4][4]; //pow3
-        double[][] BCwall4 = new double[4][4]; //pow4
+        double[][] BCwall1E1 = new double[4][4]; //pow1
+        double[][] BCwall2E1 = new double[4][4]; //pow2 from pdf
+        double[][] BCwall3E1 = new double[4][4]; //pow3
+        double[][] BCwall4E1 = new double[4][4]; //pow4
+        double[][] BCwall1E2 = new double[4][4]; //pow1
+        double[][] BCwall2E2 = new double[4][4]; //pow2 from pdf
+        double[][] BCwall3E2 = new double[4][4]; //pow3
+        double[][] BCwall4E2 = new double[4][4]; //pow4
         double[] w = new double[]{1.0, 1.0};
 
         for (int n = 0; n < 2; n++) { //here is a loop for pc1 and pc2
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
-                    BCwall1[i][j] += w[n] * alfaFactor * beforeHbc1[n][i] * w[n] * beforeHbc1[n][j];
-                    BCwall2[i][j] += w[n] * alfaFactor * beforeHbc2[n][i] * w[n] * beforeHbc2[n][j];
-                    BCwall3[i][j] += w[n] * alfaFactor * beforeHbc3[n][i] * w[n] * beforeHbc3[n][j];
-                    BCwall4[i][j] += w[n] * alfaFactor * beforeHbc4[n][i] * w[n] * beforeHbc4[n][j];
+                    BCwall1E1[i][j] += w[n] * alfaFactor * beforeHbc1[n][i] * w[n] * beforeHbc1[n][j];
+                    BCwall2E1[i][j] += w[n] * alfaFactor * beforeHbc2[n][i] * w[n] * beforeHbc2[n][j];
+                    BCwall3E1[i][j] += w[n] * alfaFactor * beforeHbc3[n][i] * w[n] * beforeHbc3[n][j];
+                    BCwall4E1[i][j] += w[n] * alfaFactor * beforeHbc4[n][i] * w[n] * beforeHbc4[n][j];
+                    BCwall1E2[i][j] += w[n] * alfaFactor * beforeHbc1[n][i] * w[n] * beforeHbc1[n][j];
+                    BCwall2E2[i][j] += w[n] * alfaFactor * beforeHbc2[n][i] * w[n] * beforeHbc2[n][j];
+                    BCwall3E2[i][j] += w[n] * alfaFactor * beforeHbc3[n][i] * w[n] * beforeHbc3[n][j];
+                    BCwall4E2[i][j] += w[n] * alfaFactor * beforeHbc4[n][i] * w[n] * beforeHbc4[n][j];
                 }
             }
         }
 //        for (int i = 0; i < 4; i++) {
 //            for (int j = 0; j < 4; j++) {
-//                BCwall1[i][j] *= detJ;
-//                BCwall2[i][j] *= detJ;
-//                BCwall3[i][j] *= detJ;
-//                BCwall4[i][j] *= detJ;
+//                BCwall1E1[i][j] *= detJ;
+//                BCwall2E1[i][j] *= detJ;
+//                BCwall3E1[i][j] *= detJ;
+//                BCwall4E1[i][j] *= detJ;
 //            }
 //        }
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                BCwall1[i][j] *= detJWallElement1[0];
-                BCwall2[i][j] *= detJWallElement1[1];
-                BCwall3[i][j] *= detJWallElement1[2];
-                BCwall4[i][j] *= detJWallElement1[3];
+                BCwall1E1[i][j] *= detJWallElement1[0];
+                BCwall2E1[i][j] *= detJWallElement1[1];
+                BCwall3E1[i][j] *= detJWallElement1[2];
+                BCwall4E1[i][j] *= detJWallElement1[3];
+                BCwall1E2[i][j] *= detJWallElement1[0];
+                BCwall2E2[i][j] *= detJWallElement1[1];
+                BCwall3E2[i][j] *= detJWallElement1[2];
+                BCwall4E2[i][j] *= detJWallElement1[3];
             }
         }
-        System.out.println("BCwall1: ");
-        MatrixService.showTable2D(BCwall1);
-        System.out.println("BCwall2: ");
-        MatrixService.showTable2D(BCwall2);
-        System.out.println("BCwall3: ");
-        MatrixService.showTable2D(BCwall3);
-        System.out.println("BCwall4: ");
-        MatrixService.showTable2D(BCwall4);
+        System.out.println("BCwall1E1: ");
+        MatrixService.showTable2D(BCwall1E1);
+        System.out.println("BCwall2E1: ");
+        MatrixService.showTable2D(BCwall2E1);
+        System.out.println("BCwall3E1: ");
+        MatrixService.showTable2D(BCwall3E1);
+        System.out.println("BCwall4E1: ");
+        MatrixService.showTable2D(BCwall4E1);
+        System.out.println("BCwall1E2: ");
+        MatrixService.showTable2D(BCwall1E2);
+        System.out.println("BCwall2E2: ");
+        MatrixService.showTable2D(BCwall2E2);
+        System.out.println("BCwall3E2: ");
+        MatrixService.showTable2D(BCwall3E2);
+        System.out.println("BCwall4E2: ");
+        MatrixService.showTable2D(BCwall4E2);
 
         //calculating border conditions for elements
 
@@ -113,18 +138,22 @@ public class BorderConditionService {
         }
         //***** Element 1 and his IDs
         List<Integer> e1IDs = elements.get(0).getIDs();
+        List<Integer> e2IDs = elements.get(1).getIDs();
         System.out.println("element 1: " + e1IDs); // 1, 2, 6, 5
+        System.out.println("element 2: " + e2IDs); // 1, 2, 6, 5
         double[][] aggregationForElements = new double[16][16];
         //******
 
         //***** Here is aggregation for ->first element
         double[][] aggregationForElement1 = calcualteHbcAndGetAggregationForElement(
-                grid, matrixHForTwoPointIntegration1, BCwall1, BCwall2, BCwall3, BCwall4, nodes, e1IDs);
+                grid, matrixHForTwoPointIntegration1, BCwall1E1, BCwall2E1, BCwall3E1, BCwall4E1, nodes, e1IDs);
+        double[][] aggregationForElement2 = calcualteHbcAndGetAggregationForElement(
+                grid, matrixHForTwoPointIntegration1, BCwall1E1, BCwall2E1, BCwall3E1, BCwall4E1, nodes, e2IDs);
 
         //**** Here is aggregation for *ALL* elements
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 16; j++) {
-                aggregationForElements[i][j] += aggregationForElement1[i][j];
+                aggregationForElements[i][j] += aggregationForElement1[i][j] +  aggregationForElement2[i][j];
             }
         }
         //***************************
@@ -141,10 +170,10 @@ public class BorderConditionService {
         Integer id2 = element1IDs.get(1);
         Integer id3 = element1IDs.get(2);
         Integer id4 = element1IDs.get(3);
-        Node node1 = nodes.get(id1);
-        Node node2 = nodes.get(id2);
-        Node node3 = nodes.get(id3);
-        Node node4 = nodes.get(id4);
+        Node node1 = nodes.get(id1-1); // has to be id minus 1
+        Node node2 = nodes.get(id2-1);
+        Node node3 = nodes.get(id3-1);
+        Node node4 = nodes.get(id4-1);
         double x1 = node1.getX();
         double y1 = node1.getY();
         double x2 = node2.getX();
