@@ -3,6 +3,8 @@ package org.example.lab1;
 import org.example.lab4.MatrixHService;
 import org.example.lab4.MatrixService;
 import org.example.lab6.BorderConditionService;
+import org.example.lab6.GaussianEliminationService;
+import org.example.lab6.VectorP;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -81,9 +83,16 @@ public class App {
         MatrixService.showTable2Dshort(globalAggregationHplusHBC);
 
 
-        double[] globalAggregationVectorP = BorderConditionService.calculateVectorP(grid, globalData);
+        double[] globalAggregationVectorP = VectorP.calculateVectorP(grid, globalData);
         System.out.println("globalAggregationVectorP: ");
         MatrixService.showTable1D(globalAggregationVectorP);
+
+        // [H]{t}+{P}=0
+        double[] solutionForSystemOfEquations = GaussianEliminationService.findSolutionForSystemOfEquations(globalAggregationHplusHBC, globalData.getTot(), globalAggregationVectorP);
+        System.out.println("solutionForSystemOfEquations");
+        MatrixService.showTable1D(solutionForSystemOfEquations);
+
+
     }
 
     public static void readFile(String fileName, Grid grid, GlobalData globalData) throws FileNotFoundException {
