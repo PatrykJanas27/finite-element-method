@@ -1,6 +1,5 @@
 package org.example.lab6;
 
-import lombok.Getter;
 import org.example.lab1.Element;
 import org.example.lab1.GlobalData;
 import org.example.lab1.Grid;
@@ -13,21 +12,108 @@ import java.util.function.BiFunction;
 
 public class BorderConditionService {
     private static double[][] globalAggregationHBC = new double[16][16];
+    private static double[] globalAggregationVectorP = new double[16];
 
-
-    public static double[][] calculateMatrixHbc(Grid grid, double[][] matrixHForTwoPointIntegration1, GlobalData globalData) {
+    public static double[] calculateVectorP(Grid grid, GlobalData globalData) {
         double[][] ksiEta = new double[][]{
-                {-(1 / Math.sqrt(3)), -1},
-                {(1 / Math.sqrt(3)), -1},
+                {-(1 / Math.sqrt(3)), -1},   // pc11 str 13/17 "generacja macierzy H oraz wektora P"
+                {(1 / Math.sqrt(3)), -1},   // pc12
 
-                {1, -(1 / Math.sqrt(3))},
-                {1, (1 / Math.sqrt(3))},
+                {1, -(1 / Math.sqrt(3))},   // pc21
+                {1, (1 / Math.sqrt(3))},    // pc22
 
-                {-(1 / Math.sqrt(3)), 1},
-                {(1 / Math.sqrt(3)), 1},
+                {-(1 / Math.sqrt(3)), 1},   // pc31
+                {(1 / Math.sqrt(3)), 1},    // pc32
 
-                {-1, -(1 / Math.sqrt(3))},
-                {-1, (1 / Math.sqrt(3))},
+                {-1, -(1 / Math.sqrt(3))},  // pc41
+                {-1, (1 / Math.sqrt(3))},   // pc42
+        };
+
+        double[][] beforeHbc1 = new double[2][4];
+        double[][] beforeHbc2 = new double[2][4];
+        double[][] beforeHbc3 = new double[2][4];
+        double[][] beforeHbc4 = new double[2][4];
+        for (int i = 0; i < 4; i++) {
+            beforeHbc1[0][i] = geometricModelsN(i, ksiEta[1][0], ksiEta[1][1]);
+            beforeHbc1[1][i] = geometricModelsN(i, ksiEta[0][0], ksiEta[0][1]);
+            beforeHbc2[0][i] = geometricModelsN(i, ksiEta[3][0], ksiEta[3][1]);
+            beforeHbc2[1][i] = geometricModelsN(i, ksiEta[2][0], ksiEta[2][1]);
+
+            beforeHbc3[0][i] = geometricModelsN(i, ksiEta[5][0], ksiEta[5][1]);
+            beforeHbc3[1][i] = geometricModelsN(i, ksiEta[4][0], ksiEta[4][1]);
+            beforeHbc4[0][i] = geometricModelsN(i, ksiEta[7][0], ksiEta[7][1]);
+            beforeHbc4[1][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
+        }
+        List<Element> elements = grid.getElements();
+        List<Node> nodes = grid.getNodes();
+
+
+//        double detJ = 0.0166667;
+        double alfaFactor = globalData.getAlfa(); // here alfa factor has to be read from file
+        double Tot = globalData.getTot();
+        double[][][] BCwall1E1 = new double[16][4][4]; //pow1
+        double[][][] BCwall2E1 = new double[16][4][4]; //pow1
+        double[][][] BCwall3E1 = new double[16][4][4]; //pow1
+        double[][][] BCwall4E1 = new double[16][4][4]; //pow1
+
+        double[] weight = new double[]{1.0, 1.0};
+        for (int e = 0; e < 16; e++) {
+            for (int n = 0; n < 2; n++) { //here is a loop for pc1 and pc2
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 4; j++) {
+                        BCwall1E1[e][i][j] += weight[n] * alfaFactor * beforeHbc1[n][i] * weight[n] * Tot;
+                        BCwall2E1[e][i][j] += weight[n] * alfaFactor * beforeHbc2[n][i] * weight[n] * Tot;
+                        BCwall3E1[e][i][j] += weight[n] * alfaFactor * beforeHbc3[n][i] * weight[n] * Tot;
+                        BCwall4E1[e][i][j] += weight[n] * alfaFactor * beforeHbc4[n][i] * weight[n] * Tot;
+                    }
+                }
+            }
+        }
+        int elementMax = 9;
+        for (int element = 0; element < elementMax; element++) { // loop for 9 elements
+            Element element1 = elements.get(element);
+            double[] detJWallElement1 = calculateDetJForElement(nodes, element1); // TODO there is 4 detJ for one element, should it be?
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    BCwall1E1[element][i][j] *= detJWallElement1[0];
+                    BCwall2E1[element][i][j] *= detJWallElement1[1];
+                    BCwall3E1[element][i][j] *= detJWallElement1[2];
+                    BCwall4E1[element][i][j] *= detJWallElement1[3];
+                }
+            }
+            List<Integer> e1IDs = elements.get(elementMax - 1 - element).getIDs(); // FIXME here is a big change!!!!!!!
+            // FIXME element9 licz dla niego H lokalne + HBC lokalne, a weight agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
+
+            double[][] localHbcForElement = calculateAndGetLocalHbc(
+                    BCwall1E1[0], BCwall2E1[0], BCwall3E1[0], BCwall4E1[0], nodes, e1IDs);
+            e1IDs = element1.getIDs(); // FIXME here is a big change!!!!!!!!!!!!!!!!!!!!!!!!
+            // FIXME  // element9 licz dla niego H lokalne + HBC lokalne, a weight agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
+
+            // here is aggregation
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    globalAggregationVectorP[e1IDs.get(i) - 1] += localHbcForElement[i][j]; // without + !!! just =
+                }
+            }
+        }
+
+        return globalAggregationVectorP;
+
+    }
+
+    public static double[][] calculateMatrixHbc(Grid grid, GlobalData globalData) {
+        double[][] ksiEta = new double[][]{
+                {-(1 / Math.sqrt(3)), -1},   // pc11 str 13/17 "generacja macierzy H oraz wektora P"
+                {(1 / Math.sqrt(3)), -1},   // pc12
+
+                {1, -(1 / Math.sqrt(3))},   // pc21
+                {1, (1 / Math.sqrt(3))},    // pc22
+
+                {-(1 / Math.sqrt(3)), 1},   // pc31
+                {(1 / Math.sqrt(3)), 1},    // pc32
+
+                {-1, -(1 / Math.sqrt(3))},  // pc41
+                {-1, (1 / Math.sqrt(3))},   // pc42
         };
 
         double[][] beforeHbc1 = new double[2][4];
@@ -58,21 +144,21 @@ public class BorderConditionService {
         double[][][] BCwall3E1 = new double[16][4][4]; //pow1
         double[][][] BCwall4E1 = new double[16][4][4]; //pow1
 
-        double[] w = new double[]{1.0, 1.0};
+        double[] weight = new double[]{1.0, 1.0};
         for (int e = 0; e < 16; e++) {
             for (int n = 0; n < 2; n++) { //here is a loop for pc1 and pc2
                 for (int i = 0; i < 4; i++) {
                     for (int j = 0; j < 4; j++) {
-                        BCwall1E1[e][i][j] += w[n] * alfaFactor * beforeHbc1[n][i] * w[n] * beforeHbc1[n][j];
-                        BCwall2E1[e][i][j] += w[n] * alfaFactor * beforeHbc2[n][i] * w[n] * beforeHbc2[n][j];
-                        BCwall3E1[e][i][j] += w[n] * alfaFactor * beforeHbc3[n][i] * w[n] * beforeHbc3[n][j];
-                        BCwall4E1[e][i][j] += w[n] * alfaFactor * beforeHbc4[n][i] * w[n] * beforeHbc4[n][j];
+                        BCwall1E1[e][i][j] += weight[n] * alfaFactor * beforeHbc1[n][i] * weight[n] * beforeHbc1[n][j];
+                        BCwall2E1[e][i][j] += weight[n] * alfaFactor * beforeHbc2[n][i] * weight[n] * beforeHbc2[n][j];
+                        BCwall3E1[e][i][j] += weight[n] * alfaFactor * beforeHbc3[n][i] * weight[n] * beforeHbc3[n][j];
+                        BCwall4E1[e][i][j] += weight[n] * alfaFactor * beforeHbc4[n][i] * weight[n] * beforeHbc4[n][j];
                     }
                 }
             }
         }
         int elementMax = 9;
-        for (int element = 0; element < elementMax; element++) {
+        for (int element = 0; element < elementMax; element++) { // loop for 9 elements
             Element element1 = elements.get(element);
             double[] detJWallElement1 = calculateDetJForElement(nodes, element1); // TODO there is 4 detJ for one element, should it be?
             for (int i = 0; i < 4; i++) {
@@ -95,7 +181,7 @@ public class BorderConditionService {
             //***** Element 1 and his IDs
 //            List<Integer> e1IDs = element1.getIDs();
             List<Integer> e1IDs = elements.get(elementMax - 1 - element).getIDs(); // FIXME here is a big change!!!!!!!
-            // FIXME element9 licz dla niego H lokalne + HBC lokalne, a w agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
+            // FIXME element9 licz dla niego H lokalne + HBC lokalne, a weight agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
 
             System.out.println("element " + (element + 1) + ": " + e1IDs); // 1, 2, 6, 5
 
@@ -105,7 +191,9 @@ public class BorderConditionService {
             System.out.println("localHbcForElement: ");
             MatrixService.showTable2Dshort(localHbcForElement);
             e1IDs = element1.getIDs(); // FIXME here is a big change!!!!!!!!!!!!!!!!!!!!!!!!
-            // FIXME  // element9 licz dla niego H lokalne + HBC lokalne, a w agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
+            // FIXME  // element9 licz dla niego H lokalne + HBC lokalne, a weight agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
+
+            // here is aggregation
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
                     globalAggregationHBC[e1IDs.get(i) - 1][e1IDs.get(j) - 1] += localHbcForElement[i][j]; // without + !!! just =
@@ -139,7 +227,6 @@ public class BorderConditionService {
         //for horizontal walls __
         if (y1 == y2) {
             detJWall[0] = (Math.abs(x1 - x2)) / 2.0;
-            System.out.println("detJWall1" + detJWall[0]);
         }
         if (y1 != y2) {
             detJWall[0] = (Math.sqrt(Math.pow(Math.abs(y2 - y1), 2) + Math.pow(Math.abs(x1 - x2), 2))) / 2.0;

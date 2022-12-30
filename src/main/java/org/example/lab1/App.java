@@ -7,6 +7,7 @@ import org.example.lab6.BorderConditionService;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -62,7 +63,7 @@ public class App {
 
 
         //************************ Here for HBC
-        double[][] globalAggregationHBC = BorderConditionService.calculateMatrixHbc(grid, matrixHForTwoPointIntegration1, globalData);
+        double[][] globalAggregationHBC = BorderConditionService.calculateMatrixHbc(grid, globalData);
         System.out.println("globalAggregationHBC: ");
         MatrixService.showTable2Dshort(globalAggregationHBC);
 
@@ -78,6 +79,11 @@ public class App {
         }
         System.out.println("globalAggregationHplusHBC: ");
         MatrixService.showTable2Dshort(globalAggregationHplusHBC);
+
+
+        double[] globalAggregationVectorP = BorderConditionService.calculateVectorP(grid, globalData);
+        System.out.println("globalAggregationVectorP: ");
+        MatrixService.showTable1D(globalAggregationVectorP);
     }
 
     public static void readFile(String fileName, Grid grid, GlobalData globalData) throws FileNotFoundException {

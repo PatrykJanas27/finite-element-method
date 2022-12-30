@@ -1,6 +1,7 @@
 package org.example.lab4;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -25,6 +26,10 @@ public class MatrixService {
             }
             System.out.println();
         }
+    }
+
+    public static void showTable1D(double[] table1D) {
+        Arrays.stream(table1D).forEach(x-> System.out.printf(" |%-6.2f|", x));
     }
 
     public static double[] getPcx() {
