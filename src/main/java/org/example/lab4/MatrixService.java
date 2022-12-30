@@ -30,6 +30,7 @@ public class MatrixService {
 
     public static void showTable1D(double[] table1D) {
         Arrays.stream(table1D).forEach(x-> System.out.printf(" |%-6.2f|", x));
+        System.out.println();
     }
 
     public static double[] getPcx() {
