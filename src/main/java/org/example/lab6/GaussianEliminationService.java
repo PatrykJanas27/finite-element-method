@@ -9,7 +9,6 @@ public class GaussianEliminationService {
     private static final double EPSILON = 1e-10;
 
     public static double[] findSolutionForSystemOfEquations(double[][] globalAggregationHplusHBC, int tot, double[] globalAggregationVectorP) {
-        int n = 16;
         double[][] A = globalAggregationHplusHBC;
         double[] b = globalAggregationVectorP;
         double[] solution = lsolve(A, b);

@@ -50,10 +50,10 @@ public class MatrixHService {
         //===================Two point integration==========
         double[][] tableOfKsiIntegralByM = getTableOfKsi1IntegralMultipliedByMatrix(mainMatrix, tableOfKsiIntegral, tableOfEtaIntegral);
         double[][] tableOfEtaIntegralByM = getTableOfEta2IntegralMultipliedByMatrix(mainMatrix, tableOfKsiIntegral, tableOfEtaIntegral);
-//        System.out.println("tableOfKsiIntegralByM 1: ");
-//        MatrixService.showTable2D(tableOfKsiIntegralByM);
-//        System.out.println("tableOfEtaIntegralByM 2:");
-//        MatrixService.showTable2D(tableOfEtaIntegralByM);
+        System.out.println("tableOfKsiIntegralByM 1: ");
+        MatrixService.showTable2D(tableOfKsiIntegralByM);
+        System.out.println("tableOfEtaIntegralByM 2:");
+        MatrixService.showTable2D(tableOfEtaIntegralByM);
         //===================WeightsOfPoints=======
         double[] weightsOfPoints = GaussianQuadrature.getWeights(2); //{1.0, 1.0}
         //===================Calculating tables of H for tree point integration (there will be 9 tables)==========

@@ -5,6 +5,7 @@ import org.example.lab4.MatrixService;
 import org.example.lab6.BorderConditionService;
 import org.example.lab6.GaussianEliminationService;
 import org.example.lab6.VectorP;
+import org.example.lab7.MatrixC;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -91,6 +92,11 @@ public class App {
         double[] solutionForSystemOfEquations = GaussianEliminationService.findSolutionForSystemOfEquations(globalAggregationHplusHBC, globalData.getTot(), globalAggregationVectorP);
         System.out.println("solutionForSystemOfEquations");
         MatrixService.showTable1D(solutionForSystemOfEquations);
+
+        // Matrix C
+        double[][] globalAggregationMatrixC = MatrixC.calculateMatrixC(grid, globalData);
+        System.out.println("globalAggregationMatrixC: ");
+        MatrixService.showTable2Dshort(globalAggregationMatrixC);
 
 
     }

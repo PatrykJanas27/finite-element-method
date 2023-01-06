@@ -28,7 +28,7 @@ public class BorderConditionService {
                 {-1, -(1 / Math.sqrt(3))},  // pc41
                 {-1, (1 / Math.sqrt(3))},   // pc42
         };
-
+        // Wartości dla funkcji kształtu
         double[][] beforeHbc1 = new double[2][4]; // for wall 1
         double[][] beforeHbc2 = new double[2][4]; // for wall 2
         double[][] beforeHbc3 = new double[2][4]; // N3
@@ -59,9 +59,9 @@ public class BorderConditionService {
 
         double[] weight = new double[]{1.0, 1.0};
         for (int e = 0; e < 9; e++) {
-            for (int n = 0; n < 2; n++) { //here is a loop for pc1 and pc2
+            for (int n = 0; n < 2; n++) { // here is a loop for pc1 and pc2
                 for (int i = 0; i < 4; i++) {
-                    for (int j = 0; j < 4; j++) {
+                    for (int j = 0; j < 4; j++) { // Integral -> alfa*({N}*{N}^T)dS
                         BCwall1E1[e][i][j] += weight[n] * alfaFactor * beforeHbc1[n][i] * weight[n] * beforeHbc1[n][j];
                         BCwall2E1[e][i][j] += weight[n] * alfaFactor * beforeHbc2[n][i] * weight[n] * beforeHbc2[n][j];
                         BCwall3E1[e][i][j] += weight[n] * alfaFactor * beforeHbc3[n][i] * weight[n] * beforeHbc3[n][j];
@@ -109,7 +109,7 @@ public class BorderConditionService {
             // here is aggregation
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
-                    globalAggregationHBC[e1IDs.get(i) - 1][e1IDs.get(j) - 1] += localHbcForElement[i][j]; // without + !!! just =
+                    globalAggregationHBC[e1IDs.get(i) - 1][e1IDs.get(j) - 1] += localHbcForElement[i][j]; // without + !!! just = ??????
                 }
             }
         }

@@ -43,7 +43,7 @@ public class MatrixService {
 
 
     public static double[][] getMainMatrix() {
-        double[] eta = new double[]{(-1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3)), (1 / sqrt(3))};
+        double[] eta = new double[]{(-1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3)), (1 / sqrt(3))}; // wspolrzedne punktow calkowania
         double[] ksi = new double[]{(-1 / sqrt(3)), (1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3))};
         double[][] table1 = new double[4][4];
         double[][] table2 = new double[4][4];
