@@ -8,7 +8,8 @@ import org.example.lab4.MatrixService;
 
 import java.util.List;
 
-import static org.example.lab6.BorderConditionService.*;
+import static org.example.lab6.BorderConditionService.calculateDetJForElement;
+import static org.example.lab6.BorderConditionService.geometricModelsN;
 
 public class VectorP {
     private static double[] globalAggregationVectorP = new double[16];
@@ -28,7 +29,7 @@ public class VectorP {
                 {-1, (1 / Math.sqrt(3))},   // pc42
         };
 
-        double[][] beforeHbc1 = new double[2][4];
+        double[][] beforeHbc1 = new double[2][4]; // wartosci funkcji ksztaltu
         double[][] beforeHbc2 = new double[2][4];
         double[][] beforeHbc3 = new double[2][4];
         double[][] beforeHbc4 = new double[2][4];
@@ -71,7 +72,6 @@ public class VectorP {
         }
 
 
-
         int elementMax = 9;
         for (int element = 0; element < elementMax; element++) { // loop for 9 elements
             Element element1 = elements.get(element);
@@ -92,10 +92,10 @@ public class VectorP {
 //            MatrixService.showTable2Dshort(localP3);
 //            System.out.println("forLocalP4: ");
 //            MatrixService.showTable2Dshort(localP4);
-            if(element == 0){
+            if (element == 0) {
                 System.out.println("detJ for first element");
 //                MatrixService.showTable1D(detJWallElement1);
-                System.out.println("\nlocalP-WithDetJ for element " + (element +1) + ": ");
+                System.out.println("\nlocalP-WithDetJ for element " + (element + 1) + ": ");
                 System.out.println("forLocalP1: ");
                 MatrixService.showTable2D(localP1);
                 System.out.println("forLocalP2: ");
@@ -105,10 +105,10 @@ public class VectorP {
                 System.out.println("forLocalP4: ");
                 MatrixService.showTable2D(localP4);
             }
-            if(element == 1){
+            if (element == 1) {
                 System.out.println("detJ for second element");
 //                MatrixService.showTable1D(detJWallElement1);
-                System.out.println("\nlocalP-WithDetJ for element " + (element +1) + ": ");
+                System.out.println("\nlocalP-WithDetJ for element " + (element + 1) + ": ");
                 System.out.println("forLocalP1: ");
                 MatrixService.showTable2D(localP1);
                 System.out.println("forLocalP2: ");
@@ -124,7 +124,7 @@ public class VectorP {
 //
             double[] localVectorP = calculateAndGetLocalVectorP(
                     localP1[element], localP2[element], localP3[element], localP4[element], nodes, e1IDs);
-            System.out.println("localVectorP for element " + (element+1) + ": ");
+            System.out.println("localVectorP for element " + (element + 1) + ": ");
             MatrixService.showTable1D(localVectorP);
             e1IDs = element1.getIDs();
 //            // here is aggregation
@@ -137,6 +137,7 @@ public class VectorP {
         return globalAggregationVectorP;
 
     }
+
     private static double[] calculateAndGetLocalVectorP(
             double[] localP1, double[] localP2, double[] localP3, double[] localP4,
             List<Node> nodes, List<Integer> eIDs) {

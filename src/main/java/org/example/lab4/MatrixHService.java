@@ -25,7 +25,14 @@ public class MatrixHService {
         double[][] Hpc2 = calculateHpcWithGlobalData(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant,globalData, 1);
         double[][] Hpc3 = calculateHpcWithGlobalData(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant,globalData, 2);
         double[][] Hpc4 = calculateHpcWithGlobalData(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant,globalData, 3);
-
+        System.out.println("Matrix H1");
+        MatrixService.showTable2Dshort(Hpc1);
+        System.out.println("Matrix H2");
+        MatrixService.showTable2Dshort(Hpc2);
+        System.out.println("Matrix H3");
+        MatrixService.showTable2Dshort(Hpc3);
+        System.out.println("Matrix H4");
+        MatrixService.showTable2Dshort(Hpc4);
         //===================tables' summing to H=======
         double[][] mainH = new double[4][4];
         for (int i = 0; i < 4; i++) {
@@ -212,7 +219,7 @@ public class MatrixHService {
         double[][] Hpc = new double[4][4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                Hpc[i][j] = 30 * (table1DlaH[i][j] + table2DlaH[i][j]) * detJ; //TODO read from file conductivity
+                Hpc[i][j] = 30 * (table1DlaH[i][j] + table2DlaH[i][j]) * detJ; // TODO read from file conductivity
             }
         }
         return Hpc;
