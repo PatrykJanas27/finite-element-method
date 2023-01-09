@@ -13,12 +13,11 @@ import java.util.Scanner;
 
 public class InputHandler {
     public static Grid readFile(String fileName) throws FileNotFoundException {
-        GlobalData globalData = new GlobalData();
         Grid grid = new Grid();
         try (Scanner scanner = new Scanner(new File(fileName))) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                readGlobalDataFromFile(globalData, line);
+                readGlobalDataFromFile( line);
                 readGridDataFromFile(grid, line);
                 readNodeCoordinatesDataFromFile(grid, scanner, line);
                 readElementDataFromFile(grid, scanner, line);
@@ -29,8 +28,6 @@ public class InputHandler {
         } catch (NumberFormatException e) {
             throw new NumberFormatException("Bad data format, can not parse string to integer/double");
         }
-
-        System.out.println(globalData);
         System.out.println(grid);
         return grid;
     }
@@ -39,8 +36,8 @@ public class InputHandler {
         if (line.equals("*BC")) {
             String[] BCs = scanner.nextLine().split(",");
             List<Node> nd = grid.getNodes();
-            for (int i = 0; i < BCs.length; i++) {
-                int BCsNodeNumber = Integer.parseInt(BCs[i].trim());
+            for (String bc : BCs) {
+                int BCsNodeNumber = Integer.parseInt(bc.trim());
                 nd.get(BCsNodeNumber - 1).setBC(true);
             }
         }
@@ -94,53 +91,53 @@ public class InputHandler {
         }
     }
 
-    private static void readGlobalDataFromFile(GlobalData globalData, String line) {
+    private static void readGlobalDataFromFile( String line) {
         if (line.contains("SimulationTime")) {
             String[] s = line.split(" ");
             if (s.length == 2) {
-                globalData.simulationTime = Integer.parseInt(s[1]);
+                GlobalData.simulationTime = Integer.parseInt(s[1]);
             }
         }
         if (line.contains("SimulationStepTime")) {
             String[] s = line.split(" ");
             if (s.length == 2) {
-                globalData.simulationStepTime = Integer.parseInt(s[1]);
+                GlobalData.simulationStepTime = Integer.parseInt(s[1]);
             }
         }
         if (line.contains("Conductivity")) {
             String[] s = line.split(" ");
             if (s.length == 2) {
-                globalData.conductivity = Integer.parseInt(s[1]);
+                GlobalData.conductivity = Integer.parseInt(s[1]);
             }
         }
         if (line.contains("Alfa")) {
             String[] s = line.split(" ");
             if (s.length == 2) {
-                globalData.alfa = Integer.parseInt(s[1]);
+                GlobalData.alfa = Integer.parseInt(s[1]);
             }
         }
         if (line.contains("Tot")) {
             String[] s = line.split(" ");
             if (s.length == 2) {
-                globalData.tot = Integer.parseInt(s[1]);
+                GlobalData.tot = Integer.parseInt(s[1]);
             }
         }
         if (line.contains("InitialTemp")) {
             String[] s = line.split(" ");
             if (s.length == 2) {
-                globalData.initialTemp = Integer.parseInt(s[1]);
+                GlobalData.initialTemp = Integer.parseInt(s[1]);
             }
         }
         if (line.contains("Density")) {
             String[] s = line.split(" ");
             if (s.length == 2) {
-                globalData.density = Integer.parseInt(s[1]);
+                GlobalData.density = Integer.parseInt(s[1]);
             }
         }
         if (line.contains("SpecificHeat")) {
             String[] s = line.split(" ");
             if (s.length == 2) {
-                globalData.specificHeat = Integer.parseInt(s[1]);
+                GlobalData.specificHeat = Integer.parseInt(s[1]);
             }
         }
     }
