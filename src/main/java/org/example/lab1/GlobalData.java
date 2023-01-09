@@ -1,23 +1,19 @@
 package org.example.lab1;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class GlobalData {
-    private int simulationTime;
-    private int simulationStepTime;
-    private int conductivity;
-    private int alfa;
-    private int tot;
-    private int initialTemp;
-    private int density;
-    private int specificHeat;
+    public static int simulationTime;
+    public static int simulationStepTime;
+    public static int conductivity;
+    public static int alfa;
+    public static int tot;
+    public static int initialTemp;
+    public static int density;
+    public static int specificHeat;
 
     @Override
     public String toString() {

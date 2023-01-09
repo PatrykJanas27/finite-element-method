@@ -15,11 +15,9 @@ public class MatrixC {
 
     private static double[][] globalAggregationMatrixC = new double[16][16];
 
-    public static double[][] calculateMatrixC(Grid grid, GlobalData globalData) {
-        int simulationStepTime = globalData.getSimulationStepTime(); // "tau"
-        int initialTemp = globalData.getInitialTemp();
-        int density = globalData.getDensity(); // gestosc
-        int specificHeat = globalData.getSpecificHeat(); // ciepło wlasciwe
+    public static double[][] calculateMatrixC(Grid grid ) {
+        int density = GlobalData.density; // gestosc
+        int specificHeat = GlobalData.specificHeat; // ciepło wlasciwe
 
         // wspolrzedne punktow calkowania
         double[] ksi = new double[]{(-1 / sqrt(3)), (1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3))};

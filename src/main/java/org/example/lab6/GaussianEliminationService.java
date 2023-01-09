@@ -8,7 +8,7 @@ package org.example.lab6;
 public class GaussianEliminationService {
     private static final double EPSILON = 1e-10;
 
-    public static double[] findSolutionForSystemOfEquations(double[][] globalAggregationHplusHBC, int tot, double[] globalAggregationVectorP) {
+    public static double[] findSolutionForSystemOfEquations(double[][] globalAggregationHplusHBC, double[] globalAggregationVectorP) {
         double[][] A = globalAggregationHplusHBC;
         double[] b = globalAggregationVectorP;
         double[] solution = lsolve(A, b);

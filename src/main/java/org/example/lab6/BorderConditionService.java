@@ -14,7 +14,7 @@ public class BorderConditionService {
     private static double[][] globalAggregationHBC = new double[16][16];
 
 
-    public static double[][] calculateMatrixHbc(Grid grid, GlobalData globalData) {
+    public static double[][] calculateMatrixHbc(Grid grid) {
         double[][] ksiEta = new double[][]{
                 {-(1 / Math.sqrt(3)), -1},   // pc11 str 13/17 "generacja macierzy H oraz wektora P"
                 {(1 / Math.sqrt(3)), -1},   // pc12
@@ -51,7 +51,7 @@ public class BorderConditionService {
 
 
 //        double detJ = 0.0166667;
-        double alfaFactor = globalData.getAlfa(); // here alfa factor has to be read from file
+        double alfaFactor = GlobalData.alfa; // here alfa factor has to be read from file
         double[][][] BCwall1E1 = new double[9][4][4]; //pow1
         double[][][] BCwall2E1 = new double[9][4][4]; //pow1
         double[][][] BCwall3E1 = new double[9][4][4]; //pow1

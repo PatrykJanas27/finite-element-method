@@ -21,30 +21,13 @@ public class App {
 
     public static void main(String[] args) throws FileNotFoundException, NumberFormatException {
 
-        Grid grid = new Grid();
-        GlobalData globalData = new GlobalData();
-        InputHandler.readFile(FILE_NAME1, grid, globalData);
-        System.out.println(globalData);
+        Grid grid = InputHandler.readFile(FILE_NAME1);
         System.out.println(grid);
         List<Element> elements = grid.getElements();
-
         List<Node> nodes = grid.getNodes();
 
-        System.out.println(elements.get(0));
-        System.out.println(elements.get(0).getIDs());
-        System.out.println(nodes.get(elements.get(0).getIDs().get(0)));
-        System.out.println(nodes.get(elements.get(0).getIDs().get(1)));
-        System.out.println(nodes.get(elements.get(0).getIDs().get(2)));
-        System.out.println(nodes.get(elements.get(0).getIDs().get(3)));
-        System.out.println("size: " + elements.size());
-        System.out.println("element 9: " + elements.get(8));
-        double[][] HG4 = new double[9][9];
         double[] pcx = new double[4];
         double[] pcy = new double[4];
-//        for (int e = 0; e < elements.size(); e++) {
-//            System.out.println("element: " + (e+1));
-//            Element element = elements.get(e);
-//            System.out.println("element id: " + element);
         Element element = elements.get(0);
         for (int i = 0; i < nodes.size(); i++) { // < 4
             for (int j = 0; j < 4; j++) { // 4 wspolrzedne x i y
@@ -56,13 +39,13 @@ public class App {
 
         //****************** Here for matrix H
         double[][] mainMatrix = MatrixService.getMainMatrix(pcx, pcy);
-        double[][] matrixHForTwoPointIntegration1 = MatrixHService.getMatrixHForTwoPointIntegrationWithGlobalData(mainMatrix, globalData);
+        double[][] matrixHForTwoPointIntegration1 = MatrixHService.getMatrixHForTwoPointIntegrationWithGlobalData(mainMatrix);
         System.out.println("matrixHForTwoPointIntegration1: ");
         MatrixService.showTable2D(matrixHForTwoPointIntegration1); //TODO MatrixH is always the same for every element?
 
 
         //************************ Here for HBC
-        double[][] globalAggregationHBC = BorderConditionService.calculateMatrixHbc(grid, globalData);
+        double[][] globalAggregationHBC = BorderConditionService.calculateMatrixHbc(grid);
         System.out.println("globalAggregationHBC: ");
         MatrixService.showTable2Dshort(globalAggregationHBC);
 
@@ -80,23 +63,23 @@ public class App {
         MatrixService.showTable2Dshort(globalAggregationHplusHBC);
 
 
-        double[] globalAggregationVectorP = VectorP.calculateVectorP(grid, globalData);
+        double[] globalAggregationVectorP = VectorP.calculateVectorP(grid);
         System.out.println("globalAggregationVectorP: ");
         MatrixService.showTable1D(globalAggregationVectorP);
 
         // [H]{t}+{P}=0
         double[] solutionForSystemOfEquations = GaussianEliminationService.findSolutionForSystemOfEquations(
-                globalAggregationHplusHBC, globalData.getTot(), globalAggregationVectorP);
+                globalAggregationHplusHBC, globalAggregationVectorP);
         System.out.println("solutionForSystemOfEquations");
         MatrixService.showTable1D(solutionForSystemOfEquations);
 
         // Matrix C // <----- to this point everything is good
-        double[][] globalAggregationMatrixC = MatrixC.calculateMatrixC(grid, globalData);
+        double[][] globalAggregationMatrixC = MatrixC.calculateMatrixC(grid);
         System.out.println("globalAggregationMatrixC: ");
         MatrixService.showTable2Dshort(globalAggregationMatrixC);
 
         // [C]/dT
-        int simulationStepTime = globalData.getSimulationStepTime();
+        int simulationStepTime = GlobalData.simulationStepTime;
         double[][] globalAggregationMatrixCByDeltaTau = new double[16][16];
         for (int i = 0; i < globalAggregationMatrixC.length; i++) {
             for (int j = 0; j < globalAggregationMatrixC[i].length; j++) {
@@ -118,7 +101,7 @@ public class App {
         System.out.println("globalAggregationMatrixHPlusMatrixCByDeltaTau ->> Martix [H] = [H]+[C]/dT : ");
         MatrixService.showTable2Dshort(globalAggregationMatrixHPlusMatrixCByDeltaTau);
         double deltaT;
-        deltaT = globalData.getSimulationStepTime();
+        deltaT = GlobalData.simulationStepTime;
         int iteration = 0;
         int actualTime = 0;
         double minimum;
@@ -127,7 +110,7 @@ public class App {
 
 
         // {[C]/dT}*{T0}
-        int initialTemp = globalData.getInitialTemp();
+        int initialTemp = GlobalData.initialTemp;
         double[][] globalAggregationMatrixCByDeltaTauMultiplyT0 = new double[16][16];
         double[] CpodT = new double[16];
         for (int i = 0; i < 16; i++) {

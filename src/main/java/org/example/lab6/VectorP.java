@@ -14,7 +14,7 @@ import static org.example.lab6.BorderConditionService.geometricModelsN;
 public class VectorP {
     private static double[] globalAggregationVectorP = new double[16];
 
-    public static double[] calculateVectorP(Grid grid, GlobalData globalData) {
+    public static double[] calculateVectorP(Grid grid ) {
         double[][] ksiEta = new double[][]{
                 {-(1 / Math.sqrt(3)), -1},   // pc11 str 13/17 "generacja macierzy H oraz wektora P"
                 {(1 / Math.sqrt(3)), -1},   // pc12
@@ -55,8 +55,8 @@ public class VectorP {
 
 
 //        double detJ = 0.0166667;
-        double alfaFactor = globalData.getAlfa(); // here alfa factor has to be read from file
-        double tot = globalData.getTot(); // 1200 from file
+        double alfaFactor = GlobalData.alfa; // here alfa factor has to be read from file
+        double tot = GlobalData.tot; // 1200 from file
         double[][] localP1 = new double[9][4];
         double[][] localP2 = new double[9][4];
         double[][] localP3 = new double[9][4];
