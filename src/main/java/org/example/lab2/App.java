@@ -6,10 +6,11 @@ import java.util.function.Function;
 import static java.lang.Math.pow;
 
 public class App {
-    public static void main(String[] args) {
-        Function<Double, Double> uniFunction = x -> 2 * pow(x, 2) + 3 * x - 8;
-        BiFunction<Double, Double, Double> biFunction = (x, y) -> -5 * pow(x, 2) * y + 2 * x * pow(y, 2) + 10;
-
+    public static void main(String[] args) { // for local x <-1,1>
+        // result += uniFunction.apply(pc.get(i)) * weights.get(i);
+        Function<Double, Double> uniFunction = x -> 2 * pow(x, 2) + 3 * x - 8; // 1D
+        // result += biFunction.apply(pc.get(i), pc.get(j)) * w.get(i) * w.get(j);
+        BiFunction<Double, Double, Double> biFunction = (x, y) -> -5 * pow(x, 2) * y + 2 * x * pow(y, 2) + 10; // 2D
         showResult(uniFunction);
         showResult(biFunction);
 

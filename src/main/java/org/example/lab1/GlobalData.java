@@ -5,8 +5,10 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 
 @Setter
 @Getter
@@ -34,7 +36,7 @@ public class GlobalData {
                 '}';
     }
 
-    public static List<Double> pc(int numberOfNodes) {
+    public static List<Double> getPcList(int numberOfNodes) {
         List<Double> pc = new ArrayList<>();
         switch (numberOfNodes) {
             case 2 -> {
@@ -64,7 +66,7 @@ public class GlobalData {
         return pc;
     }
 
-    public static List<Double> w(int numberOfNodes) {
+    public static List<Double> getWeightsList(int numberOfNodes) {
         List<Double> w = new ArrayList<>();
         switch (numberOfNodes) {
             case 2 -> {
@@ -93,4 +95,80 @@ public class GlobalData {
         }
         return w;
     }
+
+    public static double[] getPcArray(int numberOfNodes) {
+        switch (numberOfNodes) {
+            case 2 -> {
+                return new double[]{
+                        (-1 / sqrt(3)), (-1 / sqrt(3)),
+                        (1 / sqrt(3)), (1 / sqrt(3))
+                };
+            }
+            case 3 -> {
+                return new double[]{
+                        -sqrt(3.0 / 5), -sqrt(3.0 / 5), -sqrt(3.0 / 5),
+                        0, 0, 0,
+                        sqrt(3.0 / 5), sqrt(3.0 / 5), sqrt(3.0 / 5)
+                };
+            }
+            case 4 -> {
+                return new double[]{
+                        -0.861136, -0.861136, -0.861136, -0.861136,
+                        -0.339981, -0.339981, -0.339981, -0.339981,
+                        0.339981, 0.339981, 0.339981, 0.339981,
+                        0.861136, 0.861136, 0.861136, 0.861136
+                };
+            }
+            case 5 -> {
+                return new double[]{
+                        -0.906180, -0.538469,
+                        0.0,
+                        0.538469, 0.906180
+                };
+            }
+            default -> throw new IllegalArgumentException("There is not defined that numberOfNodes");
+        }
+    }
+
+    public static double[] getWeightsArray(int numberOfPoints) {
+        switch (numberOfPoints) {
+            case 2 -> {
+                return new double[]{1.0, 1.0};
+            }
+            case 3 -> {
+                return new double[]{5.0 / 9.0, 8.0 / 9.0, 5.0 / 9.0};
+            }
+            case 4 -> {
+                return new double[]{0.347855, 0.652145, 0.652145, 0.347855};
+            }
+            case 5 -> {
+                return new double[]{0.236927, 0.478629, 0.568889, 0.478629, 0.236927};
+            }
+            default -> throw new IllegalArgumentException("There is not defined that numberOfNodes");
+        }
+    }
+
+    public static List<Function<Double, Double>> getFunctionsForKsi() {
+        return new ArrayList<>() {
+            {
+                add(ksi -> 0.25 * (ksi - 1));
+                add(ksi -> 0.25 * (1 - ksi));
+                add(ksi -> 0.25 * (ksi + 1));
+                add(ksi -> 0.25 * (-ksi - 1));
+            }
+        };
+    }
+
+    public static List<Function<Double, Double>> getFunctionsForEta() {
+        return new ArrayList<>() {
+            {
+                add(eta -> 0.25 * (eta - 1));
+                add(eta -> 0.25 * (-eta - 1));
+                add(eta -> 0.25 * (eta + 1));
+                add(eta -> 0.25 * (1 - eta));
+            }
+        };
+    }
+
+
 }

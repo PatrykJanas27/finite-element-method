@@ -1,25 +1,16 @@
 package org.example.lab3;
 
-import org.example.lab2.IntegrateService;
+import org.example.lab1.GlobalData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ServicePc {
-    public static double calculatePc(double x) {
-        return calculateN1(x) * 2 + calculateN2(x) * 7;
-    }
 
-    public static List<Double> calculatePc(List<Double> pc){
-        List<Double> resultPc = new ArrayList<>();
-        for (Double aDouble : pc) {
-            resultPc.add(calculatePc(aDouble));
-        }
-        return resultPc;
-    }
-
-    public static List<Double> calculatePc(int numberOfNodes){
-        return IntegrateService.pc(numberOfNodes).stream().map(ServicePc::calculatePc).toList();
+    public static List<Double> calculatePc(double x1, double x2, int numberOfNodes) {
+        return GlobalData.getPcList(numberOfNodes)
+                .stream()
+                .map(pc -> calculateN1(pc) * x1 + calculateN2(pc) * x2)
+                .toList();
     }
 
     public static double calculateN1(double x) {
