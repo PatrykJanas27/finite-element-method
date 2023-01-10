@@ -1,0 +1,59 @@
+private static double[][] getMatrixHForFourPointIntegration() {
+        double[][] mainMatrix = getMainMatrix();
+        //===================Calculation for determinant===========
+        double determinant = DeterminantService.getDeterminant2x2(mainMatrix); // 0,00015625
+        mainMatrix = DeterminantService.getMatrix2x2MultipliedBy1DividedByDeterminant(mainMatrix, determinant);
+
+        double[][] tableOfKsiIntegral = IntegralFunctions.getTableForDnDividedByDKsi(4);
+        double[][] tableOfEtaIntegral = IntegralFunctions.getTableForDnDividedByDEta(4);
+        //===================Four point integration==========
+        double[][] tableOfKsiIntegralByM = MatrixHService.getTableOfKsi1IntegralMultipliedByMatrix(mainMatrix, tableOfKsiIntegral, tableOfEtaIntegral);
+        double[][] tableOfEtaIntegralByM = MatrixHService.getTableOfEta2IntegralMultipliedByMatrix(mainMatrix, tableOfKsiIntegral, tableOfEtaIntegral);
+//        System.out.println("tableOfKsiIntegralByM 1: ");
+//        MatrixService.showTable2D(tableOfKsiIntegralByM);
+//        System.out.println("tableOfEtaIntegralByM 2:");
+//        MatrixService.showTable2D(tableOfEtaIntegralByM);
+        //===================WeightsOfPoints=======
+        double[] weightsOfPoints = GlobalData.getWeightsArray(4); //{5.0 / 9.0, 8.0 / 9, 5.0 / 9}
+        //===================Calculating tables of H for tree point integration (there will be 16 tables)==========
+        double[][] Hpc1 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 0);
+        double[][] Hpc2 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 1);
+        double[][] Hpc3 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 2);
+        double[][] Hpc4 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 3);
+        double[][] Hpc5 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 4);
+        double[][] Hpc6 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 5);
+        double[][] Hpc7 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 6);
+        double[][] Hpc8 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 7);
+        double[][] Hpc9 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 8);
+        double[][] Hpc10 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 9);
+        double[][] Hpc11 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 10);
+        double[][] Hpc12 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 11);
+        double[][] Hpc13 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 12);
+        double[][] Hpc14 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 13);
+        double[][] Hpc15 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 14);
+        double[][] Hpc16 = calculateHpc(tableOfKsiIntegralByM, tableOfEtaIntegralByM, determinant, 15);
+
+        //===================tables' summing to H=======
+        double[][] mainH = new double[4][4];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                mainH[i][j] = Hpc1[i][j] * weightsOfPoints[0] * weightsOfPoints[0]
+                        + Hpc2[i][j] * weightsOfPoints[0] * weightsOfPoints[1]
+                        + Hpc3[i][j] * weightsOfPoints[0] * weightsOfPoints[2]
+                        + Hpc4[i][j] * weightsOfPoints[0] * weightsOfPoints[3]
+                        + Hpc5[i][j] * weightsOfPoints[1] * weightsOfPoints[0]
+                        + Hpc6[i][j] * weightsOfPoints[1] * weightsOfPoints[1]
+                        + Hpc7[i][j] * weightsOfPoints[1] * weightsOfPoints[2]
+                        + Hpc8[i][j] * weightsOfPoints[1] * weightsOfPoints[3]
+                        + Hpc9[i][j] * weightsOfPoints[2] * weightsOfPoints[0]
+                        + Hpc10[i][j] * weightsOfPoints[2] * weightsOfPoints[1]
+                        + Hpc11[i][j] * weightsOfPoints[2] * weightsOfPoints[2]
+                        + Hpc12[i][j] * weightsOfPoints[2] * weightsOfPoints[3]
+                        + Hpc13[i][j] * weightsOfPoints[3] * weightsOfPoints[0]
+                        + Hpc14[i][j] * weightsOfPoints[3] * weightsOfPoints[1]
+                        + Hpc15[i][j] * weightsOfPoints[3] * weightsOfPoints[2]
+                        + Hpc16[i][j] * weightsOfPoints[3] * weightsOfPoints[3];
+            }
+        }
+        return mainH;
+    }

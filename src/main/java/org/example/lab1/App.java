@@ -17,7 +17,7 @@ public class App {
 
     public static void main(String[] args) throws FileNotFoundException, NumberFormatException {
 
-        Grid grid = InputHandler.readFile(FILE_NAME1);
+        Grid grid = InputHandler.readFile(FILE_NAME2);
         System.out.println(grid);
         List<Element> elements = grid.getElements();
         List<Node> nodes = grid.getNodes();
@@ -37,9 +37,15 @@ public class App {
         double[][] mainMatrix = MatrixService.getMainMatrix(pcx, pcy);
         //-0.01666666545    0.0
         // 0.0              -0.016666667094999997
-        double[][] matrixHForTwoPointIntegration1 = MatrixHService.getMatrixHForTwoPointIntegrationWithGlobalData(mainMatrix);
+        double[][] matrixHForTwoPointIntegration1 = MatrixHService.getMatrixHWithGlobalData(grid, 2);
         System.out.println("matrixHForTwoPointIntegration1: ");
         MatrixService.showTable2D(matrixHForTwoPointIntegration1); //TODO MatrixH is always the same for every element?
+//        double[][] matrixHForThreePointIntegration1 = MatrixHService.getMatrixHForTwoPointIntegrationWithGlobalData(grid, 3);
+//        System.out.println("matrixHForThreePointIntegration1: ");
+//        MatrixService.showTable2D(matrixHForThreePointIntegration1); //TODO MatrixH is always the same for every element?
+//        double[][] matrixHForFourPointIntegration1 = MatrixHService.getMatrixHForTwoPointIntegrationWithGlobalData(grid, 4);
+//        System.out.println("matrixHForFourPointIntegration1: ");
+//        MatrixService.showTable2D(matrixHForFourPointIntegration1); //TODO MatrixH is always the same for every element?
         // Here for global aggregation matrix H
         double[][] globalAggregationH = calculateAggregation(grid, matrixHForTwoPointIntegration1);
         System.out.println("globalAggregationH: ");
