@@ -151,10 +151,10 @@ public class GlobalData {
     public static List<Function<Double, Double>> getFunctionsForKsi() {
         return new ArrayList<>() {
             {
-                add(ksi -> 0.25 * (ksi - 1));
-                add(ksi -> 0.25 * (1 - ksi));
-                add(ksi -> 0.25 * (ksi + 1));
-                add(ksi -> 0.25 * (-ksi - 1));
+                add(ksi -> -0.25*(1-ksi));
+                add(ksi -> -0.25 * (1 + ksi));
+                add(ksi -> 0.25 * (1+ksi));
+                add(ksi -> 0.25 * (1-ksi));
             }
         };
     }
@@ -162,13 +162,35 @@ public class GlobalData {
     public static List<Function<Double, Double>> getFunctionsForEta() {
         return new ArrayList<>() {
             {
-                add(eta -> 0.25 * (eta - 1));
-                add(eta -> 0.25 * (-eta - 1));
-                add(eta -> 0.25 * (eta + 1));
-                add(eta -> 0.25 * (1 - eta));
+                add(eta -> -0.25 * ( 1-eta));
+                add(eta -> 0.25 * (1-eta));
+                add(eta -> 0.25 * (1+eta));
+                add(eta -> -0.25 * (1+eta));
             }
         };
     }
+//
+//    public static List<Function<Double, Double>> getFunctionsForKsi() {
+//        return new ArrayList<>() {
+//            {
+//                add(ksi -> 0.25 * (ksi - 1));
+//                add(ksi -> 0.25 * (1 - ksi));
+//                add(ksi -> 0.25 * (ksi + 1));
+//                add(ksi -> 0.25 * (-ksi - 1));
+//            }
+//        };
+//    }
+//
+//    public static List<Function<Double, Double>> getFunctionsForEta() {
+//        return new ArrayList<>() {
+//            {
+//                add(eta -> 0.25 * (eta - 1));
+//                add(eta -> 0.25 * (-eta - 1));
+//                add(eta -> 0.25 * (eta + 1));
+//                add(eta -> 0.25 * (1 - eta));
+//            }
+//        };
+//    }
 
 
 }

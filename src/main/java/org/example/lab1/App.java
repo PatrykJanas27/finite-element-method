@@ -17,7 +17,7 @@ public class App {
 
     public static void main(String[] args) throws FileNotFoundException, NumberFormatException {
 
-        Grid grid = InputHandler.readFile(FILE_NAME2);
+        Grid grid = InputHandler.readFile(FILE_NAME1);
         System.out.println(grid);
         List<Element> elements = grid.getElements();
         List<Node> nodes = grid.getNodes();
