@@ -15,10 +15,10 @@ public class App {
 
     public static void main(String[] args) throws FileNotFoundException, NumberFormatException {
 
-        Grid grid = InputHandler.readFile(FILE_NAME1);
+        Grid grid = InputHandler.readFile(FILE_NAME2);
         System.out.println(grid);
 
-        double[][] globalAggregationH = MatrixHService.getMatrixHWithGlobalData(grid, 5);
+        double[][] globalAggregationH = MatrixHService.getMatrixHWithGlobalData(grid, 3);
 
 
 //        // Here for HBC

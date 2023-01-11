@@ -12,12 +12,13 @@ import static java.lang.Math.sqrt;
 
 public class MatrixHService {
 
+    public static double[][] globalAggregationH;
 
     public static double[][] getMatrixHWithGlobalData(Grid grid, int numberOfNodes) {
         if (numberOfNodes < 2 || numberOfNodes > 5) {
             throw new IllegalArgumentException("There is no method to calculate matrix with number fo nodes = " + numberOfNodes);
         }
-        double[][] globalAggregationH = new double[grid.getNodesNumber()][grid.getNodesNumber()];
+        globalAggregationH = new double[grid.getNodesNumber()][grid.getNodesNumber()];
         List<Element> elements = grid.getElements();
         List<Node> nodes = grid.getNodes();
         int length = numberOfNodes * numberOfNodes;
