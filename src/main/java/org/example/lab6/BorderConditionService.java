@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 public class BorderConditionService {
-    private static double[][] globalAggregationHBC = new double[16][16];
+    public static double[][] globalAggregationHBC = new double[16][16];
 
 
-    public static double[][] calculateMatrixHbc(Grid grid) {
+    public static void calculateMatrixHbc(Grid grid) {
         double[][] ksiEta = new double[][]{
                 {-(1 / Math.sqrt(3)), -1},   // pc11 str 13/17 "generacja macierzy H oraz wektora P"
                 {(1 / Math.sqrt(3)), -1},   // pc12
@@ -113,9 +113,6 @@ public class BorderConditionService {
                 }
             }
         }
-
-
-        return globalAggregationHBC;
     }
 
     public static double[] calculateDetJForElement(List<Node> nodes, Element element1) {

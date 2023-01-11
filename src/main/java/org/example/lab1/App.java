@@ -6,9 +6,12 @@ import org.example.lab4.MatrixService;
 import org.example.lab6.BorderConditionService;
 import org.example.lab6.GaussianEliminationService;
 import org.example.lab6.VectorP;
-import org.example.lab7.MatrixC;
 
 import java.io.FileNotFoundException;
+
+import static org.example.lab4.MatrixHService.globalAggregationH;
+import static org.example.lab4.MatrixHService.globalAggregationMatrixC;
+import static org.example.lab6.BorderConditionService.globalAggregationHBC;
 
 public class App {
 
@@ -18,68 +21,65 @@ public class App {
     private static final int NUMBER_OF_NODES = 2;
 
     public static void main(String[] args) throws FileNotFoundException, NumberFormatException {
-
         Grid grid = InputHandler.readFile(FILE_NAME1);
         System.out.println(grid);
 
-        double[][] globalAggregationH = MatrixHService.getMatrixHWithGlobalData(grid, NUMBER_OF_NODES);
+        // ********************** Here are calculation for Matrix[H] and Matrix[C] **********************
+        MatrixHService.calculate_MatrixH_and_MatrixC(grid, NUMBER_OF_NODES);
+        System.out.println("Global Aggregation matrix H");
+        MatrixService.showTable2Dshort(globalAggregationH);
+        System.out.println("Global Aggregation matrix C");
+        MatrixService.showTable2Dshort(globalAggregationMatrixC);
 
-
-        // Here for HBC
-        double[][] globalAggregationHBC = BorderConditionService.calculateMatrixHbc(grid);
+        // ********************** Here for [HBC] **********************
+        BorderConditionService.calculateMatrixHbc(grid);
         System.out.println("globalAggregationHBC: ");
         MatrixService.showTable2Dshort(globalAggregationHBC);
 
-
-        // *********************************************************************************************************
-        double[][] globalAggregationHplusHBC = new double[16][16];
+        // ********************** Here for [H] + [HBC] **********************
+        double[][] globalAggregationH_plus_HBC = new double[16][16];
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 16; j++) {
-                globalAggregationHplusHBC[i][j] = globalAggregationHBC[i][j] + globalAggregationH[i][j];
+                globalAggregationH_plus_HBC[i][j] = globalAggregationHBC[i][j] + globalAggregationH[i][j];
             }
         }
-        System.out.println("globalAggregationHplusHBC: ");
-        MatrixService.showTable2Dshort(globalAggregationHplusHBC);
+        System.out.println("globalAggregationH_plus_HBC: ");
+        MatrixService.showTable2Dshort(globalAggregationH_plus_HBC);
 
-
+        // ********************** Here for Vector {P} **********************
         double[] globalAggregationVectorP = VectorP.calculateVectorP(grid);
         System.out.println("globalAggregationVectorP: ");
         MatrixService.showTable1D(globalAggregationVectorP);
-//
-        // [H]{t}+{P}=0
+
+        // ********************** Here for [H]{t}+{P}=0, where H is [H+HBC] already **********************
         double[] solutionForSystemOfEquations = GaussianEliminationService.findSolutionForSystemOfEquations(
-                globalAggregationHplusHBC, globalAggregationVectorP);
+                globalAggregationH_plus_HBC, globalAggregationVectorP);
         System.out.println("solutionForSystemOfEquations");
         MatrixService.showTable1D(solutionForSystemOfEquations);
-        // ************************************************************************************************************
-//        // Matrix C // <----- to this point everything is good
-        double[][] globalAggregationMatrixC = MatrixC.calculateMatrixC(grid, NUMBER_OF_NODES);
-        System.out.println("globalAggregationMatrixC: ");
-        MatrixService.showTable2Dshort(globalAggregationMatrixC);
-//
-//        // [C]/dT
-//        int simulationStepTime = GlobalData.simulationStepTime;
-//        double[][] globalAggregationMatrixCByDeltaTau = new double[16][16];
-//        for (int i = 0; i < globalAggregationMatrixC.length; i++) {
-//            for (int j = 0; j < globalAggregationMatrixC[i].length; j++) {
-//                globalAggregationMatrixCByDeltaTau[i][j] = globalAggregationMatrixC[i][j] / simulationStepTime;
-//                // delta tay -> simpulation step time
-//            }
-//        }
-//        System.out.println("globalAggregationMatrixCByDeltaTau ->> [C]/dT: ");
-//        MatrixService.showTable2Dshort(globalAggregationMatrixCByDeltaTau);
-//
-//        // Martix [H] = [H]+[C]/dT
-//        double[][] globalAggregationMatrixHPlusMatrixCByDeltaTau = new double[16][16];
-//        for (int i = 0; i < globalAggregationMatrixC.length; i++) {
-//            for (int j = 0; j < globalAggregationMatrixC[i].length; j++) {
-//                globalAggregationMatrixHPlusMatrixCByDeltaTau[i][j] = globalAggregationHplusHBC[i][j]
-//                        + globalAggregationMatrixCByDeltaTau[i][j];
-//            }
-//        }
-//        System.out.println("globalAggregationMatrixHPlusMatrixCByDeltaTau ->> Martix [H] = [H]+[C]/dT : ");
-//        MatrixService.showTable2Dshort(globalAggregationMatrixHPlusMatrixCByDeltaTau);
-        //*********************************************************************
+
+        // ********************** Here for Matrix[C]/dT **********************
+        int simulationStepTime = GlobalData.simulationStepTime;
+        double[][] globalAggregationMatrixCByDeltaTau = new double[16][16];
+        for (int i = 0; i < globalAggregationMatrixC.length; i++) {
+            for (int j = 0; j < globalAggregationMatrixC[i].length; j++) {
+                globalAggregationMatrixCByDeltaTau[i][j] = globalAggregationMatrixC[i][j] / simulationStepTime;
+                // delta tau -> simulationStepTime
+            }
+        }
+        System.out.println("globalAggregationMatrixCByDeltaTau ->> [C]/dT: ");
+        MatrixService.showTable2Dshort(globalAggregationMatrixCByDeltaTau);
+
+        // ********************** Here for Matrix [H] = [H]+[C]/dT **********************
+        double[][] globalAggregationMatrixHPlusMatrixCByDeltaTau = new double[16][16];
+        for (int i = 0; i < globalAggregationMatrixC.length; i++) {
+            for (int j = 0; j < globalAggregationMatrixC[i].length; j++) {
+                globalAggregationMatrixHPlusMatrixCByDeltaTau[i][j] = globalAggregationH_plus_HBC[i][j]
+                        + globalAggregationMatrixCByDeltaTau[i][j];
+            }
+        }
+        System.out.println("globalAggregationMatrixHPlusMatrixCByDeltaTau ->> Martix [H] = [H]+[C]/dT : ");
+        MatrixService.showTable2Dshort(globalAggregationMatrixHPlusMatrixCByDeltaTau);
+        // ********************** Here for calculations with time **********************
 //        double deltaT;
 //        deltaT = GlobalData.simulationStepTime;
 //        int iteration = 0;

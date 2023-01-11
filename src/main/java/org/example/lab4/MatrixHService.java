@@ -4,21 +4,26 @@ import org.example.lab1.Element;
 import org.example.lab1.GlobalData;
 import org.example.lab1.Grid;
 import org.example.lab1.Node;
+import org.example.lab6.BorderConditionService;
 
 import java.util.List;
 import java.util.function.Function;
 
-import static java.lang.Math.sqrt;
-
 public class MatrixHService {
 
     public static double[][] globalAggregationH;
+    public static double[][] globalAggregationMatrixC;
 
-    public static double[][] getMatrixHWithGlobalData(Grid grid, int numberOfNodes) {
+    public static void calculate_MatrixH_and_MatrixC(Grid grid, int numberOfNodes) {
         if (numberOfNodes < 2 || numberOfNodes > 5) {
             throw new IllegalArgumentException("There is no method to calculate matrix with number fo nodes = " + numberOfNodes);
         }
+        int density = GlobalData.density; // gestosc
+        int specificHeat = GlobalData.specificHeat; // ciepło wlasciwe
         globalAggregationH = new double[grid.getNodesNumber()][grid.getNodesNumber()];
+        globalAggregationMatrixC = new double[grid.getNodesNumber()][grid.getNodesNumber()];
+
+
         List<Element> elements = grid.getElements();
         List<Node> nodes = grid.getNodes();
         int length = numberOfNodes * numberOfNodes;
@@ -38,6 +43,28 @@ public class MatrixHService {
             }
             double[] ksi = GlobalData.getKsiCoordinates(numberOfNodes);
             double[] eta = GlobalData.getEtaCoordinates(numberOfNodes);
+            // geometrix models for matrix C **************** (ksi, eta) -> 0.25 * (1 - ksi) * (1 - eta))
+            // Wartości dla funkcji kształtu // Values for geometric models         //{N}*{N}^T
+            double[][] geometricModelsValues = new double[4][4];
+            for (int i = 0; i < 4; i++) { // funkcje kształtów
+                for (int j = 0; j < 4; j++) {
+                    geometricModelsValues[i][j] = BorderConditionService.geometricModelsN(j, ksi[i], eta[i]);
+                }
+            }
+            System.out.println("geometricModelsValues: ");
+            MatrixService.showTable2D(geometricModelsValues);
+            //
+            double[][][] matrixCForFourPoints = new double[length][4][4]; // there will be 9 matrix C for every point if numberOfNodes = 3
+            for (int pc = 0; pc < 4; pc++) {
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 4; j++) {
+                        matrixCForFourPoints[pc][i][j] =
+                                geometricModelsValues[pc][i] * geometricModelsValues[pc][j];
+                    }
+                }
+                System.out.println("matrixCForFourPoints " + pc);
+                MatrixService.showTable2Dshort(matrixCForFourPoints[pc]);
+            }
             double[][] dNdKsiTable = new double[length][4]; // table1 - strona 13 calkowanie macierzy H
             double[][] dNdEtaTable = new double[length][4];
             List<Function<Double, Double>> functions_dNdEta = GlobalData.getFunctions_dNdEta();
@@ -109,7 +136,7 @@ public class MatrixHService {
                 }
             }
 
-
+            double[][] localMatrixCForElement = new double[4][4];
             double[][] localHForElement = new double[4][4];
             for (int pc = 0; pc < length; pc++) {
                 for (int i = 0; i < 4; i++) {
@@ -125,6 +152,10 @@ public class MatrixHService {
 //                                    + Hpcs[6][i][j] * weightsOfPoints[0] * weightsOfPoints[2]
 //                                    + Hpcs[7][i][j] * weightsOfPoints[1] * weightsOfPoints[2]
 //                                    + Hpcs[8][i][j] * weightsOfPoints[2] * weightsOfPoints[2];
+                        localMatrixCForElement[i][j] = specificHeat * density * 2.7777776463888833E-4 * matrixCForFourPoints[0][i][j] // sum for one element
+                                + specificHeat * density * 2.7777776463888833E-4 * matrixCForFourPoints[1][i][j]
+                                + specificHeat * density * 2.7777776463888833E-4 * matrixCForFourPoints[2][i][j]
+                                + specificHeat * density * 2.7777776463888833E-4 * matrixCForFourPoints[3][i][j]; //FIXME for different pc!!!!!!
                     }
                 }
             }
@@ -136,11 +167,20 @@ public class MatrixHService {
                 }
             }
 
+            System.out.println("localMatrixCForElement: ");
+            MatrixService.showTable2D(localMatrixCForElement); // for one element
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    globalAggregationMatrixC[element.getIDs().get(i) - 1][element.getIDs().get(j) - 1] += localMatrixCForElement[i][j]; // without + !!! just = ???
+                }
+            }
+
 
         }
-
-        MatrixService.showTable2Dshort(globalAggregationH);
-        return globalAggregationH;
+//        System.out.println("Global Aggregation matrix H");
+//        MatrixService.showTable2Dshort(globalAggregationH);
+//        System.out.println("Global Aggregation matrix C");
+//        MatrixService.showTable2Dshort(globalAggregationMatrixC);
     }
 
     public static double[][] getTableOfEta2IntegralMultipliedByMatrix(double[][] mainMatrix, double[][] tableOfKsiIntegral, double[][] tableOfEtaIntegral) {

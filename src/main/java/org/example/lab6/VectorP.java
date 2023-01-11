@@ -83,41 +83,6 @@ public class VectorP {
                 localP3[element][j] *= detJWallElement1[j];
                 localP4[element][j] *= detJWallElement1[j];
             }
-//            System.out.println("\nlocalP-WithDetJ for element " + (element +1) + ": ");
-//            System.out.println("forLocalP1: ");
-//            MatrixService.showTable2Dshort(localP1);
-//            System.out.println("forLocalP2: ");
-//            MatrixService.showTable2Dshort(localP2);
-//            System.out.println("forLocalP3: ");
-//            MatrixService.showTable2Dshort(localP3);
-//            System.out.println("forLocalP4: ");
-//            MatrixService.showTable2Dshort(localP4);
-            if (element == 0) {
-                System.out.println("detJ for first element");
-//                MatrixService.showTable1D(detJWallElement1);
-                System.out.println("\nlocalP-WithDetJ for element " + (element + 1) + ": ");
-                System.out.println("forLocalP1: ");
-                MatrixService.showTable2D(localP1);
-                System.out.println("forLocalP2: ");
-                MatrixService.showTable2D(localP2);
-                System.out.println("forLocalP3: ");
-                MatrixService.showTable2D(localP3);
-                System.out.println("forLocalP4: ");
-                MatrixService.showTable2D(localP4);
-            }
-            if (element == 1) {
-                System.out.println("detJ for second element");
-//                MatrixService.showTable1D(detJWallElement1);
-                System.out.println("\nlocalP-WithDetJ for element " + (element + 1) + ": ");
-                System.out.println("forLocalP1: ");
-                MatrixService.showTable2D(localP1);
-                System.out.println("forLocalP2: ");
-                MatrixService.showTable2D(localP2);
-                System.out.println("forLocalP3: ");
-                MatrixService.showTable2D(localP3);
-                System.out.println("forLocalP4: ");
-                MatrixService.showTable2D(localP4);
-            }
             List<Integer> e1IDs = elements.get(elementMax - 1 - element).getIDs(); // FIXME here is a big change!!!!!!!
             // FIXME element9 licz dla niego H lokalne + HBC lokalne, a weight agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
 //            List<Integer> e1IDs = element1.getIDs();
