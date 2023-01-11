@@ -15,14 +15,17 @@ public class MatrixC {
 
     private static double[][] globalAggregationMatrixC = new double[16][16];
 
-    public static double[][] calculateMatrixC(Grid grid ) {
+    public static double[][] calculateMatrixC(Grid grid, int numberOfNodes) {
+        int length = numberOfNodes * numberOfNodes;
         int density = GlobalData.density; // gestosc
         int specificHeat = GlobalData.specificHeat; // ciepło wlasciwe
 
         // wspolrzedne punktow calkowania
-        double[] ksi = new double[]{(-1 / sqrt(3)), (1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3))};
-        double[] eta = new double[]{(-1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3)), (1 / sqrt(3))};
-        double[] weight = new double[]{1.0, 1.0};
+//        double[] ksi = new double[]{(-1 / sqrt(3)), (1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3))};
+//        double[] eta = new double[]{(-1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3)), (1 / sqrt(3))};
+//        double[] weight = new double[]{1.0, 1.0};
+        double[] ksi = GlobalData.getKsiCoordinates(numberOfNodes);
+        double[] eta = GlobalData.getEtaCoordinates(numberOfNodes);
         List<Node> nodes = grid.getNodes();
         List<Element> elements = grid.getElements();
 
@@ -31,9 +34,6 @@ public class MatrixC {
         for (int i = 0; i < 4; i++) { // funkcje kształtów
             for (int j = 0; j < 4; j++) {
                 geometricModelsValues[i][j] = BorderConditionService.geometricModelsN(j, ksi[i], eta[i]);
-                geometricModelsValues[i][j] = BorderConditionService.geometricModelsN(j, ksi[i], eta[i]);
-                geometricModelsValues[i][j] = BorderConditionService.geometricModelsN(j, ksi[i], eta[i]);
-                geometricModelsValues[i][j] = BorderConditionService.geometricModelsN(j, ksi[i], eta[i]);
             }
         }
         System.out.println("geometricModelsValues: ");
@@ -41,7 +41,7 @@ public class MatrixC {
 
 
         // for every element !!!
-        for (int element = 0; element < 9; element++) {
+        for (int element = 0; element < grid.getElementsNumber(); element++) {
             Element element1 = elements.get(element);
             double[] detJWallElement1 = BorderConditionService.calculateDetJForElement(nodes, element1);
             System.out.println("detJ for element " + element);
