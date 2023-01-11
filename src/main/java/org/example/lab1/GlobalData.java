@@ -144,7 +144,7 @@ public class GlobalData {
             case 5 -> {
                 return new double[]{0.236927, 0.478629, 0.568889, 0.478629, 0.236927};
             }
-            default -> throw new IllegalArgumentException("There is not defined that numberOfNodes");
+            default -> throw new IllegalArgumentException("There is not defined that numberOfPoints");
         }
     }
 
@@ -166,32 +166,72 @@ public class GlobalData {
                 add(ksi -> -0.25 * (1 + ksi));
                 add(ksi -> 0.25 * (1+ksi));
                 add(ksi -> 0.25 * (1-ksi));
-
             }
         };
     }
-//
-//    public static List<Function<Double, Double>> getFunctionsForKsi() {
-//        return new ArrayList<>() {
-//            {
-//                add(ksi -> 0.25 * (ksi - 1));
-//                add(ksi -> 0.25 * (1 - ksi));
-//                add(ksi -> 0.25 * (ksi + 1));
-//                add(ksi -> 0.25 * (-ksi - 1));
-//            }
-//        };
-//    }
-//
-//    public static List<Function<Double, Double>> getFunctionsForEta() {
-//        return new ArrayList<>() {
-//            {
-//                add(eta -> 0.25 * (eta - 1));
-//                add(eta -> 0.25 * (-eta - 1));
-//                add(eta -> 0.25 * (eta + 1));
-//                add(eta -> 0.25 * (1 - eta));
-//            }
-//        };
-//    }
 
-
+    public static double[] getKsiCoordinates(int numberOfNodes) {
+        switch (numberOfNodes) {
+            case 2 -> {
+                return new double[]{(-1 / sqrt(3)), (1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3))};
+            }
+            case 3 -> {
+                return new double[]{
+                        -sqrt(3.0 / 5), 0, sqrt(3.0 / 5),
+                        -sqrt(3.0 / 5), 0, sqrt(3.0 / 5),
+                        -sqrt(3.0 / 5), 0, sqrt(3.0 / 5)
+                };
+            }
+            case 4 -> {
+                return new double[]{
+                    -0.861136, -0.339981, 0.339981, 0.861136,
+                            -0.861136, -0.339981, 0.339981, 0.861136,
+                            -0.861136, -0.339981, 0.339981, 0.861136,
+                            -0.861136, -0.339981, 0.339981, 0.861136
+                };
+            }
+            case 5 -> {
+                return new double[]{
+                        -0.906180, -0.538469, 0, 0.538469, 0.906180,
+                        -0.906180, -0.538469, 0, 0.538469, 0.906180,
+                        -0.906180, -0.538469, 0, 0.538469, 0.906180,
+                        -0.906180, -0.538469, 0, 0.538469, 0.906180,
+                        -0.906180, -0.538469, 0, 0.538469, 0.906180,
+                };
+            }
+            default -> throw new IllegalArgumentException("There is not defined that numberOfNodes");
+        }
+    }
+    public static double[] getEtaCoordinates(int numberOfNodes) {
+        switch (numberOfNodes) {
+            case 2 -> {
+                return new double[]{(-1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3)), (1 / sqrt(3))};
+            }
+            case 3 -> {
+                return new double[]{
+                        -sqrt(3.0 / 5), -sqrt(3.0 / 5), -sqrt(3.0 / 5),
+                        0, 0, 0,
+                        sqrt(3.0 / 5), sqrt(3.0 / 5), sqrt(3.0 / 5)
+                };
+            }
+            case 4 -> {
+                return new double[]{
+                        -0.861136, -0.339981, 0.339981, 0.861136,
+                        -0.861136, -0.339981, 0.339981, 0.861136,
+                        -0.861136, -0.339981, 0.339981, 0.861136,
+                        -0.861136, -0.339981, 0.339981, 0.861136
+                };
+            }
+            case 5 -> {
+                return new double[]{
+                        -0.906180, -0.538469, 0, 0.538469, 0.906180,
+                        -0.906180, -0.538469, 0, 0.538469, 0.906180,
+                        -0.906180, -0.538469, 0, 0.538469, 0.906180,
+                        -0.906180, -0.538469, 0, 0.538469, 0.906180,
+                        -0.906180, -0.538469, 0, 0.538469, 0.906180,
+                };
+            }
+            default -> throw new IllegalArgumentException("There is not defined that numberOfNodes");
+        }
+    }
 }

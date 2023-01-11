@@ -17,40 +17,9 @@ public class App {
 
         Grid grid = InputHandler.readFile(FILE_NAME1);
         System.out.println(grid);
-        List<Element> elements = grid.getElements();
-        List<Node> nodes = grid.getNodes();
 
-        ///===============
-//        double[] pcx = new double[4];
-//        double[] pcy = new double[4];
-//        Element element = elements.get(0);
-//        for (int i = 0; i < nodes.size(); i++) { // < 4
-//            for (int j = 0; j < 4; j++) { // 4 wspolrzedne x i y
-//                pcx[j] = nodes.get(element.getIDs().get(j) - 1).getX();
-//                pcy[j] = nodes.get(element.getIDs().get(j) - 1).getY();
-//            }
-//        }
-        //===================
-
-        double[] pcx = new double[]{0.0623899326, 0.100000001, 0.0546918176, 0.100000001};
-        double[] pcy = new double[]{-0.0326100662, -0.0403081849, 0.00499999989, 0.00499999989};
-//        }
-
-        // Here for matrix H
-        double[][] mainMatrix = MatrixService.getMainMatrix(pcx, pcy);
-        //-0.01666666545    0.0
-        // 0.0              -0.016666667094999997
         double[][] globalAggregationH = MatrixHService.getMatrixHWithGlobalData(grid, 5);
-//        double[][] matrixHForThreePointIntegration1 = MatrixHService.getMatrixHForTwoPointIntegrationWithGlobalData(grid, 3);
-//        System.out.println("matrixHForThreePointIntegration1: ");
-//        MatrixService.showTable2D(matrixHForThreePointIntegration1); //TODO MatrixH is always the same for every element?
-//        double[][] matrixHForFourPointIntegration1 = MatrixHService.getMatrixHForTwoPointIntegrationWithGlobalData(grid, 4);
-//        System.out.println("matrixHForFourPointIntegration1: ");
-//        MatrixService.showTable2D(matrixHForFourPointIntegration1); //TODO MatrixH is always the same for every element?
-        // Here for global aggregation matrix H
-//        double[][] globalAggregationH = calculateAggregation(grid, matrixHForTwoPointIntegration1);
-//        System.out.println("globalAggregationH: ");
-//        MatrixService.showTable2Dshort(globalAggregationH);
+
 
 //        // Here for HBC
 //        double[][] globalAggregationHBC = BorderConditionService.calculateMatrixHbc(grid);

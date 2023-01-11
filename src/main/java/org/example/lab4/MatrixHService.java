@@ -14,6 +14,9 @@ public class MatrixHService {
 
 
     public static double[][] getMatrixHWithGlobalData(Grid grid, int numberOfNodes) {
+        if (numberOfNodes < 2 || numberOfNodes > 5) {
+            throw new IllegalArgumentException("There is no method to calculate matrix with number fo nodes = " + numberOfNodes);
+        }
         double[][] globalAggregationH = new double[grid.getNodesNumber()][grid.getNodesNumber()];
         List<Element> elements = grid.getElements();
         List<Node> nodes = grid.getNodes();
@@ -32,56 +35,8 @@ public class MatrixHService {
                     pcy[j] = nodes.get(element.getIDs().get(j) - 1).getY();
                 }
             }
-            double[] ksi = new double[length];
-            double[] eta = new double[length];
-            // Here for matrix H
-            if (numberOfNodes == 2) {
-                ksi = new double[]{(-1 / sqrt(3)), (1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3))};
-                eta = new double[]{(-1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3)), (1 / sqrt(3))};
-            }
-            if (numberOfNodes == 3) {
-                ksi = new double[]{
-                        -sqrt(3.0 / 5), 0, sqrt(3.0 / 5),
-                        -sqrt(3.0 / 5), 0, sqrt(3.0 / 5),
-                        -sqrt(3.0 / 5), 0, sqrt(3.0 / 5)
-                };
-                eta = new double[]{
-                        -sqrt(3.0 / 5), -sqrt(3.0 / 5), -sqrt(3.0 / 5),
-                        0, 0, 0,
-                        sqrt(3.0 / 5), sqrt(3.0 / 5), sqrt(3.0 / 5)
-                };
-            }
-            if (numberOfNodes == 4) {
-                ksi = new double[]{
-                        -0.861136, -0.339981, 0.339981,0.861136,
-                        -0.861136, -0.339981, 0.339981,0.861136,
-                        -0.861136, -0.339981, 0.339981,0.861136,
-                        -0.861136, -0.339981, 0.339981,0.861136
-                };
-                eta = new double[]{
-                        -0.861136, -0.339981, 0.339981,0.861136,
-                        -0.861136, -0.339981, 0.339981,0.861136,
-                        -0.861136, -0.339981, 0.339981,0.861136,
-                        -0.861136, -0.339981, 0.339981,0.861136
-                };
-            }
-            if (numberOfNodes == 5) {
-                ksi = new double[]{
-                        -0.906180,-0.538469,0,0.538469,0.906180,
-                        -0.906180,-0.538469,0,0.538469,0.906180,
-                        -0.906180,-0.538469,0,0.538469,0.906180,
-                        -0.906180,-0.538469,0,0.538469,0.906180,
-                        -0.906180,-0.538469,0,0.538469,0.906180,
-                };
-                eta = new double[]{
-                        -0.906180,-0.538469,0,0.538469,0.906180,
-                        -0.906180,-0.538469,0,0.538469,0.906180,
-                        -0.906180,-0.538469,0,0.538469,0.906180,
-                        -0.906180,-0.538469,0,0.538469,0.906180,
-                        -0.906180,-0.538469,0,0.538469,0.906180,
-                };
-            }
-
+            double[] ksi = GlobalData.getKsiCoordinates(numberOfNodes);
+            double[] eta = GlobalData.getEtaCoordinates(numberOfNodes);
             double[][] dNdKsiTable = new double[length][4]; // table1 - strona 13 calkowanie macierzy H
             double[][] dNdEtaTable = new double[length][4];
             List<Function<Double, Double>> functions_dNdEta = GlobalData.getFunctions_dNdEta();
@@ -154,72 +109,12 @@ public class MatrixHService {
             }
 
 
-            //=====showing local matrix H ====
-            if (numberOfNodes == 2) {
-
-                double[][] localHForElement = new double[4][4];
-                for (int pc = 0; pc < length; pc++) {
-                    for (int i = 0; i < 4; i++) {
-                        for (int j = 0; j < 4; j++) {
-//                        localHForElement[i][j] += Hpcs[pc][i][j];
-                            localHForElement[i][j] = Hpcs[0][i][j] * weightsOfPoints[0] * weightsOfPoints[0]
-                                    + Hpcs[1][i][j] * weightsOfPoints[0] * weightsOfPoints[1]
-                                    + Hpcs[2][i][j] * weightsOfPoints[0] * weightsOfPoints[0]
-                                    + Hpcs[3][i][j] * weightsOfPoints[0] * weightsOfPoints[1];
-                        }
-                    }
-                }
-                System.out.println("Hpc1 dla elementu - " + (e + 1));
-                MatrixService.showTable2D(Hpcs[0]);
-                System.out.println("Hpc2 dla elementu - " + (e + 1));
-                MatrixService.showTable2D(Hpcs[1]);
-                System.out.println("Hpc3 dla elementu - " + (e + 1));
-                MatrixService.showTable2D(Hpcs[2]);
-                System.out.println("Hpc4 dla elementu - " + (e + 1));
-                MatrixService.showTable2D(Hpcs[3]);
-                System.out.println("H dla elementu - " + (e + 1));
-                MatrixService.showTable2Dshort(localHForElement);
-                System.out.println("local determinants: ");
-                MatrixService.showTable1D(determinants);
+            double[][] localHForElement = new double[4][4];
+            for (int pc = 0; pc < length; pc++) {
                 for (int i = 0; i < 4; i++) {
                     for (int j = 0; j < 4; j++) {
-                        globalAggregationH[element.getIDs().get(i) - 1][element.getIDs().get(j) - 1] += localHForElement[i][j];
-                    }
-                }
-            }
-            if (numberOfNodes == 3) {
-                double[][] localHForElement = new double[4][4];
-                for (int pc = 0; pc < length; pc++) {
-                    for (int i = 0; i < 4; i++) {
-                        for (int j = 0; j < 4; j++) {
-//                        localHForElement[i][j] += Hpcs[pc][i][j];
-                            localHForElement[i][j] = Hpcs[0][i][j] * weightsOfPoints[0] * weightsOfPoints[0]
-                                    + Hpcs[1][i][j] * weightsOfPoints[1] * weightsOfPoints[0]
-                                    + Hpcs[2][i][j] * weightsOfPoints[2] * weightsOfPoints[0]
-                                    + Hpcs[3][i][j] * weightsOfPoints[0] * weightsOfPoints[1]
-                                    + Hpcs[4][i][j] * weightsOfPoints[1] * weightsOfPoints[1]
-                                    + Hpcs[5][i][j] * weightsOfPoints[2] * weightsOfPoints[1]
-                                    + Hpcs[6][i][j] * weightsOfPoints[0] * weightsOfPoints[2]
-                                    + Hpcs[7][i][j] * weightsOfPoints[1] * weightsOfPoints[2]
-                                    + Hpcs[8][i][j] * weightsOfPoints[2] * weightsOfPoints[2];
-                        }
-                    }
-                }
-                System.out.println("Local matrix H for element " + (e + 1));
-                MatrixService.showTable2Dshort(localHForElement);
-                for (int i = 0; i < 4; i++) {
-                    for (int j = 0; j < 4; j++) {
-                        globalAggregationH[element.getIDs().get(i) - 1][element.getIDs().get(j) - 1] += localHForElement[i][j];
-                    }
-                }
-            }
-            if(numberOfNodes > 3){
-                double[][] localHForElement = new double[4][4];
-                for (int pc = 0; pc < length; pc++) {
-                    for (int i = 0; i < 4; i++) {
-                        for (int j = 0; j < 4; j++) {
-                            localHForElement[i][j] += Hpcs[pc][i][j] * weightsOfPoints[pc/numberOfNodes] * weightsOfPoints[pc%numberOfNodes];
-                            // bellow example for 3 numberOfNodes
+                        localHForElement[i][j] += Hpcs[pc][i][j] * weightsOfPoints[pc / numberOfNodes] * weightsOfPoints[pc % numberOfNodes];
+                        // bellow example for 3 numberOfNodes
 //                            localHForElement[i][j] = Hpcs[0][i][j] * weightsOfPoints[0] * weightsOfPoints[0]
 //                                    + Hpcs[1][i][j] * weightsOfPoints[1] * weightsOfPoints[0]
 //                                    + Hpcs[2][i][j] * weightsOfPoints[2] * weightsOfPoints[0]
@@ -229,15 +124,14 @@ public class MatrixHService {
 //                                    + Hpcs[6][i][j] * weightsOfPoints[0] * weightsOfPoints[2]
 //                                    + Hpcs[7][i][j] * weightsOfPoints[1] * weightsOfPoints[2]
 //                                    + Hpcs[8][i][j] * weightsOfPoints[2] * weightsOfPoints[2];
-                        }
                     }
                 }
-                System.out.println("Local matrix H for element " + (e + 1));
-                MatrixService.showTable2Dshort(localHForElement);
-                for (int i = 0; i < 4; i++) {
-                    for (int j = 0; j < 4; j++) {
-                        globalAggregationH[element.getIDs().get(i) - 1][element.getIDs().get(j) - 1] += localHForElement[i][j];
-                    }
+            }
+            System.out.println("Local matrix H for element " + (e + 1));
+            MatrixService.showTable2Dshort(localHForElement);
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    globalAggregationH[element.getIDs().get(i) - 1][element.getIDs().get(j) - 1] += localHForElement[i][j];
                 }
             }
 
