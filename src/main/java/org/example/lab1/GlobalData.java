@@ -148,24 +148,25 @@ public class GlobalData {
         }
     }
 
-    public static List<Function<Double, Double>> getFunctionsForKsi() {
-        return new ArrayList<>() {
-            {
-                add(ksi -> -0.25*(1-ksi));
-                add(ksi -> -0.25 * (1 + ksi));
-                add(ksi -> 0.25 * (1+ksi));
-                add(ksi -> 0.25 * (1-ksi));
-            }
-        };
-    }
-
-    public static List<Function<Double, Double>> getFunctionsForEta() {
+    public static List<Function<Double, Double>> getFunctions_dNdKsi() {
         return new ArrayList<>() {
             {
                 add(eta -> -0.25 * ( 1-eta));
                 add(eta -> 0.25 * (1-eta));
                 add(eta -> 0.25 * (1+eta));
                 add(eta -> -0.25 * (1+eta));
+            }
+        };
+    }
+
+    public static List<Function<Double, Double>> getFunctions_dNdEta() {
+        return new ArrayList<>() {
+            {
+                add(ksi -> -0.25*(1-ksi));
+                add(ksi -> -0.25 * (1 + ksi));
+                add(ksi -> 0.25 * (1+ksi));
+                add(ksi -> 0.25 * (1-ksi));
+
             }
         };
     }

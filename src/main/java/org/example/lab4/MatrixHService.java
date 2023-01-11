@@ -11,13 +11,16 @@ import java.util.function.Function;
 import static java.lang.Math.sqrt;
 
 public class MatrixHService {
+    public static double[][] globalAggregationH = new double[16][16];
+
     public static double[][] getMatrixHWithGlobalData(Grid grid, int numberOfNodes) {
+//        double[][] globalAggregationH = new double[grid.getNodesNumber()][grid.getNodesNumber()];
         List<Element> elements = grid.getElements();
         List<Node> nodes = grid.getNodes();
         int length = numberOfNodes * numberOfNodes;
         int elementsNumber = grid.getElementsNumber();
         double[][][] Hpcs = new double[length][4][4];
-
+        double[] weightsOfPoints = GlobalData.getWeightsArray(numberOfNodes); //{1.0, 1.0}
         // --> main loop for elements
         for (int e = 0; e < grid.getElements().size(); e++) {
             Element element = elements.get(e);
@@ -30,18 +33,32 @@ public class MatrixHService {
                 }
             }
             // Here for matrix H
-            double[] eta = new double[]{(-1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3)), (1 / sqrt(3))};
             double[] ksi = new double[]{(-1 / sqrt(3)), (1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3))};
-            double[][] dNdKsiTable = new double[4][4]; // table1 - strona 13 calkowanie macierzy H
-            double[][] dNdEtaTable = new double[4][4];
-            List<Function<Double, Double>> functions1 = GlobalData.getFunctionsForKsi();
-            List<Function<Double, Double>> functions2 = GlobalData.getFunctionsForEta();
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    dNdKsiTable[i][j] = functions1.get(j).apply(eta[i]);
-                    dNdEtaTable[i][j] = functions2.get(j).apply(ksi[i]);
-                }
-            }
+            double[] eta = new double[]{(-1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3)), (1 / sqrt(3))};
+//==============================
+//            double[][] dNdKsiTable = new double[4][4]; // table1 - strona 13 calkowanie macierzy H
+//            double[][] dNdEtaTable = new double[4][4];
+//            List<Function<Double, Double>> functions_dNdKsi = GlobalData.getFunctions_dNdKsi();
+//            List<Function<Double, Double>> functions_dNdEta = GlobalData.getFunctions_dNdEta();
+//            for (int i = 0; i < 4; i++) {
+//                for (int j = 0; j < 4; j++) {
+//                    dNdKsiTable[i][j] = functions_dNdKsi.get(j).apply(ksi[i]);
+//                    dNdEtaTable[i][j] = functions_dNdEta.get(j).apply(eta[i]);
+//                }
+//            }
+            //==============================
+            double[][] dNdKsiTable = new double[][]{
+                    {-0.39434, 0.39434, 0.105662, -0.105662},
+                    {-0.39434, 0.39434, 0.105662, -0.105662},
+                    {-0.105662, 0.105662, 0.39434, -0.39434},
+                    {-0.105662, 0.105662, 0.39434, -0.39434}
+            };
+            double[][] dNdEtaTable = new double[][]{
+                    {-0.39434, -0.105662, 0.105662, 0.39434},
+                    {-0.105662, -0.39434, 0.39434, 0.105662},
+                    {-0.39434, -0.105662, 0.105662, 0.39434},
+                    {-0.105662, -0.39434, 0.39434, 0.105662}
+            };
 
             double[][][] jakobianMatrix = new double[length][2][2]; // length for every pc
             double m00 = 0;
@@ -75,15 +92,22 @@ public class MatrixHService {
             // 80 0
             // 0 80
             for (int pc = 0; pc < length; pc++) {
-                double determinant = (1.0 / determinants[pc]);
-                jakobianMatrix[pc][0][0] = determinant * jakobianMatrix[pc][0][0];
+                double determinant = ((1.0) / determinants[pc]);
+                jakobianMatrix[pc][0][0] = determinant * jakobianMatrix[pc][1][1];
                 jakobianMatrix[pc][0][1] = determinant * (-jakobianMatrix[pc][0][1]); // have to be a minus
                 jakobianMatrix[pc][1][0] = determinant * jakobianMatrix[pc][1][0];
-                jakobianMatrix[pc][1][1] = determinant * (-jakobianMatrix[pc][1][1]);
+                jakobianMatrix[pc][1][1] = determinant * (-jakobianMatrix[pc][0][0]);
             }
 
-            // TODO to jest to samo co wyzej dNdKsiTable[i][j] = functions1.get(j).apply(eta[i]);
-            //                    dNdEtaTable[i][j] = functions2.get(j).apply(ksi[i]);
+            System.out.println("Macierze jakobiego dla ");
+            for (int pc = 0; pc < length; pc++) {
+                System.out.println("pc " + (pc + 1) + "element " + (e + 1));
+                MatrixService.showTable2Dshort(jakobianMatrix[pc]);
+                System.out.println();
+            }
+
+            // TODO to jest to samo co wyzej dNdKsiTable[i][j] = functions_dNdKsi.get(j).apply(eta[i]);
+            //                    dNdEtaTable[i][j] = functions_dNdEta.get(j).apply(ksi[i]);
             double[][] tableOfKsiIntegral = IntegralFunctions.getTableForDnDividedByDKsi(numberOfNodes);
             double[][] tableOfEtaIntegral = IntegralFunctions.getTableForDnDividedByDEta(numberOfNodes);//FIXME here is a bug
             //===================Two point integration==========
@@ -136,35 +160,52 @@ public class MatrixHService {
             //=====showing local matrix H ====
             double[][] localHForElement = new double[4][4];
             for (int pc = 0; pc < length; pc++) {
-                for (int j = 0; j < 4; j++) {
-                    for (int k = 0; k < 4; k++) {
-                        localHForElement[j][k] += Hpcs[pc][j][k];
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 4; j++) {
+//                        localHForElement[i][j] += Hpcs[pc][i][j];
+                        localHForElement[i][j] = Hpcs[0][i][j] * weightsOfPoints[0] * weightsOfPoints[0]
+                                + Hpcs[1][i][j] * weightsOfPoints[0] * weightsOfPoints[1]
+                                + Hpcs[2][i][j] * weightsOfPoints[0] * weightsOfPoints[0]
+                                + Hpcs[3][i][j] * weightsOfPoints[0] * weightsOfPoints[1];
                     }
                 }
             }
+            System.out.println("Hpc1 dla elementu - " + (e + 1));
+            MatrixService.showTable2D(Hpcs[0]);
+            System.out.println("Hpc2 dla elementu - " + (e + 1));
+            MatrixService.showTable2D(Hpcs[1]);
+            System.out.println("Hpc3 dla elementu - " + (e + 1));
+            MatrixService.showTable2D(Hpcs[2]);
+            System.out.println("Hpc4 dla elementu - " + (e + 1));
+            MatrixService.showTable2D(Hpcs[3]);
             System.out.println("H dla elementu - " + (e + 1));
             MatrixService.showTable2Dshort(localHForElement);
             System.out.println("local determinants: ");
-            for (double determinant : determinants) {
-                System.out.println(String.valueOf(determinant));
-            }
-//            MatrixService.showTable1D(determinants);
-        }
-
-
-        //   ===================tables' summing to H=======
-        double[] weightsOfPoints = GlobalData.getWeightsArray(numberOfNodes); //{1.0, 1.0}
-        double[][] mainH = new double[4][4];
-        for (int k = 0; k < length; k++) {
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-
-                    mainH[i][j] += Hpcs[k][i][j] * weightsOfPoints[k / numberOfNodes] * weightsOfPoints[k % numberOfNodes];
+            MatrixService.showTable1D(determinants);
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    globalAggregationH[element.getIDs().get(i) - 1][element.getIDs().get(j) - 1] += localHForElement[i][j];
                 }
-
+//                System.out.println();
             }
+
+
+//            MatrixService.showTable1D(determinants);
+
         }
-        return mainH;
+        MatrixService.showTable2Dshort(globalAggregationH);
+        //   ===================tables' summing to H=======
+
+        double[][] mainH = new double[4][4];
+//        for (int k = 0; k < length; k++) {
+//        for (int i = 0; i < 4; i++) {
+//            for (int j = 0; j < 4; j++) {
+//                    mainH[i][j] += Hpcs[k][i][j] * weightsOfPoints[k / numberOfNodes] * weightsOfPoints[k % numberOfNodes];
+//                }
+//
+//            }
+//        }
+        return globalAggregationH;
     }
 
 //    public static double[][] getMatrixHWithGlobalData(Grid grid, int numberOfNodes) {
@@ -294,14 +335,14 @@ public class MatrixHService {
 //    }
 
 
-    private static double[][] calculateHpcWithGlobalData(double[][] table1DlaPc1, double[][] table2DlaPc1, double detJ, int whichPc) {
+    private static double[][] calculateHpcWithGlobalData(double[][] dNiDividedByDx, double[][] dNiDividedByDy, double detJ, int whichPc) {
         double[][] table1DlaH = new double[4][4];
         double[][] table2DlaH = new double[4][4];
         double[][] Hpc = new double[4][4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                table1DlaH[i][j] = table1DlaPc1[whichPc][i] * table1DlaPc1[whichPc][j];//zmiana dla Hpc2
-                table2DlaH[i][j] = table2DlaPc1[whichPc][i] * table2DlaPc1[whichPc][j];
+                table1DlaH[i][j] = dNiDividedByDx[whichPc][i] * dNiDividedByDx[whichPc][j];//zmiana dla Hpc2
+                table2DlaH[i][j] = dNiDividedByDy[whichPc][i] * dNiDividedByDy[whichPc][j];
                 Hpc[i][j] = GlobalData.conductivity * (table1DlaH[i][j] + table2DlaH[i][j]) * detJ;
             }
         }

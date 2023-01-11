@@ -77,8 +77,8 @@ public class Main {
         double[] ksi = new double[]{(-1 / sqrt(3)), (1 / sqrt(3)), (-1 / sqrt(3)), (1 / sqrt(3))};
         double[][] table1 = new double[4][4];
         double[][] table2 = new double[4][4];
-        List<Function<Double, Double>> functions1 = GlobalData.getFunctionsForKsi();
-        List<Function<Double, Double>> functions2 = GlobalData.getFunctionsForEta();
+        List<Function<Double, Double>> functions1 = GlobalData.getFunctions_dNdKsi();
+        List<Function<Double, Double>> functions2 = GlobalData.getFunctions_dNdEta();
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 table1[i][j] = functions1.get(j).apply(eta[i]);
