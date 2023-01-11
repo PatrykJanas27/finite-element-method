@@ -148,7 +148,7 @@ public class GlobalData {
         }
     }
 
-    public static List<Function<Double, Double>> getFunctions_dNdKsi() {
+    public static List<Function<Double, Double>> getFunctions_dNdEta() {
         return new ArrayList<>() {
             {
                 add(eta -> -0.25 * ( 1-eta));
@@ -159,7 +159,7 @@ public class GlobalData {
         };
     }
 
-    public static List<Function<Double, Double>> getFunctions_dNdEta() {
+    public static List<Function<Double, Double>> getFunctions_dNdKsi() {
         return new ArrayList<>() {
             {
                 add(ksi -> -0.25*(1-ksi));

@@ -14,7 +14,6 @@ public class MatrixHService {
 
 
     public static double[][] getMatrixHWithGlobalData(Grid grid, int numberOfNodes) {
-//        double[][] globalAggregationH = new double[16][16];
         double[][] globalAggregationH = new double[grid.getNodesNumber()][grid.getNodesNumber()];
         List<Element> elements = grid.getElements();
         List<Node> nodes = grid.getNodes();
@@ -47,22 +46,23 @@ public class MatrixHService {
                         -sqrt(3.0 / 5), 0, sqrt(3.0 / 5)
                 };
                 eta = new double[]{
-                        -sqrt(3.0 / 5), 0, sqrt(3.0 / 5),
-                        -sqrt(3.0 / 5), 0, sqrt(3.0 / 5),
-                        -sqrt(3.0 / 5), 0, sqrt(3.0 / 5)
+                        -sqrt(3.0 / 5), -sqrt(3.0 / 5), -sqrt(3.0 / 5),
+                        0, 0, 0,
+                        sqrt(3.0 / 5), sqrt(3.0 / 5), sqrt(3.0 / 5)
                 };
             }
 
             double[][] dNdKsiTable = new double[length][4]; // table1 - strona 13 calkowanie macierzy H
             double[][] dNdEtaTable = new double[length][4];
-            List<Function<Double, Double>> functions_dNdKsi = GlobalData.getFunctions_dNdKsi();
             List<Function<Double, Double>> functions_dNdEta = GlobalData.getFunctions_dNdEta();
+            List<Function<Double, Double>> functions_dNdKsi = GlobalData.getFunctions_dNdKsi();
             for (int pc = 0; pc < length; pc++) {
                 for (int j = 0; j < 4; j++) {
-                    dNdKsiTable[pc][j] = functions_dNdKsi.get(j).apply(ksi[pc]);
-                    dNdEtaTable[pc][j] = functions_dNdEta.get(j).apply(eta[pc]);
+                    dNdKsiTable[pc][j] = functions_dNdEta.get(j).apply(eta[pc]);
+                    dNdEtaTable[pc][j] = functions_dNdKsi.get(j).apply(ksi[pc]);
                 }
             }
+
 
             double[][][] jakobianMatrix = new double[length][2][2]; // length for every pc
             for (int pc = 0; pc < length; pc++) { // for every pc // for example 4 pc

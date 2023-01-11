@@ -7,8 +7,6 @@ import org.example.lab4.MatrixService;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-import static org.example.lab5.Aggregation.calculateAggregation;
-
 public class App {
 
     private static final String FILE_NAME1 = "src/main/resources/lab1/Test1_4_4.txt";
@@ -17,7 +15,7 @@ public class App {
 
     public static void main(String[] args) throws FileNotFoundException, NumberFormatException {
 
-        Grid grid = InputHandler.readFile(FILE_NAME2);
+        Grid grid = InputHandler.readFile(FILE_NAME1);
         System.out.println(grid);
         List<Element> elements = grid.getElements();
         List<Node> nodes = grid.getNodes();
@@ -34,15 +32,15 @@ public class App {
 //        }
         //===================
 
-        double[] pcx = new double[]{0.0623899326,0.100000001,0.0546918176,0.100000001};
-        double[] pcy = new double[]{-0.0326100662,-0.0403081849,0.00499999989,0.00499999989};
+        double[] pcx = new double[]{0.0623899326, 0.100000001, 0.0546918176, 0.100000001};
+        double[] pcy = new double[]{-0.0326100662, -0.0403081849, 0.00499999989, 0.00499999989};
 //        }
 
         // Here for matrix H
         double[][] mainMatrix = MatrixService.getMainMatrix(pcx, pcy);
         //-0.01666666545    0.0
         // 0.0              -0.016666667094999997
-        double[][] globalAggregationH = MatrixHService.getMatrixHWithGlobalData(grid, 3);
+        double[][] globalAggregationH = MatrixHService.getMatrixHWithGlobalData(grid, 4);
 //        double[][] matrixHForThreePointIntegration1 = MatrixHService.getMatrixHForTwoPointIntegrationWithGlobalData(grid, 3);
 //        System.out.println("matrixHForThreePointIntegration1: ");
 //        MatrixService.showTable2D(matrixHForThreePointIntegration1); //TODO MatrixH is always the same for every element?
