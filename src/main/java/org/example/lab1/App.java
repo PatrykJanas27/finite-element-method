@@ -5,13 +5,13 @@ import org.example.lab4.MatrixHService;
 import org.example.lab4.MatrixService;
 import org.example.lab6.BorderConditionService;
 import org.example.lab6.GaussianEliminationService;
-import org.example.lab6.VectorP;
 
 import java.io.FileNotFoundException;
 
 import static org.example.lab4.MatrixHService.globalAggregationH;
 import static org.example.lab4.MatrixHService.globalAggregationMatrixC;
 import static org.example.lab6.BorderConditionService.globalAggregationHBC;
+import static org.example.lab6.BorderConditionService.globalAggregationVectorP;
 
 public class App {
 
@@ -31,10 +31,12 @@ public class App {
         System.out.println("Global Aggregation matrix C");
         MatrixService.showTable2Dshort(globalAggregationMatrixC);
 
-        // ********************** Here for [HBC] **********************
-        BorderConditionService.calculateMatrixHbc(grid);
+        // ********************** Here for [HBC] and Vector {P} **********************
+        BorderConditionService.calculateMatrixHbc_andVectorP(grid);
         System.out.println("globalAggregationHBC: ");
         MatrixService.showTable2Dshort(globalAggregationHBC);
+        System.out.println("globalAggregationVectorP: ");
+        MatrixService.showTable1D(globalAggregationVectorP);
 
         // ********************** Here for [H] + [HBC] **********************
         double[][] globalAggregationH_plus_HBC = new double[16][16];
@@ -46,10 +48,7 @@ public class App {
         System.out.println("globalAggregationH_plus_HBC: ");
         MatrixService.showTable2Dshort(globalAggregationH_plus_HBC);
 
-        // ********************** Here for Vector {P} **********************
-        double[] globalAggregationVectorP = VectorP.calculateVectorP(grid);
-        System.out.println("globalAggregationVectorP: ");
-        MatrixService.showTable1D(globalAggregationVectorP);
+
 
         // ********************** Here for [H]{t}+{P}=0, where H is [H+HBC] already **********************
         double[] solutionForSystemOfEquations = GaussianEliminationService.findSolutionForSystemOfEquations(
