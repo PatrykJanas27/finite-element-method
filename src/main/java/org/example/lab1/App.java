@@ -40,7 +40,7 @@ public class App {
         double[][] mainMatrix = MatrixService.getMainMatrix(pcx, pcy);
         //-0.01666666545    0.0
         // 0.0              -0.016666667094999997
-        double[][] globalAggregationH = MatrixHService.getMatrixHWithGlobalData(grid, 4);
+        double[][] globalAggregationH = MatrixHService.getMatrixHWithGlobalData(grid, 5);
 //        double[][] matrixHForThreePointIntegration1 = MatrixHService.getMatrixHForTwoPointIntegrationWithGlobalData(grid, 3);
 //        System.out.println("matrixHForThreePointIntegration1: ");
 //        MatrixService.showTable2D(matrixHForThreePointIntegration1); //TODO MatrixH is always the same for every element?
