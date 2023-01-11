@@ -91,18 +91,22 @@ public class MatrixHService {
             // now will be // data from pdf
             // 80 0
             // 0 80
+            double[] reverseDeterminants = new double[length];
+            for (int i = 0; i < reverseDeterminants.length; i++) {
+                reverseDeterminants[i] = 1.0 / determinants[i];
+            }
+            double[][][] jakobianMatrixMultipliedByReverseDetJ = new double[length][2][2];
             for (int pc = 0; pc < length; pc++) {
-                double determinant = ((1.0) / determinants[pc]);
-                jakobianMatrix[pc][0][0] = determinant * jakobianMatrix[pc][1][1];
-                jakobianMatrix[pc][0][1] = determinant * (-jakobianMatrix[pc][0][1]); // have to be a minus
-                jakobianMatrix[pc][1][0] = determinant * jakobianMatrix[pc][1][0];
-                jakobianMatrix[pc][1][1] = determinant * (-jakobianMatrix[pc][0][0]);
+                jakobianMatrixMultipliedByReverseDetJ[pc][0][0] = reverseDeterminants[pc] * jakobianMatrix[pc][1][1];
+                jakobianMatrixMultipliedByReverseDetJ[pc][0][1] = reverseDeterminants[pc] * (-jakobianMatrix[pc][0][1]); // have to be a minus
+                jakobianMatrixMultipliedByReverseDetJ[pc][1][0] = reverseDeterminants[pc] * jakobianMatrix[pc][1][0];
+                jakobianMatrixMultipliedByReverseDetJ[pc][1][1] = reverseDeterminants[pc] * (-jakobianMatrix[pc][0][0]);
             }
 
             System.out.println("Macierze jakobiego dla ");
             for (int pc = 0; pc < length; pc++) {
                 System.out.println("pc " + (pc + 1) + "element " + (e + 1));
-                MatrixService.showTable2Dshort(jakobianMatrix[pc]);
+                MatrixService.showTable2Dshort(jakobianMatrixMultipliedByReverseDetJ[pc]);
                 System.out.println();
             }
 
@@ -112,8 +116,8 @@ public class MatrixHService {
             double[][] tableOfEtaIntegral = IntegralFunctions.getTableForDnDividedByDEta(numberOfNodes);//FIXME here is a bug
             //===================Two point integration==========
 
-            double[][][] dNiDividedByDx = new double[length][4][4]; //dNiDividedByDx
-            double[][][] dNiDividedByDy = new double[length][4][4]; //dNiDividedByDx
+            double[][] dNiDividedByDx = new double[4][4]; //dNiDividedByDx
+            double[][] dNiDividedByDy = new double[4][4]; //dNiDividedByDx
             for (int pc = 0; pc < length; pc++) {
                 for (int i = 0; i < length; i++) {
                     for (int j = 0; j < 4; j++) {
@@ -123,8 +127,25 @@ public class MatrixHService {
 //                        dNiDividedByDx[pc][0][1] = jakobianMatrix[pc][0][0]*tableOfKsiIntegral[0][1]+jakobianMatrix[pc][0][1]*tableOfEtaIntegral[0][1]; //jakobiany te same
 //                        dNiDividedByDx[pc][0][2] = jakobianMatrix[pc][0][0]*tableOfKsiIntegral[0][2]+jakobianMatrix[pc][0][1]*tableOfEtaIntegral[0][2];
 //                        dNiDividedByDx[pc][0][3] = jakobianMatrix[pc][0][0]*tableOfKsiIntegral[0][3]+jakobianMatrix[pc][0][1]*tableOfEtaIntegral[0][3];
-                        dNiDividedByDx[pc][i][j] = jakobianMatrix[pc][0][0] * dNdKsiTable[pc][j] + jakobianMatrix[pc][0][1] * dNdEtaTable[i][j];
-                        dNiDividedByDy[pc][i][j] = jakobianMatrix[pc][0][0] * dNdKsiTable[pc][j] + jakobianMatrix[pc][0][1] * dNdEtaTable[i][j];
+//                        dNiDividedByDx[i][j] = jakobianMatrix[pc][0][0] * dNdKsiTable[][j] + jakobianMatrix[pc][0][1] * dNdEtaTable[i][j];
+//                        dNiDividedByDy[i][j] = jakobianMatrix[pc][0][0] * dNdKsiTable[][j] + jakobianMatrix[pc][0][1] * dNdEtaTable[i][j];
+
+
+                        dNiDividedByDx[pc][j] = jakobianMatrixMultipliedByReverseDetJ[pc][0][0] * dNdKsiTable[pc][j] + jakobianMatrixMultipliedByReverseDetJ[pc][0][1] * dNdEtaTable[pc][j];
+                        dNiDividedByDy[pc][j] = jakobianMatrixMultipliedByReverseDetJ[pc][1][0] * dNdKsiTable[pc][j] + jakobianMatrixMultipliedByReverseDetJ[pc][1][1] * dNdEtaTable[pc][j];
+
+//                        //dla pc1 Dx
+//                        dNiDividedByDx[0][0] = jakobianMatrix[0][0][0] * dNdKsiTable[0][0] + jakobianMatrix[0][0][1] * dNdEtaTable[0][0];
+//                        dNiDividedByDx[0][1] = jakobianMatrix[0][0][0] * dNdKsiTable[0][1] + jakobianMatrix[0][0][1] * dNdEtaTable[0][1];
+//                        dNiDividedByDx[0][2] = jakobianMatrix[0][0][0] * dNdKsiTable[0][2] + jakobianMatrix[0][0][1] * dNdEtaTable[0][2];
+//                        dNiDividedByDx[0][3] = jakobianMatrix[0][0][0] * dNdKsiTable[0][3] + jakobianMatrix[0][0][1] * dNdEtaTable[0][3];
+//                        //dla pc1 Dy
+//                        dNiDividedByDy[0][0] = jakobianMatrix[0][1][0] * dNdKsiTable[0][0] + jakobianMatrix[0][1][1] * dNdEtaTable[0][0];
+//                        dNiDividedByDy[0][1] = jakobianMatrix[0][1][0] * dNdKsiTable[0][1] + jakobianMatrix[0][1][1] * dNdEtaTable[0][1];
+//                        dNiDividedByDy[0][2] = jakobianMatrix[0][1][0] * dNdKsiTable[0][2] + jakobianMatrix[0][1][1] * dNdEtaTable[0][2];
+//                        dNiDividedByDy[0][3] = jakobianMatrix[0][1][0] * dNdKsiTable[0][3] + jakobianMatrix[0][1][1] * dNdEtaTable[0][3];
+//                        //dla pc2 Dx
+//                        dNiDividedByDx[1][0] = jakobianMatrix[1][0][0] * dNdKsiTable[0][0] + jakobianMatrix[1][0][1] * dNdEtaTable[0][0];
                     }
                 }
             }
@@ -152,9 +173,29 @@ public class MatrixHService {
 //                    }
 //                }
 //            }
+//            for (int pc = 0; pc < length; pc++) {
+//                Hpcs[pc] = calculateHpcWithGlobalData(dNiDividedByDx[pc], dNiDividedByDy[pc], determinants[pc], pc);
+//            }
+            double[][][] table1 = new double[length][4][4];
+            double[][][] table2 = new double[length][4][4];
             for (int pc = 0; pc < length; pc++) {
-                Hpcs[pc] = calculateHpcWithGlobalData(dNiDividedByDx[pc], dNiDividedByDy[pc], determinants[pc], pc);
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 4; j++) {
+                        table1[pc][i][j] = dNiDividedByDx[pc][i] * dNiDividedByDx[pc][j];
+                        table2[pc][i][j] = dNiDividedByDy[pc][i] * dNiDividedByDy[pc][j];
+                        Hpcs[pc][i][j] = table1[pc][i][j] + table2[pc][i][j];
+                        Hpcs[pc][i][j] = Hpcs[pc][i][j] * GlobalData.conductivity * determinants[pc];
+                    }
+                }
             }
+//            table1[0][0][0] = dNiDividedByDx[0][0][0] * dNiDividedByDx[0][0][0];
+//            table1[0][0][1] = dNiDividedByDx[0][0][0] * dNiDividedByDx[0][0][1];
+//            table1[0][0][2] = dNiDividedByDx[0][0][0] * dNiDividedByDx[0][0][2];
+//            table1[0][0][3] = dNiDividedByDx[0][0][0] * dNiDividedByDx[0][0][3];
+//            table1[0][1][0] = dNiDividedByDx[0][0][1] * dNiDividedByDx[0][0][0];
+//            table1[0][1][1] = dNiDividedByDx[0][0][1] * dNiDividedByDx[0][0][1];
+//            table1[0][1][2] = dNiDividedByDx[0][0][1] * dNiDividedByDx[0][0][2];
+//            table1[0][1][3] = dNiDividedByDx[0][0][1] * dNiDividedByDx[0][0][3];
 
 
             //=====showing local matrix H ====
@@ -335,19 +376,19 @@ public class MatrixHService {
 //    }
 
 
-    private static double[][] calculateHpcWithGlobalData(double[][] dNiDividedByDx, double[][] dNiDividedByDy, double detJ, int whichPc) {
-        double[][] table1DlaH = new double[4][4];
-        double[][] table2DlaH = new double[4][4];
-        double[][] Hpc = new double[4][4];
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                table1DlaH[i][j] = dNiDividedByDx[whichPc][i] * dNiDividedByDx[whichPc][j];//zmiana dla Hpc2
-                table2DlaH[i][j] = dNiDividedByDy[whichPc][i] * dNiDividedByDy[whichPc][j];
-                Hpc[i][j] = GlobalData.conductivity * (table1DlaH[i][j] + table2DlaH[i][j]) * detJ;
-            }
-        }
-        return Hpc;
-    }
+//    private static double[][] calculateHpcWithGlobalData(double[][] dNiDividedByDx, double[][] dNiDividedByDy, double detJ, int whichPc) {
+//        double[][] table1DlaH = new double[4][4];
+//        double[][] table2DlaH = new double[4][4];
+//        double[][] Hpc = new double[4][4];
+//        for (int i = 0; i < 4; i++) {
+//            for (int j = 0; j < 4; j++) {
+//                table1DlaH[i][j] = dNiDividedByDx[whichPc][i] * dNiDividedByDx[whichPc][j];//zmiana dla Hpc2
+//                table2DlaH[i][j] = dNiDividedByDy[whichPc][i] * dNiDividedByDy[whichPc][j];
+//                Hpc[i][j] = GlobalData.conductivity * (table1DlaH[i][j] + table2DlaH[i][j]) * detJ;
+//            }
+//        }
+//        return Hpc;
+//    }
 
 
     public static double[][] getTableOfEta2IntegralMultipliedByMatrix(double[][] mainMatrix, double[][] tableOfKsiIntegral, double[][] tableOfEtaIntegral) {
