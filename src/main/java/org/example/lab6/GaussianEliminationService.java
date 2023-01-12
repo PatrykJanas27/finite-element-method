@@ -1,6 +1,8 @@
 package org.example.lab6;
 
 
+import java.util.Arrays;
+
 /**
  * ***************** source of this code for GaussianElimination ************************
  * https://introcs.cs.princeton.edu/java/95linear/GaussianElimination.java.html
@@ -9,10 +11,15 @@ public class GaussianEliminationService {
     private static final double EPSILON = 1e-10;
 
     public static double[] findSolutionForSystemOfEquations(double[][] globalAggregationHplusHBC, double[] globalAggregationVectorP) {
-        double[][] A = globalAggregationHplusHBC;
-        double[] b = globalAggregationVectorP;
-        double[] solution = lsolve(A, b);
-        return solution;
+        double[][] A = new double[16][16];
+        double[] b = new double[16];
+        for (int i = 0; i < globalAggregationHplusHBC.length; i++) {
+            for (int j = 0; j < globalAggregationHplusHBC[i].length; j++) {
+                A[i][j] = globalAggregationHplusHBC[i][j];
+            }
+            b[i] = globalAggregationVectorP[i];
+        }
+        return lsolve(A, b);
     }
 
     // Gaussian elimination with partial pivoting

@@ -63,8 +63,8 @@ public class App {
             // ********************** Here for Matrix[C]/dT **********************
             int simulationStepTime = GlobalData.simulationStepTime;
             double[][] globalAggregationMatrixCByDeltaTau = new double[16][16];
-            for (int i = 0; i < globalAggregationMatrixC.length; i++) {
-                for (int j = 0; j < globalAggregationMatrixC[i].length; j++) {
+            for (int i = 0; i < 16; i++) {
+                for (int j = 0; j < 16; j++) {
                     globalAggregationMatrixCByDeltaTau[i][j] = globalAggregationMatrixC[i][j] / simulationStepTime;
                     // delta tau -> simulationStepTime
                 }
@@ -80,8 +80,8 @@ public class App {
 
             // ********************** Here for Matrix [H] = [H]+[C]/dT **********************
             double[][] globalAggregationMatrixHPlusMatrixCByDeltaTau = new double[16][16];
-            for (int i = 0; i < globalAggregationMatrixC.length; i++) {
-                for (int j = 0; j < globalAggregationMatrixC[i].length; j++) {
+            for (int i = 0; i < 16; i++) {
+                for (int j = 0; j < 16; j++) {
                     globalAggregationMatrixHPlusMatrixCByDeltaTau[i][j] = globalAggregationH_plus_HBC[i][j]
                             + globalAggregationMatrixCByDeltaTau[i][j];
                 }
@@ -91,21 +91,20 @@ public class App {
 
             // ********************** Here for {[C]/dT}*{T0} **********************
             int initialTemp = GlobalData.initialTemp;
-            double[][] globalAggregationMatrixCByDeltaTauMultiplyT0 = new double[16][16];
+            double[] globalAggregationMatrixCByDeltaTauMultiplyT0 = new double[16];
             for (int i = 0; i < 16; i++) {
                 for (int j = 0; j < 16; j++) {
-                    globalAggregationMatrixCByDeltaTauMultiplyT0[i][j] += globalAggregationMatrixCByDeltaTau[i][j] * initialTemp; //CG4koniec <<-----
+                    globalAggregationMatrixCByDeltaTauMultiplyT0[i] += globalAggregationMatrixCByDeltaTau[i][j] * initialTemp; //CG4koniec <<-----
                 }
             }
         System.out.println("globalAggregationMatrixCByDeltaTauMultiplyT0 ->> Vector {[C]/dT}*{T0}: ");
-        MatrixService.showTable2Dshort(globalAggregationMatrixCByDeltaTauMultiplyT0);
+        MatrixService.showTable1D(globalAggregationMatrixCByDeltaTauMultiplyT0);
 
             //********************** Here for {P} = {P}+{[C]/dT}*{T0} **********************
             double[] vectorP_plus_matrixCByDeltaTauMultipliedByT0 = new double[16];
             for (int i = 0; i < 16; i++) {
-                for (int j = 0; j < 16; j++) {
-                    vectorP_plus_matrixCByDeltaTauMultipliedByT0[i] += globalAggregationVectorP[j] + globalAggregationMatrixCByDeltaTauMultiplyT0[i][j]; //FIXME here is a bug
-                }
+                    //FIXME here is a bug!!!!!!!!!!!!!!!!!!!
+                    vectorP_plus_matrixCByDeltaTauMultipliedByT0[i] += globalAggregationVectorP[i] + globalAggregationMatrixCByDeltaTauMultiplyT0[i];
             }
             System.out.println("vectorP_plus_matrixCByDeltaTauMultipliedByT0 ->> Vector ([{P}+{[C]/dT}*{T0}): ");
             MatrixService.showTable1D(vectorP_plus_matrixCByDeltaTauMultipliedByT0);
