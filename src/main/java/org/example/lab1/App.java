@@ -26,9 +26,9 @@ public class App {
         System.out.println(grid);
 
         // ********************** Here for calculations with time **********************
-        double currentTime = 0;
-        double[] temperaturesFromLastSimulations = new double[grid.getElementsNumber()];
-        while (GlobalData.simulationTime + GlobalData.simulationStepTime != currentTime) {
+//        double currentTime = 0;
+//        double[] temperaturesFromLastSimulations = new double[grid.getElementsNumber()];
+//        while (GlobalData.simulationTime + GlobalData.simulationStepTime != currentTime) {
             // ********************** Here are calculation for Matrix[H] and Matrix[C] **********************
             MatrixHService.calculate_MatrixH_and_MatrixC(grid, NUMBER_OF_NODES);
             System.out.println("Global Aggregation matrix H");
@@ -72,11 +72,11 @@ public class App {
             System.out.println("globalAggregationMatrixCByDeltaTau ->> [C]/dT: ");
             MatrixService.showTable2Dshort(globalAggregationMatrixCByDeltaTau);
 
-            double[] initialTempVector = (currentTime == 0) ?
-                    new double[globalAggregationVectorP.length] : temperaturesFromLastSimulations;
-            if (currentTime == 0) {
-                Arrays.fill(initialTempVector, 0);
-            }
+//            double[] initialTempVector = (currentTime == 0) ?
+//                    new double[globalAggregationVectorP.length] : temperaturesFromLastSimulations;
+//            if (currentTime == 0) {
+//                Arrays.fill(initialTempVector, 0);
+//            }
 
             // ********************** Here for Matrix [H] = [H]+[C]/dT **********************
             double[][] globalAggregationMatrixHPlusMatrixCByDeltaTau = new double[16][16];
@@ -97,19 +97,22 @@ public class App {
                     globalAggregationMatrixCByDeltaTauMultiplyT0[i][j] += globalAggregationMatrixCByDeltaTau[i][j] * initialTemp; //CG4koniec <<-----
                 }
             }
+        System.out.println("globalAggregationMatrixCByDeltaTauMultiplyT0 ->> Vector {[C]/dT}*{T0}: ");
+        MatrixService.showTable2Dshort(globalAggregationMatrixCByDeltaTauMultiplyT0);
+
             //********************** Here for {P} = {P}+{[C]/dT}*{T0} **********************
             double[] vectorP_plus_matrixCByDeltaTauMultipliedByT0 = new double[16];
             for (int i = 0; i < 16; i++) {
                 for (int j = 0; j < 16; j++) {
-                    vectorP_plus_matrixCByDeltaTauMultipliedByT0[i] += globalAggregationVectorP[i] + globalAggregationMatrixCByDeltaTauMultiplyT0[i][j]; //FIXME here is a bug
+                    vectorP_plus_matrixCByDeltaTauMultipliedByT0[i] += globalAggregationVectorP[j] + globalAggregationMatrixCByDeltaTauMultiplyT0[i][j]; //FIXME here is a bug
                 }
             }
             System.out.println("vectorP_plus_matrixCByDeltaTauMultipliedByT0 ->> Vector ([{P}+{[C]/dT}*{T0}): ");
             MatrixService.showTable1D(vectorP_plus_matrixCByDeltaTauMultipliedByT0);
 
-            temperaturesFromLastSimulations = GaussianEliminationService.findSolutionForSystemOfEquations(globalAggregationMatrixHPlusMatrixCByDeltaTau, vectorP_plus_matrixCByDeltaTauMultipliedByT0);
-            currentTime += GlobalData.simulationStepTime;
-        }
+//            temperaturesFromLastSimulations = GaussianEliminationService.findSolutionForSystemOfEquations(globalAggregationMatrixHPlusMatrixCByDeltaTau, vectorP_plus_matrixCByDeltaTauMultipliedByT0);
+//            currentTime += GlobalData.simulationStepTime;
+//        }
 
     }
 

@@ -51,8 +51,8 @@ public class MatrixHService {
                     geometricModelsValues[i][j] = BorderConditionService.geometricModelsN(j, ksi[i], eta[i]);
                 }
             }
-            System.out.println("geometricModelsValues: ");
-            MatrixService.showTable2D(geometricModelsValues);
+//            System.out.println("geometricModelsValues: ");
+//            MatrixService.showTable2D(geometricModelsValues);
             //
             double[][][] matrixCForFourPoints = new double[length][4][4]; // there will be 9 matrix C for every point if numberOfNodes = 3
             for (int pc = 0; pc < 4; pc++) {
@@ -62,8 +62,8 @@ public class MatrixHService {
                                 geometricModelsValues[pc][i] * geometricModelsValues[pc][j];
                     }
                 }
-                System.out.println("matrixCForFourPoints " + pc);
-                MatrixService.showTable2Dshort(matrixCForFourPoints[pc]);
+//                System.out.println("matrixCForFourPoints " + pc);
+//                MatrixService.showTable2Dshort(matrixCForFourPoints[pc]);
             }
             double[][] dNdKsiTable = new double[length][4]; // table1 - strona 13 calkowanie macierzy H
             double[][] dNdEtaTable = new double[length][4];
@@ -104,12 +104,12 @@ public class MatrixHService {
                 jakobianMatrixMultipliedByReverseDetJ[pc][1][1] = reverseDeterminants[pc] * (-jakobianMatrix[pc][0][0]);
             }
 
-            System.out.println("Macierze jakobiego dla ");
-            for (int pc = 0; pc < length; pc++) {
-                System.out.println("pc " + (pc + 1) + "element " + (e + 1));
-                MatrixService.showTable2Dshort(jakobianMatrixMultipliedByReverseDetJ[pc]);
-                System.out.println();
-            }
+//            System.out.println("Macierze jakobiego dla ");
+//            for (int pc = 0; pc < length; pc++) {
+//                System.out.println("pc " + (pc + 1) + "element " + (e + 1));
+//                MatrixService.showTable2Dshort(jakobianMatrixMultipliedByReverseDetJ[pc]);
+//                System.out.println();
+//            }
             //===================Two point integration==========
 
             double[][] dNiDividedByDx = new double[length][4]; //dNiDividedByDx
@@ -152,23 +152,23 @@ public class MatrixHService {
 //                                    + Hpcs[6][i][j] * weightsOfPoints[0] * weightsOfPoints[2]
 //                                    + Hpcs[7][i][j] * weightsOfPoints[1] * weightsOfPoints[2]
 //                                    + Hpcs[8][i][j] * weightsOfPoints[2] * weightsOfPoints[2];
-                        localMatrixCForElement[i][j] = specificHeat * density * 2.7777776463888833E-4 * matrixCForFourPoints[0][i][j] // sum for one element
-                                + specificHeat * density * 2.7777776463888833E-4 * matrixCForFourPoints[1][i][j]
-                                + specificHeat * density * 2.7777776463888833E-4 * matrixCForFourPoints[2][i][j]
-                                + specificHeat * density * 2.7777776463888833E-4 * matrixCForFourPoints[3][i][j]; //FIXME for different pc!!!!!!
+                        localMatrixCForElement[i][j] = specificHeat * density * determinants[pc] * matrixCForFourPoints[0][i][j] // sum for one element
+                                + specificHeat * density * determinants[pc] * matrixCForFourPoints[1][i][j]
+                                + specificHeat * density * determinants[pc] * matrixCForFourPoints[2][i][j]
+                                + specificHeat * density * determinants[pc] * matrixCForFourPoints[3][i][j]; //FIXME for different pc!!!!!!
                     }
                 }
             }
-            System.out.println("Local matrix H for element " + (e + 1));
-            MatrixService.showTable2Dshort(localHForElement);
+//            System.out.println("Local matrix H for element " + (e + 1));
+//            MatrixService.showTable2Dshort(localHForElement);
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
                     globalAggregationH[element.getIDs().get(i) - 1][element.getIDs().get(j) - 1] += localHForElement[i][j];
                 }
             }
 
-            System.out.println("localMatrixCForElement: ");
-            MatrixService.showTable2D(localMatrixCForElement); // for one element
+//            System.out.println("localMatrixCForElement: ");
+//            MatrixService.showTable2D(localMatrixCForElement); // for one element
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
                     globalAggregationMatrixC[element.getIDs().get(i) - 1][element.getIDs().get(j) - 1] += localMatrixCForElement[i][j]; // without + !!! just = ???

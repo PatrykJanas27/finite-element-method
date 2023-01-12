@@ -47,8 +47,8 @@ public class BorderConditionService {
             beforeHbc4[0][i] = geometricModelsN(i, ksiEta[7][0], ksiEta[7][1]);
             beforeHbc4[1][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
         }
-        System.out.println("Before Hbc 4: ");
-        MatrixService.showTable2D(beforeHbc4);
+//        System.out.println("Before Hbc 4: ");
+//        MatrixService.showTable2D(beforeHbc4);
         List<Element> elements = grid.getElements();
         List<Node> nodes = grid.getNodes();
 
@@ -119,17 +119,17 @@ public class BorderConditionService {
             List<Integer> e1IDs = elements.get(elementMax - 1 - element).getIDs(); // FIXME here is a big change!!!!!!!
             // FIXME element9 licz dla niego H lokalne + HBC lokalne, a weight agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
 
-            System.out.println("element " + (element + 1) + ": " + e1IDs); // 1, 2, 6, 5
+//            System.out.println("element " + (element + 1) + ": " + e1IDs); // 1, 2, 6, 5
 
             //***** Here is localHBC for -> first element
             double[][] localHbcForElement = calculateAndGetLocalHbc(
                     BCwall1E1[element], BCwall2E1[element], BCwall3E1[element], BCwall4E1[element], nodes, e1IDs);
-            System.out.println("localHbcForElement: ");
-            MatrixService.showTable2Dshort(localHbcForElement);
+//            System.out.println("localHbcForElement: ");
+//            MatrixService.showTable2Dshort(localHbcForElement);
             double[] localVectorP = calculateAndGetLocalVectorP(
                     localP1[element], localP2[element], localP3[element], localP4[element], nodes, e1IDs);
-            System.out.println("localVectorP for element " + (element + 1) + ": ");
-            MatrixService.showTable1D(localVectorP);
+//            System.out.println("localVectorP for element " + (element + 1) + ": ");
+//            MatrixService.showTable1D(localVectorP);
             e1IDs = element1.getIDs(); // FIXME here is a big change!!!!!!!!!!!!!!!!!!!!!!!!
             // FIXME  // element9 licz dla niego H lokalne + HBC lokalne, a weight agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
 
