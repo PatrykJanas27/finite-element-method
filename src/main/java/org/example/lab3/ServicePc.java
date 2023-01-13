@@ -4,6 +4,7 @@ import org.example.lab1.GlobalData;
 
 import java.util.List;
 
+@Deprecated
 public class ServicePc {
 
     public static List<Double> calculatePc(double x1, double x2, int numberOfNodes) {

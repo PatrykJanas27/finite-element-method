@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import static java.lang.Math.pow;
 
+@Deprecated
 public class App {
     public static void main(String[] args) { // for local x <-1,1>
         // result += uniFunction.apply(pc.get(i)) * weights.get(i);

@@ -8,7 +8,7 @@ import java.util.function.Function;
 import static java.lang.Math.pow;
 import static org.example.lab3.ServicePc.calculatePc;
 import static org.example.lab3.ServiceW.calculateW;
-
+@Deprecated
 public class App {
     public static void main(String[] args) { // for extended scope <2,7>
         Function<Double, Double> uniFunction1 = x -> x + 3;

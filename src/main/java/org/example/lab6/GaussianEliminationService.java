@@ -1,8 +1,6 @@
 package org.example.lab6;
 
 
-import java.util.Arrays;
-
 /**
  * ***************** source of this code for GaussianElimination ************************
  * https://introcs.cs.princeton.edu/java/95linear/GaussianElimination.java.html

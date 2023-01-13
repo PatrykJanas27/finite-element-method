@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 import static java.lang.Math.sqrt;
 
-
+@Deprecated
 public class Main {
     public static void main(String[] args) {
         double[][] matrixHForTwoPointIntegration = getMatrixH(2);

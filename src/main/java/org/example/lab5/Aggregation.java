@@ -4,7 +4,7 @@ import org.example.lab1.Element;
 import org.example.lab1.Grid;
 
 import java.util.List;
-
+@Deprecated
 public class Aggregation {
 
     public static double[][] calculateAggregation(Grid grid, double[][] matrixHForTwoPointIntegration1) {

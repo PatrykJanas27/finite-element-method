@@ -4,7 +4,6 @@ import org.example.lab1.Element;
 import org.example.lab1.GlobalData;
 import org.example.lab1.Grid;
 import org.example.lab1.Node;
-import org.example.lab4.MatrixService;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -5,6 +5,7 @@ import org.example.lab1.GlobalData;
 import java.util.List;
 import java.util.function.Function;
 
+@Deprecated
 public class IntegralFunctions {
     public static double[][] getTableForDnDividedByDEta(int numberOfNodes) {
         double[] ksi = GlobalData.getPcArray(numberOfNodes);
