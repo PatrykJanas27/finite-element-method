@@ -59,7 +59,7 @@ public class MatrixHService {
                 for (int i = 0; i < 4; i++) {
                     for (int j = 0; j < 4; j++) {
                         matrixCForFourPoints[pc][i][j] =
-                                geometricModelsValues[pc][i] * geometricModelsValues[pc][j];
+                                geometricModelsValues[pc][i] * geometricModelsValues[pc][j]; //FIXME is it correct?
                     }
                 }
 //                System.out.println("matrixCForFourPoints " + pc);
@@ -125,7 +125,7 @@ public class MatrixHService {
 
             double[][][] table1 = new double[length][4][4];
             double[][][] table2 = new double[length][4][4];
-            for (int pc = 0; pc < length; pc++) {
+            for (int pc = 0; pc < length; pc++) { // for calculating matrix H
                 for (int i = 0; i < 4; i++) {
                     for (int j = 0; j < 4; j++) {
                         table1[pc][i][j] = dNiDividedByDx[pc][i] * dNiDividedByDx[pc][j];
@@ -143,11 +143,26 @@ public class MatrixHService {
                     for (int j = 0; j < 4; j++) {
                         localHForElement[i][j] += Hpcs[pc][i][j] * weightsOfPoints[pc / numberOfNodes] * weightsOfPoints[pc % numberOfNodes];
 
-                        localMatrixCForElement[i][j] = specificHeat * density * determinants[pc] * matrixCForFourPoints[0][i][j] // sum for one element
-                                + specificHeat * density * determinants[pc] * matrixCForFourPoints[1][i][j]
-                                + specificHeat * density * determinants[pc] * matrixCForFourPoints[2][i][j]
-                                + specificHeat * density * determinants[pc] * matrixCForFourPoints[3][i][j]; //FIXME for different pc!!!!!!
-                    }
+                        if(numberOfNodes!=3){ //FIXME for a while
+                            localMatrixCForElement[i][j] = specificHeat * density * determinants[pc] * matrixCForFourPoints[0][i][j] // sum for one element
+                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[1][i][j]
+                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[2][i][j]
+                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[3][i][j]; //FIXME for different pc!!!!!!
+
+                        }
+                        if(numberOfNodes==3){
+                            localMatrixCForElement[i][j] = specificHeat * density * determinants[pc] * matrixCForFourPoints[0][i][j] // sum for one element
+                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[1][i][j]
+                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[2][i][j]
+                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[3][i][j]
+                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[4][i][j]
+                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[5][i][j]
+                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[6][i][j]
+                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[7][i][j]
+                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[8][i][j]; //FIXME for different pc!!!!!!
+
+                        }
+                         }
                 }
             }
 //            System.out.println("Local matrix H for element " + (e + 1));

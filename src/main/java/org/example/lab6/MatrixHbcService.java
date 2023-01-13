@@ -14,7 +14,7 @@ public class MatrixHbcService {
     public static double[] globalAggregationVectorP;
 
 
-    public static void calculateMatrixHbc_andVectorP(Grid grid) {
+    public static void calculateMatrixHbc_andVectorP(Grid grid, int numberOfPoints) {
         globalAggregationHBC = new double[grid.getNodesNumber()][grid.getNodesNumber()];
         globalAggregationVectorP = new double[grid.getNodesNumber()];
         double[][] ksiEta = new double[][]{
@@ -60,15 +60,16 @@ public class MatrixHbcService {
         double[][][] BCwall3E1 = new double[9][4][4]; //pow1
         double[][][] BCwall4E1 = new double[9][4][4]; //pow1
 
-        double[] weight = new double[]{1.0, 1.0};
-        for (int e = 0; e < 9; e++) {
-            for (int n = 0; n < 2; n++) { // here is a loop for pc1 and pc2
+//        double[] weights = new double[]{1.0, 1.0}; //FIXME for number of pc
+        double[] weights = GlobalData.getWeightsArray(numberOfPoints);
+        for (int e = 0; e < 9; e++) { //FIXME for number of elements
+            for (int n = 0; n < 2; n++) { // here is a loop for pc1 and pc2 //FIXME for numberOfElements
                 for (int i = 0; i < 4; i++) {
                     for (int j = 0; j < 4; j++) { // Integral -> alfa*({N}*{N}^T)dS
-                        BCwall1E1[e][i][j] += weight[n] * alfaFactor * beforeHbc1[n][i] * weight[n] * beforeHbc1[n][j];
-                        BCwall2E1[e][i][j] += weight[n] * alfaFactor * beforeHbc2[n][i] * weight[n] * beforeHbc2[n][j];
-                        BCwall3E1[e][i][j] += weight[n] * alfaFactor * beforeHbc3[n][i] * weight[n] * beforeHbc3[n][j];
-                        BCwall4E1[e][i][j] += weight[n] * alfaFactor * beforeHbc4[n][i] * weight[n] * beforeHbc4[n][j];
+                        BCwall1E1[e][i][j] += weights[n] * alfaFactor * beforeHbc1[n][i] * weights[n] * beforeHbc1[n][j];
+                        BCwall2E1[e][i][j] += weights[n] * alfaFactor * beforeHbc2[n][i] * weights[n] * beforeHbc2[n][j];
+                        BCwall3E1[e][i][j] += weights[n] * alfaFactor * beforeHbc3[n][i] * weights[n] * beforeHbc3[n][j];
+                        BCwall4E1[e][i][j] += weights[n] * alfaFactor * beforeHbc4[n][i] * weights[n] * beforeHbc4[n][j];
                     }
                 }
             }
@@ -80,16 +81,16 @@ public class MatrixHbcService {
         double[][] localP4 = new double[9][4];
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 4; j++) {
-                localP1[i][j] = alfaFactor * (weight[0] * (beforeHbc1[0][j] * tot) + weight[1] * (beforeHbc1[1][j] * tot));
-                localP2[i][j] = alfaFactor * (weight[0] * (beforeHbc2[0][j] * tot) + weight[1] * (beforeHbc2[1][j] * tot));
-                localP3[i][j] = alfaFactor * (weight[0] * (beforeHbc3[0][j] * tot) + weight[1] * (beforeHbc3[1][j] * tot));
-                localP4[i][j] = alfaFactor * (weight[0] * (beforeHbc4[0][j] * tot) + weight[1] * (beforeHbc4[1][j] * tot));
+                localP1[i][j] = alfaFactor * (weights[0] * (beforeHbc1[0][j] * tot) + weights[1] * (beforeHbc1[1][j] * tot));
+                localP2[i][j] = alfaFactor * (weights[0] * (beforeHbc2[0][j] * tot) + weights[1] * (beforeHbc2[1][j] * tot));
+                localP3[i][j] = alfaFactor * (weights[0] * (beforeHbc3[0][j] * tot) + weights[1] * (beforeHbc3[1][j] * tot));
+                localP4[i][j] = alfaFactor * (weights[0] * (beforeHbc4[0][j] * tot) + weights[1] * (beforeHbc4[1][j] * tot));
             }
         }
         int elementMax = 9;
         for (int element = 0; element < elementMax; element++) { // loop for 9 elements
             Element element1 = elements.get(element);
-            double[] detJWallElement1 = calculateDetJForElement(nodes, element1); // TODO there is 4 detJ for one element, should it be?
+            double[] detJWallElement1 = calculateDetJForElement(nodes, element1);
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
                     BCwall1E1[element][i][j] *= detJWallElement1[0];
@@ -116,7 +117,7 @@ public class MatrixHbcService {
             //***** Element 1 and his IDs
 //            List<Integer> e1IDs = element1.getIDs();
             List<Integer> e1IDs = elements.get(elementMax - 1 - element).getIDs(); // FIXME here is a big change!!!!!!!
-            // FIXME element9 licz dla niego H lokalne + HBC lokalne, a weight agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
+            // FIXME element9 licz dla niego H lokalne + HBC lokalne, a weights agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
 
 //            System.out.println("element " + (element + 1) + ": " + e1IDs); // 1, 2, 6, 5
 
@@ -130,7 +131,7 @@ public class MatrixHbcService {
 //            System.out.println("localVectorP for element " + (element + 1) + ": ");
 //            MatrixService.showTable1D(localVectorP);
             e1IDs = element1.getIDs(); // FIXME here is a big change!!!!!!!!!!!!!!!!!!!!!!!!
-            // FIXME  // element9 licz dla niego H lokalne + HBC lokalne, a weight agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
+            // FIXME  // element9 licz dla niego H lokalne + HBC lokalne, a weights agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
 
             // here is aggregation
             for (int i = 0; i < 4; i++) {
@@ -202,7 +203,7 @@ public class MatrixHbcService {
         if (nodes.get((eIDs.get(0)) - 1).isBC() && nodes.get((eIDs.get(1)) - 1).isBC()) { //top right && top left ^^
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
-                    localBC1[i][j] = BCwall3[i][j]; //FIXME here how to do that?
+                    localBC1[i][j] = BCwall3[i][j];
                 }
             }
         }

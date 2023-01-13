@@ -33,7 +33,7 @@ public class App {
         MatrixService.showTable2Dshort(globalAggregationMatrixC);
 
         // ********************** Here for [HBC] and Vector {P} **********************
-        MatrixHbcService.calculateMatrixHbc_andVectorP(grid);
+        MatrixHbcService.calculateMatrixHbc_andVectorP(grid, NUMBER_OF_NODES);
         System.out.println("globalAggregationHBC: ");
         MatrixService.showTable2Dshort(globalAggregationHBC);
         System.out.println("globalAggregationVectorP: ");
@@ -98,7 +98,11 @@ public class App {
         System.out.println("vectorP_plus_matrixCByDeltaTauMultipliedByT0 ->> Vector ([{P}+{[C]/dT}*{T0}): ");
         MatrixService.showTable1D(vectorP_plus_matrixCByDeltaTauMultipliedByT0);
 
+        //***********************************************************************
+        //***********************************************************************
         //********************** Adding time for solutions **********************
+        //***********************************************************************
+        //***********************************************************************
         double[] initialTemperatureVector = new double[grid.getNodesNumber()];
         Arrays.fill(initialTemperatureVector, GlobalData.initialTemp);
         for (int i = 0; i < grid.getNodesNumber(); i++) {
@@ -107,30 +111,19 @@ public class App {
             }
         }
         MatrixService.showTable2Dshort(globalAggregationH_plus_HBC);
-        // ******* here creating a copy *******
-        double[] copyOfGlobalAggregationVectorP = new double[globalAggregationVectorP.length];
-        for (int i = 0; i < globalAggregationVectorP.length; i++) {
-            copyOfGlobalAggregationVectorP[i] = globalAggregationVectorP[i];
-        }
 
-        double[][] copyOfGlobalAggregationH_plus_HBC = new double[globalAggregationH_plus_HBC.length][globalAggregationH_plus_HBC[0].length];
-        for (int i = 0; i < globalAggregationH_plus_HBC.length; i++) {
-            for (int j = 0; j < globalAggregationH_plus_HBC[i].length; j++) {
-                copyOfGlobalAggregationH_plus_HBC[i][j] = globalAggregationH_plus_HBC[i][j];
-            }
-        }
+        // ******* here creating a copy *******
+        double[] copyOfGlobalAggregationVectorP = Arrays.copyOf(globalAggregationVectorP, globalAggregationVectorP.length);
+        double[][] copyOfGlobalAggregationH_plus_HBC = Arrays.copyOf(globalAggregationH_plus_HBC, globalAggregationH_plus_HBC.length);
         // ******* after copy *******
 
         System.out.println("Time[s]\t\tMinTemp\t\t\t\t\tMaxTemp");
         for (int i = simulationStepTime; i <= GlobalData.simulationTime; i += simulationStepTime) {
-
             for (int j = 0; j < grid.getNodesNumber(); j++) {
                 for (int k = 0; k < grid.getNodesNumber(); k++) {
                     globalAggregationVectorP[j] += (globalAggregationMatrixC[j][k] / simulationStepTime) * initialTemperatureVector[k];
                 }
             }
-
-
             initialTemperatureVector = GaussianEliminationService.findSolutionForSystemOfEquations(globalAggregationH_plus_HBC, globalAggregationVectorP);
             for (int f = 0; f < grid.getNodesNumber(); f++) {
                 globalAggregationVectorP[f] = copyOfGlobalAggregationVectorP[f];
