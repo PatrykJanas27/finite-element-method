@@ -4,8 +4,8 @@ import org.example.lab1.Element;
 import org.example.lab1.GlobalData;
 import org.example.lab1.Grid;
 import org.example.lab1.Node;
-import org.example.lab4.MatrixService;
-import org.example.lab6.BorderConditionService;
+import org.example.data.MatrixService;
+import org.example.lab6.MatrixHbcService;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class MatrixC {
         double[][] geometricModelsValues = new double[4][4];
         for (int i = 0; i < 4; i++) { // funkcje kształtów
             for (int j = 0; j < 4; j++) {
-                geometricModelsValues[i][j] = BorderConditionService.geometricModelsN(j, ksi[i], eta[i]);
+                geometricModelsValues[i][j] = MatrixHbcService.geometricModelsN(j, ksi[i], eta[i]);
             }
         }
         System.out.println("geometricModelsValues: ");
@@ -42,7 +42,7 @@ public class MatrixC {
         // for every element !!!
         for (int element = 0; element < grid.getElementsNumber(); element++) {
             Element element1 = elements.get(element);
-            double[] detJWallElement1 = BorderConditionService.calculateDetJForElement(nodes, element1);
+            double[] detJWallElement1 = MatrixHbcService.calculateDetJForElement(nodes, element1);
             System.out.println("detJ for element " + element);
             MatrixService.showTable1D(detJWallElement1);
 

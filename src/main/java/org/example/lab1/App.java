@@ -2,8 +2,8 @@ package org.example.lab1;
 
 import org.example.data.InputHandler;
 import org.example.lab4.MatrixHService;
-import org.example.lab4.MatrixService;
-import org.example.lab6.BorderConditionService;
+import org.example.data.MatrixService;
+import org.example.lab6.MatrixHbcService;
 import org.example.lab6.GaussianEliminationService;
 
 import java.io.FileNotFoundException;
@@ -11,8 +11,8 @@ import java.util.Arrays;
 
 import static org.example.lab4.MatrixHService.globalAggregationH;
 import static org.example.lab4.MatrixHService.globalAggregationMatrixC;
-import static org.example.lab6.BorderConditionService.globalAggregationHBC;
-import static org.example.lab6.BorderConditionService.globalAggregationVectorP;
+import static org.example.lab6.MatrixHbcService.globalAggregationHBC;
+import static org.example.lab6.MatrixHbcService.globalAggregationVectorP;
 
 public class App {
 
@@ -22,13 +22,9 @@ public class App {
     private static final int NUMBER_OF_NODES = 2;
 
     public static void main(String[] args) throws FileNotFoundException, NumberFormatException {
-        Grid grid = InputHandler.readFile(FILE_NAME2);
+        Grid grid = InputHandler.readFile(FILE_NAME1);
         System.out.println(grid);
 
-        // ********************** Here for calculations with time **********************
-//        double currentTime = 0;
-//        double[] temperaturesFromLastSimulations = new double[grid.getElementsNumber()];
-//        while (GlobalData.simulationTime + GlobalData.simulationStepTime != currentTime) {
         // ********************** Here are calculation for Matrix[H] and Matrix[C] **********************
         MatrixHService.calculate_MatrixH_and_MatrixC(grid, NUMBER_OF_NODES);
         System.out.println("Global Aggregation matrix H");
@@ -37,7 +33,7 @@ public class App {
         MatrixService.showTable2Dshort(globalAggregationMatrixC);
 
         // ********************** Here for [HBC] and Vector {P} **********************
-        BorderConditionService.calculateMatrixHbc_andVectorP(grid);
+        MatrixHbcService.calculateMatrixHbc_andVectorP(grid);
         System.out.println("globalAggregationHBC: ");
         MatrixService.showTable2Dshort(globalAggregationHBC);
         System.out.println("globalAggregationVectorP: ");
@@ -52,7 +48,6 @@ public class App {
         }
         System.out.println("globalAggregationH_plus_HBC: ");
         MatrixService.showTable2Dshort(globalAggregationH_plus_HBC);
-
 
         // ********************** Here for [H]{t}+{P}=0, where H is [H+HBC] already **********************
         double[] solutionForSystemOfEquations = GaussianEliminationService.findSolutionForSystemOfEquations(
@@ -71,12 +66,6 @@ public class App {
         }
         System.out.println("globalAggregationMatrixCByDeltaTau ->> [C]/dT: ");
         MatrixService.showTable2Dshort(globalAggregationMatrixCByDeltaTau);
-
-//            double[] initialTempVector = (currentTime == 0) ?
-//                    new double[globalAggregationVectorP.length] : temperaturesFromLastSimulations;
-//            if (currentTime == 0) {
-//                Arrays.fill(initialTempVector, 0);
-//            }
 
         // ********************** Here for Matrix [H] = [H]+[C]/dT **********************
         double[][] globalAggregationMatrixHPlusMatrixCByDeltaTau = new double[16][16];
@@ -103,7 +92,7 @@ public class App {
         //********************** Here for {P} = {P}+{[C]/dT}*{T0} **********************
         double[] vectorP_plus_matrixCByDeltaTauMultipliedByT0 = new double[16];
         for (int i = 0; i < 16; i++) {
-            //FIXME here is a bug!!!!!!!!!!!!!!!!!!!
+            //FIXME here is a bug for mix grid!!!!!!!!!!!!!!!!!!!
             vectorP_plus_matrixCByDeltaTauMultipliedByT0[i] += globalAggregationVectorP[i] + globalAggregationMatrixCByDeltaTauMultiplyT0[i];
         }
         System.out.println("vectorP_plus_matrixCByDeltaTauMultipliedByT0 ->> Vector ([{P}+{[C]/dT}*{T0}): ");
@@ -118,7 +107,7 @@ public class App {
             }
         }
         MatrixService.showTable2Dshort(globalAggregationH_plus_HBC);
-        // *******copy******
+        // ******* here creating a copy *******
         double[] copyOfGlobalAggregationVectorP = new double[globalAggregationVectorP.length];
         for (int i = 0; i < globalAggregationVectorP.length; i++) {
             copyOfGlobalAggregationVectorP[i] = globalAggregationVectorP[i];
@@ -130,7 +119,7 @@ public class App {
                 copyOfGlobalAggregationH_plus_HBC[i][j] = globalAggregationH_plus_HBC[i][j];
             }
         }
-        // after copy**********
+        // ******* after copy *******
 
         System.out.println("Time[s]\t\tMinTemp\t\t\t\t\tMaxTemp");
         for (int i = simulationStepTime; i <= GlobalData.simulationTime; i += simulationStepTime) {

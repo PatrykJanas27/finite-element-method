@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
-public class BorderConditionService {
+public class MatrixHbcService {
     public static double[][] globalAggregationHBC;
     public static double[] globalAggregationVectorP;
 

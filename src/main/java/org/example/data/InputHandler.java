@@ -1,5 +1,6 @@
 package org.example.data;
 
+import lombok.CustomLog;
 import org.example.lab1.Element;
 import org.example.lab1.GlobalData;
 import org.example.lab1.Grid;
@@ -11,13 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+//@Slf4j(topic = "InputHandler")
+@CustomLog(topic = "InputHandler")
 public class InputHandler {
     public static Grid readFile(String fileName) throws FileNotFoundException {
+        log.info("Reading file: " + fileName);
         Grid grid = new Grid();
         try (Scanner scanner = new Scanner(new File(fileName))) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                readGlobalDataFromFile( line);
+                readGlobalDataFromFile(line);
                 readGridDataFromFile(grid, line);
                 readNodeCoordinatesDataFromFile(grid, scanner, line);
                 readElementDataFromFile(grid, scanner, line);
@@ -91,7 +95,7 @@ public class InputHandler {
         }
     }
 
-    private static void readGlobalDataFromFile( String line) {
+    private static void readGlobalDataFromFile(String line) {
         if (line.contains("SimulationTime")) {
             String[] s = line.split(" ");
             if (s.length == 2) {

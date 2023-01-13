@@ -4,7 +4,7 @@ import org.example.lab1.Element;
 import org.example.lab1.GlobalData;
 import org.example.lab1.Grid;
 import org.example.lab1.Node;
-import org.example.lab6.BorderConditionService;
+import org.example.lab6.MatrixHbcService;
 
 import java.util.List;
 import java.util.function.Function;
@@ -27,10 +27,10 @@ public class MatrixHService {
         List<Element> elements = grid.getElements();
         List<Node> nodes = grid.getNodes();
         int length = numberOfNodes * numberOfNodes;
-        int elementsNumber = grid.getElementsNumber();
         double[][][] Hpcs = new double[length][4][4];
-        double[] weightsOfPoints = GlobalData.getWeightsArray(numberOfNodes); //{1.0, 1.0}
-        // --> main loop for elements
+        double[] weightsOfPoints = GlobalData.getWeightsArray(numberOfNodes);
+
+        // **************** main loop for elements ******************
         for (int e = 0; e < grid.getElements().size(); e++) {
             Element element = elements.get(e);
             double[] pcx = new double[4];
@@ -48,12 +48,12 @@ public class MatrixHService {
             double[][] geometricModelsValues = new double[4][4];
             for (int i = 0; i < 4; i++) { // funkcje kształtów
                 for (int j = 0; j < 4; j++) {
-                    geometricModelsValues[i][j] = BorderConditionService.geometricModelsN(j, ksi[i], eta[i]);
+                    geometricModelsValues[i][j] = MatrixHbcService.geometricModelsN(j, ksi[i], eta[i]);
                 }
             }
 //            System.out.println("geometricModelsValues: ");
 //            MatrixService.showTable2D(geometricModelsValues);
-            //
+
             double[][][] matrixCForFourPoints = new double[length][4][4]; // there will be 9 matrix C for every point if numberOfNodes = 3
             for (int pc = 0; pc < 4; pc++) {
                 for (int i = 0; i < 4; i++) {
@@ -142,16 +142,7 @@ public class MatrixHService {
                 for (int i = 0; i < 4; i++) {
                     for (int j = 0; j < 4; j++) {
                         localHForElement[i][j] += Hpcs[pc][i][j] * weightsOfPoints[pc / numberOfNodes] * weightsOfPoints[pc % numberOfNodes];
-                        // bellow example for 3 numberOfNodes
-//                            localHForElement[i][j] = Hpcs[0][i][j] * weightsOfPoints[0] * weightsOfPoints[0]
-//                                    + Hpcs[1][i][j] * weightsOfPoints[1] * weightsOfPoints[0]
-//                                    + Hpcs[2][i][j] * weightsOfPoints[2] * weightsOfPoints[0]
-//                                    + Hpcs[3][i][j] * weightsOfPoints[0] * weightsOfPoints[1]
-//                                    + Hpcs[4][i][j] * weightsOfPoints[1] * weightsOfPoints[1]
-//                                    + Hpcs[5][i][j] * weightsOfPoints[2] * weightsOfPoints[1]
-//                                    + Hpcs[6][i][j] * weightsOfPoints[0] * weightsOfPoints[2]
-//                                    + Hpcs[7][i][j] * weightsOfPoints[1] * weightsOfPoints[2]
-//                                    + Hpcs[8][i][j] * weightsOfPoints[2] * weightsOfPoints[2];
+
                         localMatrixCForElement[i][j] = specificHeat * density * determinants[pc] * matrixCForFourPoints[0][i][j] // sum for one element
                                 + specificHeat * density * determinants[pc] * matrixCForFourPoints[1][i][j]
                                 + specificHeat * density * determinants[pc] * matrixCForFourPoints[2][i][j]
@@ -171,7 +162,7 @@ public class MatrixHService {
 //            MatrixService.showTable2D(localMatrixCForElement); // for one element
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
-                    globalAggregationMatrixC[element.getIDs().get(i) - 1][element.getIDs().get(j) - 1] += localMatrixCForElement[i][j]; // without + !!! just = ???
+                    globalAggregationMatrixC[element.getIDs().get(i) - 1][element.getIDs().get(j) - 1] += localMatrixCForElement[i][j];
                 }
             }
 
@@ -183,23 +174,5 @@ public class MatrixHService {
 //        MatrixService.showTable2Dshort(globalAggregationMatrixC);
     }
 
-    public static double[][] getTableOfEta2IntegralMultipliedByMatrix(double[][] mainMatrix, double[][] tableOfKsiIntegral, double[][] tableOfEtaIntegral) {
-        double[][] table2DlaPc1 = new double[tableOfKsiIntegral.length][4];
-        for (int i = 0; i < tableOfKsiIntegral.length; i++) {
-            for (int j = 0; j < 4; j++) {
-                table2DlaPc1[i][j] = mainMatrix[1][0] * tableOfKsiIntegral[i][j] + mainMatrix[1][1] * tableOfEtaIntegral[i][j];
-            }
-        }
-        return table2DlaPc1;
-    }
 
-    public static double[][] getTableOfKsi1IntegralMultipliedByMatrix(double[][] mainMatrix, double[][] tableOfKsiIntegral, double[][] tableOfEtaIntegral) {
-        double[][] table1DlaPc1 = new double[tableOfKsiIntegral.length][4];
-        for (int i = 0; i < tableOfKsiIntegral.length; i++) {
-            for (int j = 0; j < 4; j++) {
-                table1DlaPc1[i][j] = mainMatrix[0][0] * tableOfKsiIntegral[i][j] + mainMatrix[0][1] * tableOfEtaIntegral[i][j];
-            }
-        }
-        return table1DlaPc1;
-    }
 }

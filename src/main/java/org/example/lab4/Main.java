@@ -1,5 +1,6 @@
 package org.example.lab4;
 
+import org.example.data.MatrixService;
 import org.example.lab1.GlobalData;
 
 import java.util.List;
@@ -36,8 +37,8 @@ public class Main {
         double[][] tableOfKsiIntegral = IntegralFunctions.getTableForDnDividedByDKsi(numberOfNodes);
         double[][] tableOfEtaIntegral = IntegralFunctions.getTableForDnDividedByDEta(numberOfNodes);
 
-        double[][] tableOfKsiIntegralByM = MatrixHService.getTableOfKsi1IntegralMultipliedByMatrix(mainMatrix, tableOfKsiIntegral, tableOfEtaIntegral);
-        double[][] tableOfEtaIntegralByM = MatrixHService.getTableOfEta2IntegralMultipliedByMatrix(mainMatrix, tableOfKsiIntegral, tableOfEtaIntegral);
+        double[][] tableOfKsiIntegralByM = getTableOfKsi1IntegralMultipliedByMatrix(mainMatrix, tableOfKsiIntegral, tableOfEtaIntegral);
+        double[][] tableOfEtaIntegralByM = getTableOfEta2IntegralMultipliedByMatrix(mainMatrix, tableOfKsiIntegral, tableOfEtaIntegral);
         //===================Calculating tables of H for tree point integration (there will be 9 tables)==========
         int length = numberOfNodes * numberOfNodes;
         double[][][] Hpcs = new double[length][4][4];
@@ -105,5 +106,23 @@ public class Main {
         return new double[]{0, 0, 0.025, 0.025};
     }
 
+    private static double[][] getTableOfEta2IntegralMultipliedByMatrix(double[][] mainMatrix, double[][] tableOfKsiIntegral, double[][] tableOfEtaIntegral) {
+        double[][] table2DlaPc1 = new double[tableOfKsiIntegral.length][4];
+        for (int i = 0; i < tableOfKsiIntegral.length; i++) {
+            for (int j = 0; j < 4; j++) {
+                table2DlaPc1[i][j] = mainMatrix[1][0] * tableOfKsiIntegral[i][j] + mainMatrix[1][1] * tableOfEtaIntegral[i][j];
+            }
+        }
+        return table2DlaPc1;
+    }
 
+    private static double[][] getTableOfKsi1IntegralMultipliedByMatrix(double[][] mainMatrix, double[][] tableOfKsiIntegral, double[][] tableOfEtaIntegral) {
+        double[][] table1DlaPc1 = new double[tableOfKsiIntegral.length][4];
+        for (int i = 0; i < tableOfKsiIntegral.length; i++) {
+            for (int j = 0; j < 4; j++) {
+                table1DlaPc1[i][j] = mainMatrix[0][0] * tableOfKsiIntegral[i][j] + mainMatrix[0][1] * tableOfEtaIntegral[i][j];
+            }
+        }
+        return table1DlaPc1;
+    }
 }

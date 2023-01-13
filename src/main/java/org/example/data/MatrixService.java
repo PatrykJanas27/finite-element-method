@@ -1,4 +1,4 @@
-package org.example.lab4;
+package org.example.data;
 
 import org.example.lab1.GlobalData;
 
