@@ -38,15 +38,21 @@ public class MatrixHbcService {
         }
         if(numberOfPoints==3){
             ksiEta = new double[][]{
-                    {-sqrt(3.0 / 5),-sqrt(3.0 / 5)},
-                    {0,-sqrt(3.0 / 5)},
-                    {sqrt(3.0 / 5),-sqrt(3.0 / 5)},
-                    {-sqrt(3.0 / 5),0},
-                    {0,0},
-                    {sqrt(3.0 / 5),0},
-                    {-sqrt(3.0 / 5),sqrt(3.0 / 5)},
-                    {0,sqrt(3.0 / 5)},
-                    {sqrt(3.0 / 5),sqrt(3.0 / 5)}
+                    {-sqrt(3.0 / 5),-1},
+                    {0,-1},
+                    {sqrt(3.0 / 5),-1},
+
+                    {1,-sqrt(3.0 / 5)},
+                    {1,0},
+                    {1,sqrt(3.0 / 5)},
+
+                    {-sqrt(3.0 / 5),1},
+                    {0,1},
+                    {sqrt(3.0 / 5),1},
+
+                    {-1,-sqrt(3.0 / 5)},
+                    {-1,0},
+                    {-1,sqrt(3.0 / 5)},
             };
         }
 
@@ -57,32 +63,32 @@ public class MatrixHbcService {
         double[][] beforeHbc4 = new double[numberOfPoints][4]; // N4
         if(numberOfPoints==2){
             for (int i = 0; i < 4; i++) {
-                beforeHbc1[0][i] = geometricModelsN(i, ksiEta[1][0], ksiEta[1][1]); // (1 / Math.sqrt(3)), -1
-                beforeHbc1[1][i] = geometricModelsN(i, ksiEta[0][0], ksiEta[0][1]); // -(1 / Math.sqrt(3)), -1
-                beforeHbc2[0][i] = geometricModelsN(i, ksiEta[3][0], ksiEta[3][1]);
-                beforeHbc2[1][i] = geometricModelsN(i, ksiEta[2][0], ksiEta[2][1]);
+                beforeHbc1[0][i] = geometricModelsN(i, ksiEta[0][0], ksiEta[0][1]); // (1 / Math.sqrt(3)), -1
+                beforeHbc1[1][i] = geometricModelsN(i, ksiEta[1][0], ksiEta[1][1]); // -(1 / Math.sqrt(3)), -1
+                beforeHbc2[0][i] = geometricModelsN(i, ksiEta[2][0], ksiEta[2][1]);
+                beforeHbc2[1][i] = geometricModelsN(i, ksiEta[3][0], ksiEta[3][1]);
 
-                beforeHbc3[0][i] = geometricModelsN(i, ksiEta[5][0], ksiEta[5][1]);
-                beforeHbc3[1][i] = geometricModelsN(i, ksiEta[4][0], ksiEta[4][1]);
-                beforeHbc4[0][i] = geometricModelsN(i, ksiEta[7][0], ksiEta[7][1]);
-                beforeHbc4[1][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
+                beforeHbc3[0][i] = geometricModelsN(i, ksiEta[4][0], ksiEta[4][1]);
+                beforeHbc3[1][i] = geometricModelsN(i, ksiEta[5][0], ksiEta[5][1]);
+                beforeHbc4[0][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
+                beforeHbc4[1][i] = geometricModelsN(i, ksiEta[7][0], ksiEta[7][1]);
             }
         }
         if(numberOfPoints==3){
             for (int i = 0; i < 4; i++) {
                 beforeHbc1[0][i] = geometricModelsN(i, ksiEta[0][0], ksiEta[0][1]);
                 beforeHbc1[1][i] = geometricModelsN(i, ksiEta[1][0], ksiEta[1][1]);
-                beforeHbc1[2][i] = geometricModelsN(i, ksiEta[3][0], ksiEta[3][1]);
+                beforeHbc1[2][i] = geometricModelsN(i, ksiEta[2][0], ksiEta[2][1]);
                 beforeHbc2[0][i] = geometricModelsN(i, ksiEta[3][0], ksiEta[3][1]);
-                beforeHbc2[1][i] = geometricModelsN(i, ksiEta[2][0], ksiEta[2][1]);
-                beforeHbc2[2][i] = geometricModelsN(i, ksiEta[2][0], ksiEta[2][1]);
+                beforeHbc2[1][i] = geometricModelsN(i, ksiEta[4][0], ksiEta[4][1]);
+                beforeHbc2[2][i] = geometricModelsN(i, ksiEta[5][0], ksiEta[5][1]);
 
-                beforeHbc3[0][i] = geometricModelsN(i, ksiEta[5][0], ksiEta[5][1]);
-                beforeHbc3[1][i] = geometricModelsN(i, ksiEta[4][0], ksiEta[4][1]);
-                beforeHbc3[2][i] = geometricModelsN(i, ksiEta[4][0], ksiEta[4][1]);
-                beforeHbc4[0][i] = geometricModelsN(i, ksiEta[7][0], ksiEta[7][1]);
-                beforeHbc4[1][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
-                beforeHbc4[2][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
+                beforeHbc3[0][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
+                beforeHbc3[1][i] = geometricModelsN(i, ksiEta[7][0], ksiEta[7][1]);
+                beforeHbc3[2][i] = geometricModelsN(i, ksiEta[8][0], ksiEta[8][1]);
+                beforeHbc4[0][i] = geometricModelsN(i, ksiEta[9][0], ksiEta[9][1]);
+                beforeHbc4[1][i] = geometricModelsN(i, ksiEta[10][0], ksiEta[10][1]);
+                beforeHbc4[2][i] = geometricModelsN(i, ksiEta[11][0], ksiEta[11][1]);
             }
         }
 
@@ -103,13 +109,18 @@ public class MatrixHbcService {
 //        double[] weights = new double[]{1.0, 1.0}; //FIXME for number of pc
         double[] weights = GlobalData.getWeightsArray(numberOfPoints);
         for (int e = 0; e < 9; e++) { //FIXME for number of elements
-            for (int n = 0; n < 2; n++) { // here is a loop for pc1 and pc2 //FIXME for numberOfElements
+            for (int n = 0; n < numberOfPoints; n++) { // here is a loop for pc1 and pc2 //FIXME for numberOfElements
                 for (int i = 0; i < 4; i++) {
                     for (int j = 0; j < 4; j++) { // Integral -> alfa*({N}*{N}^T)dS
-                        BCwall1E1[e][i][j] += weights[n] * alfaFactor * beforeHbc1[n][i] * weights[n] * beforeHbc1[n][j];
-                        BCwall2E1[e][i][j] += weights[n] * alfaFactor * beforeHbc2[n][i] * weights[n] * beforeHbc2[n][j];
-                        BCwall3E1[e][i][j] += weights[n] * alfaFactor * beforeHbc3[n][i] * weights[n] * beforeHbc3[n][j];
-                        BCwall4E1[e][i][j] += weights[n] * alfaFactor * beforeHbc4[n][i] * weights[n] * beforeHbc4[n][j];
+//                        BCwall1E1[e][i][j] += weights[n] * beforeHbc1[n][i] * weights[n] * beforeHbc1[n][j];
+//                        BCwall2E1[e][i][j] += weights[n] * beforeHbc2[n][i] * weights[n] * beforeHbc2[n][j];
+//                        BCwall3E1[e][i][j] += weights[n] * beforeHbc3[n][i] * weights[n] * beforeHbc3[n][j];
+//                        BCwall4E1[e][i][j] += weights[n] * beforeHbc4[n][i] * weights[n] * beforeHbc4[n][j];
+                        //FIXME top or bellow??
+                        BCwall1E1[e][i][j] += weights[n] * beforeHbc1[n][i] * beforeHbc1[n][j];
+                        BCwall2E1[e][i][j] += weights[n] * beforeHbc2[n][i] * beforeHbc2[n][j];
+                        BCwall3E1[e][i][j] += weights[n] * beforeHbc3[n][i] * beforeHbc3[n][j];
+                        BCwall4E1[e][i][j] += weights[n] * beforeHbc4[n][i] * beforeHbc4[n][j];
                     }
                 }
             }
@@ -133,10 +144,10 @@ public class MatrixHbcService {
             double[] detJWallElement1 = calculateDetJForElement(nodes, element1);
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
-                    BCwall1E1[element][i][j] *= detJWallElement1[0];
-                    BCwall2E1[element][i][j] *= detJWallElement1[1];
-                    BCwall3E1[element][i][j] *= detJWallElement1[2];
-                    BCwall4E1[element][i][j] *= detJWallElement1[3];
+                    BCwall1E1[element][i][j] *= detJWallElement1[0]*alfaFactor;
+                    BCwall2E1[element][i][j] *= detJWallElement1[1]*alfaFactor;
+                    BCwall3E1[element][i][j] *= detJWallElement1[2]*alfaFactor;
+                    BCwall4E1[element][i][j] *= detJWallElement1[3]*alfaFactor;
                 }
             }
 
