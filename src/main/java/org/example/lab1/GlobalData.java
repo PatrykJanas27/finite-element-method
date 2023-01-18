@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static java.lang.Math.pow;
@@ -233,5 +234,17 @@ public class GlobalData {
             }
             default -> throw new IllegalArgumentException("There is not defined that numberOfNodes");
         }
+    }
+
+    public static Double geometricModelsN(int whichOneFrom1To4, double ksi, double eta) {
+        List<BiFunction<Double, Double, Double>> geometricModels = new ArrayList<>() {
+            {
+                add((ksi, eta) -> 0.25 * (1 - ksi) * (1 - eta));
+                add((ksi, eta) -> 0.25 * (1 + ksi) * (1 - eta));
+                add((ksi, eta) -> 0.25 * (1 + ksi) * (1 + eta));
+                add((ksi, eta) -> 0.25 * (1 - ksi) * (1 + eta));
+            }
+        };
+        return geometricModels.get(whichOneFrom1To4).apply(ksi, eta);
     }
 }

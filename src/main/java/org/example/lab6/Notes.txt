@@ -1,0 +1,9 @@
+//        double[][][] geometricModelsValues = new double[4][numberOfPoints][4];
+//        for (int j = 0; j < 4; j++) { // iterate through walls
+//            for (int i = 0; i < numberOfPoints; i++) { // iterate through points
+//                int k = j * numberOfPoints + i;
+//                for (int l = 0; l < 4; l++) { // iterate through values
+//                    geometricModelsValues[j][i][l] = geometricModelsN(l, ksiEta[k][0], ksiEta[k][1]);
+//                }
+//            }
+//        }

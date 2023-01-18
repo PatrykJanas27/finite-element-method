@@ -1,15 +1,15 @@
 package org.example.lab6;
 
+import org.example.data.MatrixService;
 import org.example.lab1.Element;
 import org.example.lab1.GlobalData;
 import org.example.lab1.Grid;
 import org.example.lab1.Node;
-import org.example.data.MatrixService;
 
 import java.util.List;
 
+import static org.example.lab1.GlobalData.geometricModelsN;
 import static org.example.lab6.MatrixHbcService.calculateDetJForElement;
-import static org.example.lab6.MatrixHbcService.geometricModelsN;
 
 @Deprecated
 public class VectorP {

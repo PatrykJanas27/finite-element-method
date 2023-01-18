@@ -9,6 +9,8 @@ import org.example.lab6.MatrixHbcService;
 
 import java.util.List;
 
+import static org.example.lab1.GlobalData.geometricModelsN;
+
 @Deprecated
 public class MatrixC {
 
@@ -32,7 +34,7 @@ public class MatrixC {
         double[][] geometricModelsValues = new double[4][4];
         for (int i = 0; i < 4; i++) { // funkcje kształtów
             for (int j = 0; j < 4; j++) {
-                geometricModelsValues[i][j] = MatrixHbcService.geometricModelsN(j, ksi[i], eta[i]);
+                geometricModelsValues[i][j] = geometricModelsN(j, ksi[i], eta[i]);
             }
         }
         System.out.println("geometricModelsValues: ");

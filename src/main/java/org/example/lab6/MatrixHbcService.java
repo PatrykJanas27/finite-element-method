@@ -5,11 +5,10 @@ import org.example.lab1.GlobalData;
 import org.example.lab1.Grid;
 import org.example.lab1.Node;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 
 import static java.lang.Math.sqrt;
+import static org.example.lab1.GlobalData.geometricModelsN;
 
 public class MatrixHbcService {
     public static double[][] globalAggregationHBC;
@@ -22,40 +21,38 @@ public class MatrixHbcService {
         int length = numberOfPoints * numberOfPoints;
         double[][] ksiEta = getCoordinatesKsiEta(numberOfPoints);
 
-
-        // Wartości dla funkcji kształtu
-        double[][] beforeHbc1 = new double[numberOfPoints][4]; // for wall 1
-        double[][] beforeHbc2 = new double[numberOfPoints][4]; // for wall 2
-        double[][] beforeHbc3 = new double[numberOfPoints][4]; // N3
-        double[][] beforeHbc4 = new double[numberOfPoints][4]; // N4
+        double[][] geometricModelsValues1 = new double[numberOfPoints][4]; // for wall 1
+        double[][] geometricModelsValues2 = new double[numberOfPoints][4]; // for wall 2
+        double[][] geometricModelsValues3 = new double[numberOfPoints][4]; // N3
+        double[][] geometricModelsValues4 = new double[numberOfPoints][4]; // N4
         if (numberOfPoints == 2) {
             for (int i = 0; i < 4; i++) {
-                beforeHbc1[0][i] = geometricModelsN(i, ksiEta[0][0], ksiEta[0][1]); // (1 / Math.sqrt(3)), -1
-                beforeHbc1[1][i] = geometricModelsN(i, ksiEta[1][0], ksiEta[1][1]); // -(1 / Math.sqrt(3)), -1
-                beforeHbc2[0][i] = geometricModelsN(i, ksiEta[2][0], ksiEta[2][1]);
-                beforeHbc2[1][i] = geometricModelsN(i, ksiEta[3][0], ksiEta[3][1]);
+                geometricModelsValues1[0][i] = geometricModelsN(i, ksiEta[0][0], ksiEta[0][1]);
+                geometricModelsValues1[1][i] = geometricModelsN(i, ksiEta[1][0], ksiEta[1][1]);
+                geometricModelsValues2[0][i] = geometricModelsN(i, ksiEta[2][0], ksiEta[2][1]);
+                geometricModelsValues2[1][i] = geometricModelsN(i, ksiEta[3][0], ksiEta[3][1]);
 
-                beforeHbc3[0][i] = geometricModelsN(i, ksiEta[4][0], ksiEta[4][1]);
-                beforeHbc3[1][i] = geometricModelsN(i, ksiEta[5][0], ksiEta[5][1]);
-                beforeHbc4[0][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
-                beforeHbc4[1][i] = geometricModelsN(i, ksiEta[7][0], ksiEta[7][1]);
+                geometricModelsValues3[0][i] = geometricModelsN(i, ksiEta[4][0], ksiEta[4][1]);
+                geometricModelsValues3[1][i] = geometricModelsN(i, ksiEta[5][0], ksiEta[5][1]);
+                geometricModelsValues4[0][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
+                geometricModelsValues4[1][i] = geometricModelsN(i, ksiEta[7][0], ksiEta[7][1]);
             }
         }
         if (numberOfPoints == 3) {
             for (int i = 0; i < 4; i++) {
-                beforeHbc1[0][i] = geometricModelsN(i, ksiEta[0][0], ksiEta[0][1]);
-                beforeHbc1[1][i] = geometricModelsN(i, ksiEta[1][0], ksiEta[1][1]);
-                beforeHbc1[2][i] = geometricModelsN(i, ksiEta[2][0], ksiEta[2][1]);
-                beforeHbc2[0][i] = geometricModelsN(i, ksiEta[3][0], ksiEta[3][1]);
-                beforeHbc2[1][i] = geometricModelsN(i, ksiEta[4][0], ksiEta[4][1]);
-                beforeHbc2[2][i] = geometricModelsN(i, ksiEta[5][0], ksiEta[5][1]);
+                geometricModelsValues1[0][i] = geometricModelsN(i, ksiEta[0][0], ksiEta[0][1]);
+                geometricModelsValues1[1][i] = geometricModelsN(i, ksiEta[1][0], ksiEta[1][1]);
+                geometricModelsValues1[2][i] = geometricModelsN(i, ksiEta[2][0], ksiEta[2][1]);
+                geometricModelsValues2[0][i] = geometricModelsN(i, ksiEta[3][0], ksiEta[3][1]);
+                geometricModelsValues2[1][i] = geometricModelsN(i, ksiEta[4][0], ksiEta[4][1]);
+                geometricModelsValues2[2][i] = geometricModelsN(i, ksiEta[5][0], ksiEta[5][1]);
 
-                beforeHbc3[0][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
-                beforeHbc3[1][i] = geometricModelsN(i, ksiEta[7][0], ksiEta[7][1]);
-                beforeHbc3[2][i] = geometricModelsN(i, ksiEta[8][0], ksiEta[8][1]);
-                beforeHbc4[0][i] = geometricModelsN(i, ksiEta[9][0], ksiEta[9][1]);
-                beforeHbc4[1][i] = geometricModelsN(i, ksiEta[10][0], ksiEta[10][1]);
-                beforeHbc4[2][i] = geometricModelsN(i, ksiEta[11][0], ksiEta[11][1]);
+                geometricModelsValues3[0][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
+                geometricModelsValues3[1][i] = geometricModelsN(i, ksiEta[7][0], ksiEta[7][1]);
+                geometricModelsValues3[2][i] = geometricModelsN(i, ksiEta[8][0], ksiEta[8][1]);
+                geometricModelsValues4[0][i] = geometricModelsN(i, ksiEta[9][0], ksiEta[9][1]);
+                geometricModelsValues4[1][i] = geometricModelsN(i, ksiEta[10][0], ksiEta[10][1]);
+                geometricModelsValues4[2][i] = geometricModelsN(i, ksiEta[11][0], ksiEta[11][1]);
             }
         }
 
@@ -74,10 +71,10 @@ public class MatrixHbcService {
             for (int n = 0; n < numberOfPoints; n++) {
                 for (int i = 0; i < 4; i++) {
                     for (int j = 0; j < 4; j++) { // Integral -> alfa*({N}*{N}^T)dS
-                        BCwall1[e][i][j] += weights[n] * beforeHbc1[n][i] * beforeHbc1[n][j];
-                        BCwall2[e][i][j] += weights[n] * beforeHbc2[n][i] * beforeHbc2[n][j];
-                        BCwall3[e][i][j] += weights[n] * beforeHbc3[n][i] * beforeHbc3[n][j];
-                        BCwall4[e][i][j] += weights[n] * beforeHbc4[n][i] * beforeHbc4[n][j];
+                        BCwall1[e][i][j] += weights[n] * geometricModelsValues1[n][i] * geometricModelsValues1[n][j];
+                        BCwall2[e][i][j] += weights[n] * geometricModelsValues2[n][i] * geometricModelsValues2[n][j];
+                        BCwall3[e][i][j] += weights[n] * geometricModelsValues3[n][i] * geometricModelsValues3[n][j];
+                        BCwall4[e][i][j] += weights[n] * geometricModelsValues4[n][i] * geometricModelsValues4[n][j];
                     }
                 }
             }
@@ -91,16 +88,16 @@ public class MatrixHbcService {
             for (int n = 0; n < numberOfPoints; n++) {
                 for (int j = 0; j < 4; j++) {
                     if (numberOfPoints == 2) {
-                        localP1[i][j] = (weights[0] * (beforeHbc1[0][j] * tot) + weights[1] * (beforeHbc1[1][j] * tot));
-                        localP2[i][j] = (weights[0] * (beforeHbc2[0][j] * tot) + weights[1] * (beforeHbc2[1][j] * tot));
-                        localP3[i][j] = (weights[0] * (beforeHbc3[0][j] * tot) + weights[1] * (beforeHbc3[1][j] * tot));
-                        localP4[i][j] = (weights[0] * (beforeHbc4[0][j] * tot) + weights[1] * (beforeHbc4[1][j] * tot));
+                        localP1[i][j] = (weights[0] * (geometricModelsValues1[0][j] * tot) + weights[1] * (geometricModelsValues1[1][j] * tot));
+                        localP2[i][j] = (weights[0] * (geometricModelsValues2[0][j] * tot) + weights[1] * (geometricModelsValues2[1][j] * tot));
+                        localP3[i][j] = (weights[0] * (geometricModelsValues3[0][j] * tot) + weights[1] * (geometricModelsValues3[1][j] * tot));
+                        localP4[i][j] = (weights[0] * (geometricModelsValues4[0][j] * tot) + weights[1] * (geometricModelsValues4[1][j] * tot));
                     }
                     if (numberOfPoints == 3) {
-                        localP1[i][j] = (weights[0] * (beforeHbc1[0][j] * tot) + weights[1] * (beforeHbc1[1][j] * tot) + weights[2] * (beforeHbc1[2][j] * tot));
-                        localP2[i][j] = (weights[0] * (beforeHbc2[0][j] * tot) + weights[1] * (beforeHbc2[1][j] * tot) + weights[2] * (beforeHbc2[2][j] * tot));
-                        localP3[i][j] = (weights[0] * (beforeHbc3[0][j] * tot) + weights[1] * (beforeHbc3[1][j] * tot) + weights[2] * (beforeHbc3[2][j] * tot));
-                        localP4[i][j] = (weights[0] * (beforeHbc4[0][j] * tot) + weights[1] * (beforeHbc4[1][j] * tot) + weights[2] * (beforeHbc4[2][j] * tot));
+                        localP1[i][j] = (weights[0] * (geometricModelsValues1[0][j] * tot) + weights[1] * (geometricModelsValues1[1][j] * tot) + weights[2] * (geometricModelsValues1[2][j] * tot));
+                        localP2[i][j] = (weights[0] * (geometricModelsValues2[0][j] * tot) + weights[1] * (geometricModelsValues2[1][j] * tot) + weights[2] * (geometricModelsValues2[2][j] * tot));
+                        localP3[i][j] = (weights[0] * (geometricModelsValues3[0][j] * tot) + weights[1] * (geometricModelsValues3[1][j] * tot) + weights[2] * (geometricModelsValues3[2][j] * tot));
+                        localP4[i][j] = (weights[0] * (geometricModelsValues4[0][j] * tot) + weights[1] * (geometricModelsValues4[1][j] * tot) + weights[2] * (geometricModelsValues4[2][j] * tot));
                     }
                 }
             }
@@ -294,27 +291,6 @@ public class MatrixHbcService {
         return localHbc;
     }
 
-    public static Double geometricModelsN(int whichOneFrom1To4, double ksi, double eta) {
-        List<BiFunction<Double, Double, Double>> geometricModels = new ArrayList<>() {
-            {
-                add((ksi, eta) -> 0.25 * (1 - ksi) * (1 - eta));
-                add((ksi, eta) -> 0.25 * (1 + ksi) * (1 - eta));
-                add((ksi, eta) -> 0.25 * (1 + ksi) * (1 + eta));
-                add((ksi, eta) -> 0.25 * (1 - ksi) * (1 + eta));
-            }
-        };
-        return geometricModels.get(whichOneFrom1To4).apply(ksi, eta);
-    }
-
-    public static TriFunction<Double, Double, Double, Double> getBorderConditionTriFunction() {
-        TriFunction<Double, Double, Double, Double> heatBorderCondition = new TriFunction<Double, Double, Double, Double>() {
-            @Override
-            public Double apply(Double alfaFactor, Double temperature, Double temperatureAmb) {
-                return alfaFactor * (temperature - temperatureAmb);
-            }
-        };
-        return heatBorderCondition;
-    }
 
     private static double[] calculateAndGetLocalVectorP(
             double[] localP1, double[] localP2, double[] localP3, double[] localP4,
