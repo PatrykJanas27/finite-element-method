@@ -19,9 +19,9 @@ public class MatrixHbcService {
     public static void calculateMatrixHbc_andVectorP(Grid grid, int numberOfPoints) {
         globalAggregationHBC = new double[grid.getNodesNumber()][grid.getNodesNumber()];
         globalAggregationVectorP = new double[grid.getNodesNumber()];
-        int length = numberOfPoints*numberOfPoints;
+        int length = numberOfPoints * numberOfPoints;
         double[][] ksiEta = new double[length][2];
-        if (numberOfPoints!=3) {
+        if (numberOfPoints != 3) {
             ksiEta = new double[][]{
                     {-(1 / Math.sqrt(3)), -1},   // pc11 str 13/17 "generacja macierzy H oraz wektora P"
                     {(1 / Math.sqrt(3)), -1},   // pc12
@@ -36,23 +36,23 @@ public class MatrixHbcService {
                     {-1, (1 / Math.sqrt(3))},   // pc42
             };
         }
-        if(numberOfPoints==3){
+        if (numberOfPoints == 3) {
             ksiEta = new double[][]{
-                    {-sqrt(3.0 / 5),-1},
-                    {0,-1},
-                    {sqrt(3.0 / 5),-1},
+                    {-sqrt(3.0 / 5), -1},
+                    {0, -1},
+                    {sqrt(3.0 / 5), -1},
 
-                    {1,-sqrt(3.0 / 5)},
-                    {1,0},
-                    {1,sqrt(3.0 / 5)},
+                    {1, -sqrt(3.0 / 5)},
+                    {1, 0},
+                    {1, sqrt(3.0 / 5)},
 
-                    {-sqrt(3.0 / 5),1},
-                    {0,1},
-                    {sqrt(3.0 / 5),1},
+                    {-sqrt(3.0 / 5), 1},
+                    {0, 1},
+                    {sqrt(3.0 / 5), 1},
 
-                    {-1,-sqrt(3.0 / 5)},
-                    {-1,0},
-                    {-1,sqrt(3.0 / 5)},
+                    {-1, -sqrt(3.0 / 5)},
+                    {-1, 0},
+                    {-1, sqrt(3.0 / 5)},
             };
         }
 
@@ -61,7 +61,7 @@ public class MatrixHbcService {
         double[][] beforeHbc2 = new double[numberOfPoints][4]; // for wall 2
         double[][] beforeHbc3 = new double[numberOfPoints][4]; // N3
         double[][] beforeHbc4 = new double[numberOfPoints][4]; // N4
-        if(numberOfPoints==2){
+        if (numberOfPoints == 2) {
             for (int i = 0; i < 4; i++) {
                 beforeHbc1[0][i] = geometricModelsN(i, ksiEta[0][0], ksiEta[0][1]); // (1 / Math.sqrt(3)), -1
                 beforeHbc1[1][i] = geometricModelsN(i, ksiEta[1][0], ksiEta[1][1]); // -(1 / Math.sqrt(3)), -1
@@ -74,7 +74,7 @@ public class MatrixHbcService {
                 beforeHbc4[1][i] = geometricModelsN(i, ksiEta[7][0], ksiEta[7][1]);
             }
         }
-        if(numberOfPoints==3){
+        if (numberOfPoints == 3) {
             for (int i = 0; i < 4; i++) {
                 beforeHbc1[0][i] = geometricModelsN(i, ksiEta[0][0], ksiEta[0][1]);
                 beforeHbc1[1][i] = geometricModelsN(i, ksiEta[1][0], ksiEta[1][1]);
@@ -131,11 +131,21 @@ public class MatrixHbcService {
         double[][] localP3 = new double[9][4];
         double[][] localP4 = new double[9][4];
         for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 4; j++) {
-                localP1[i][j] = alfaFactor * (weights[0] * (beforeHbc1[0][j] * tot) + weights[1] * (beforeHbc1[1][j] * tot));
-                localP2[i][j] = alfaFactor * (weights[0] * (beforeHbc2[0][j] * tot) + weights[1] * (beforeHbc2[1][j] * tot));
-                localP3[i][j] = alfaFactor * (weights[0] * (beforeHbc3[0][j] * tot) + weights[1] * (beforeHbc3[1][j] * tot));
-                localP4[i][j] = alfaFactor * (weights[0] * (beforeHbc4[0][j] * tot) + weights[1] * (beforeHbc4[1][j] * tot));
+            for (int n = 0; n < numberOfPoints; n++) {
+                for (int j = 0; j < 4; j++) {
+                    if(numberOfPoints==2){
+                        localP1[i][j] =   (weights[0] * (beforeHbc1[0][j] * tot) + weights[1] * (beforeHbc1[1][j] * tot));
+                        localP2[i][j] =   (weights[0] * (beforeHbc2[0][j] * tot) + weights[1] * (beforeHbc2[1][j] * tot));
+                        localP3[i][j] =   (weights[0] * (beforeHbc3[0][j] * tot) + weights[1] * (beforeHbc3[1][j] * tot));
+                        localP4[i][j] =   (weights[0] * (beforeHbc4[0][j] * tot) + weights[1] * (beforeHbc4[1][j] * tot));
+                    }
+                    if(numberOfPoints==3){
+                        localP1[i][j] =   (weights[0] * (beforeHbc1[0][j] * tot) + weights[1] * (beforeHbc1[1][j] * tot)+ weights[2] * (beforeHbc1[2][j] * tot));
+                        localP2[i][j] =   (weights[0] * (beforeHbc2[0][j] * tot) + weights[1] * (beforeHbc2[1][j] * tot)+ weights[2] * (beforeHbc2[2][j] * tot));
+                        localP3[i][j] =   (weights[0] * (beforeHbc3[0][j] * tot) + weights[1] * (beforeHbc3[1][j] * tot)+ weights[2] * (beforeHbc3[2][j] * tot));
+                        localP4[i][j] =   (weights[0] * (beforeHbc4[0][j] * tot) + weights[1] * (beforeHbc4[1][j] * tot)+ weights[2] * (beforeHbc4[2][j] * tot));
+                    }
+                }
             }
         }
         int elementMax = 9;
@@ -144,18 +154,18 @@ public class MatrixHbcService {
             double[] detJWallElement1 = calculateDetJForElement(nodes, element1);
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
-                    BCwall1E1[element][i][j] *= detJWallElement1[0]*alfaFactor;
-                    BCwall2E1[element][i][j] *= detJWallElement1[1]*alfaFactor;
-                    BCwall3E1[element][i][j] *= detJWallElement1[2]*alfaFactor;
-                    BCwall4E1[element][i][j] *= detJWallElement1[3]*alfaFactor;
+                    BCwall1E1[element][i][j] *= detJWallElement1[0] * alfaFactor;
+                    BCwall2E1[element][i][j] *= detJWallElement1[1] * alfaFactor;
+                    BCwall3E1[element][i][j] *= detJWallElement1[2] * alfaFactor;
+                    BCwall4E1[element][i][j] *= detJWallElement1[3] * alfaFactor;
                 }
             }
 
             for (int j = 0; j < 4; j++) {
-                localP1[element][j] *= detJWallElement1[j];
-                localP2[element][j] *= detJWallElement1[j];
-                localP3[element][j] *= detJWallElement1[j];
-                localP4[element][j] *= detJWallElement1[j];
+                localP1[element][j] *= detJWallElement1[0] * alfaFactor;
+                localP2[element][j] *= detJWallElement1[1] * alfaFactor;
+                localP3[element][j] *= detJWallElement1[2] * alfaFactor;
+                localP4[element][j] *= detJWallElement1[3] * alfaFactor;
             }
             //calculating border conditions for elements
             //**** check which node has border condition (BC) for first element***
