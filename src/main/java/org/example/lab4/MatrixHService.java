@@ -46,7 +46,7 @@ public class MatrixHService {
             // geometrix models for matrix C **************** (ksi, eta) -> 0.25 * (1 - ksi) * (1 - eta))
             // Wartości dla funkcji kształtu // Values for geometric models         //{N}*{N}^T
             double[][] geometricModelsValues = new double[length][4];
-            for (int i = 0; i < 4; i++) { // funkcje kształtów //
+            for (int i = 0; i < length; i++) { // funkcje kształtów //
                 for (int j = 0; j < 4; j++) {
                     geometricModelsValues[i][j] = MatrixHbcService.geometricModelsN(j, ksi[i], eta[i]);
                 }
@@ -55,7 +55,7 @@ public class MatrixHService {
 //            MatrixService.showTable2D(geometricModelsValues);
 
             double[][][] matrixCForFourPoints = new double[length][4][4]; // there will be 9 matrix C for every point if numberOfNodes = 3
-            for (int pc = 0; pc < 4; pc++) {
+            for (int pc = 0; pc < length; pc++) {
                 for (int i = 0; i < 4; i++) {
                     for (int j = 0; j < 4; j++) {
                         matrixCForFourPoints[pc][i][j] =
