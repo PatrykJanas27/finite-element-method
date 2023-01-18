@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
+import static java.lang.Math.sqrt;
+
 public class MatrixHbcService {
     public static double[][] globalAggregationHBC;
     public static double[] globalAggregationVectorP;
@@ -17,35 +19,73 @@ public class MatrixHbcService {
     public static void calculateMatrixHbc_andVectorP(Grid grid, int numberOfPoints) {
         globalAggregationHBC = new double[grid.getNodesNumber()][grid.getNodesNumber()];
         globalAggregationVectorP = new double[grid.getNodesNumber()];
-        double[][] ksiEta = new double[][]{
-                {-(1 / Math.sqrt(3)), -1},   // pc11 str 13/17 "generacja macierzy H oraz wektora P"
-                {(1 / Math.sqrt(3)), -1},   // pc12
+        int length = numberOfPoints*numberOfPoints;
+        double[][] ksiEta = new double[length][2];
+        if (numberOfPoints!=3) {
+            ksiEta = new double[][]{
+                    {-(1 / Math.sqrt(3)), -1},   // pc11 str 13/17 "generacja macierzy H oraz wektora P"
+                    {(1 / Math.sqrt(3)), -1},   // pc12
 
-                {1, -(1 / Math.sqrt(3))},   // pc21
-                {1, (1 / Math.sqrt(3))},    // pc22
+                    {1, -(1 / Math.sqrt(3))},   // pc21
+                    {1, (1 / Math.sqrt(3))},    // pc22
 
-                {-(1 / Math.sqrt(3)), 1},   // pc31
-                {(1 / Math.sqrt(3)), 1},    // pc32
+                    {-(1 / Math.sqrt(3)), 1},   // pc31
+                    {(1 / Math.sqrt(3)), 1},    // pc32
 
-                {-1, -(1 / Math.sqrt(3))},  // pc41
-                {-1, (1 / Math.sqrt(3))},   // pc42
-        };
-        // Wartości dla funkcji kształtu
-        double[][] beforeHbc1 = new double[2][4]; // for wall 1
-        double[][] beforeHbc2 = new double[2][4]; // for wall 2
-        double[][] beforeHbc3 = new double[2][4]; // N3
-        double[][] beforeHbc4 = new double[2][4]; // N4
-        for (int i = 0; i < 4; i++) {
-            beforeHbc1[0][i] = geometricModelsN(i, ksiEta[1][0], ksiEta[1][1]); // (1 / Math.sqrt(3)), -1
-            beforeHbc1[1][i] = geometricModelsN(i, ksiEta[0][0], ksiEta[0][1]); // -(1 / Math.sqrt(3)), -1
-            beforeHbc2[0][i] = geometricModelsN(i, ksiEta[3][0], ksiEta[3][1]);
-            beforeHbc2[1][i] = geometricModelsN(i, ksiEta[2][0], ksiEta[2][1]);
-
-            beforeHbc3[0][i] = geometricModelsN(i, ksiEta[5][0], ksiEta[5][1]);
-            beforeHbc3[1][i] = geometricModelsN(i, ksiEta[4][0], ksiEta[4][1]);
-            beforeHbc4[0][i] = geometricModelsN(i, ksiEta[7][0], ksiEta[7][1]);
-            beforeHbc4[1][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
+                    {-1, -(1 / Math.sqrt(3))},  // pc41
+                    {-1, (1 / Math.sqrt(3))},   // pc42
+            };
         }
+        if(numberOfPoints==3){
+            ksiEta = new double[][]{
+                    {-sqrt(3.0 / 5),-sqrt(3.0 / 5)},
+                    {0,-sqrt(3.0 / 5)},
+                    {sqrt(3.0 / 5),-sqrt(3.0 / 5)},
+                    {-sqrt(3.0 / 5),0},
+                    {0,0},
+                    {sqrt(3.0 / 5),0},
+                    {-sqrt(3.0 / 5),sqrt(3.0 / 5)},
+                    {0,sqrt(3.0 / 5)},
+                    {sqrt(3.0 / 5),sqrt(3.0 / 5)}
+            };
+        }
+
+        // Wartości dla funkcji kształtu
+        double[][] beforeHbc1 = new double[numberOfPoints][4]; // for wall 1
+        double[][] beforeHbc2 = new double[numberOfPoints][4]; // for wall 2
+        double[][] beforeHbc3 = new double[numberOfPoints][4]; // N3
+        double[][] beforeHbc4 = new double[numberOfPoints][4]; // N4
+        if(numberOfPoints==2){
+            for (int i = 0; i < 4; i++) {
+                beforeHbc1[0][i] = geometricModelsN(i, ksiEta[1][0], ksiEta[1][1]); // (1 / Math.sqrt(3)), -1
+                beforeHbc1[1][i] = geometricModelsN(i, ksiEta[0][0], ksiEta[0][1]); // -(1 / Math.sqrt(3)), -1
+                beforeHbc2[0][i] = geometricModelsN(i, ksiEta[3][0], ksiEta[3][1]);
+                beforeHbc2[1][i] = geometricModelsN(i, ksiEta[2][0], ksiEta[2][1]);
+
+                beforeHbc3[0][i] = geometricModelsN(i, ksiEta[5][0], ksiEta[5][1]);
+                beforeHbc3[1][i] = geometricModelsN(i, ksiEta[4][0], ksiEta[4][1]);
+                beforeHbc4[0][i] = geometricModelsN(i, ksiEta[7][0], ksiEta[7][1]);
+                beforeHbc4[1][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
+            }
+        }
+        if(numberOfPoints==3){
+            for (int i = 0; i < 4; i++) {
+                beforeHbc1[0][i] = geometricModelsN(i, ksiEta[0][0], ksiEta[0][1]);
+                beforeHbc1[1][i] = geometricModelsN(i, ksiEta[1][0], ksiEta[1][1]);
+                beforeHbc1[2][i] = geometricModelsN(i, ksiEta[3][0], ksiEta[3][1]);
+                beforeHbc2[0][i] = geometricModelsN(i, ksiEta[3][0], ksiEta[3][1]);
+                beforeHbc2[1][i] = geometricModelsN(i, ksiEta[2][0], ksiEta[2][1]);
+                beforeHbc2[2][i] = geometricModelsN(i, ksiEta[2][0], ksiEta[2][1]);
+
+                beforeHbc3[0][i] = geometricModelsN(i, ksiEta[5][0], ksiEta[5][1]);
+                beforeHbc3[1][i] = geometricModelsN(i, ksiEta[4][0], ksiEta[4][1]);
+                beforeHbc3[2][i] = geometricModelsN(i, ksiEta[4][0], ksiEta[4][1]);
+                beforeHbc4[0][i] = geometricModelsN(i, ksiEta[7][0], ksiEta[7][1]);
+                beforeHbc4[1][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
+                beforeHbc4[2][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
+            }
+        }
+
 //        System.out.println("Before Hbc 4: ");
 //        MatrixService.showTable2D(beforeHbc4);
         List<Element> elements = grid.getElements();

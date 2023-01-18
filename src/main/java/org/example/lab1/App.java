@@ -19,7 +19,7 @@ public class App {
     private static final String FILE_NAME1 = "src/main/resources/lab1/Test1_4_4.txt";
     private static final String FILE_NAME2 = "src/main/resources/lab1/Test2_4_4_MixGrid.txt";
     private static final String FILE_NAME3 = "src/main/resources/lab1/Test3_31_31_kwadrat.txt";
-    private static final int NUMBER_OF_NODES = 3;
+    private static final int NUMBER_OF_NODES = 2;
 
     public static void main(String[] args) throws FileNotFoundException, NumberFormatException {
         Grid grid = InputHandler.readFile(FILE_NAME1);
