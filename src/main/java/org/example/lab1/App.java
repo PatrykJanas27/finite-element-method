@@ -22,7 +22,7 @@ public class App {
     private static final int NUMBER_OF_NODES = 3;
 
     public static void main(String[] args) throws FileNotFoundException, NumberFormatException {
-        Grid grid = InputHandler.readFile(FILE_NAME1);
+        Grid grid = InputHandler.readFile(FILE_NAME2);
         System.out.println(grid);
 
         // ********************** Here are calculation for Matrix[H] and Matrix[C] **********************
