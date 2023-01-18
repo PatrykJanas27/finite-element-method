@@ -144,10 +144,10 @@ public class MatrixHService {
                         localHForElement[i][j] += Hpcs[pc][i][j] * weightsOfPoints[pc / numberOfNodes] * weightsOfPoints[pc % numberOfNodes];
 
                         if(numberOfNodes!=3){ //FIXME for a while
-                            localMatrixCForElement[i][j] = specificHeat * density * determinants[pc] * matrixCForFourPoints[0][i][j] // sum for one element
-                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[1][i][j]
-                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[2][i][j]
-                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[3][i][j]; //FIXME for different pc!!!!!!
+                            localMatrixCForElement[i][j] = specificHeat * density * determinants[0] * matrixCForFourPoints[0][i][j] // sum for one element
+                                    + specificHeat * density * determinants[1] * matrixCForFourPoints[1][i][j]
+                                    + specificHeat * density * determinants[2] * matrixCForFourPoints[2][i][j]
+                                    + specificHeat * density * determinants[3] * matrixCForFourPoints[3][i][j]; //FIXME for different pc!!!!!!
 
                         }
                         if(numberOfNodes==3){
