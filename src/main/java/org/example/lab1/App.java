@@ -15,12 +15,10 @@ import static org.example.lab6.MatrixHbcService.globalAggregationHBC;
 import static org.example.lab6.MatrixHbcService.globalAggregationVectorP;
 
 public class App {
-
     private static final String FILE_NAME1 = "src/main/resources/lab1/Test1_4_4.txt";
     private static final String FILE_NAME2 = "src/main/resources/lab1/Test2_4_4_MixGrid.txt";
     private static final String FILE_NAME3 = "src/main/resources/lab1/Test3_31_31_kwadrat.txt";
     private static final int NUMBER_OF_NODES = 3;
-
     public static void main(String[] args) throws FileNotFoundException, NumberFormatException {
         Grid grid = InputHandler.readFile(FILE_NAME2);
         System.out.println(grid);
@@ -92,16 +90,13 @@ public class App {
         //********************** Here for {P} = {P}+{[C]/dT}*{T0} **********************
         double[] vectorP_plus_matrixCByDeltaTauMultipliedByT0 = new double[16];
         for (int i = 0; i < 16; i++) {
-            //FIXME here is a bug for mix grid!!!!!!!!!!!!!!!!!!!
             vectorP_plus_matrixCByDeltaTauMultipliedByT0[i] += globalAggregationVectorP[i] + globalAggregationMatrixCByDeltaTauMultiplyT0[i];
         }
         System.out.println("vectorP_plus_matrixCByDeltaTauMultipliedByT0 ->> Vector ([{P}+{[C]/dT}*{T0}): ");
         MatrixService.showTable1D(vectorP_plus_matrixCByDeltaTauMultipliedByT0);
 
         //***********************************************************************
-        //***********************************************************************
         //********************** Adding time for solutions **********************
-        //***********************************************************************
         //***********************************************************************
         double[] initialTemperatureVector = new double[grid.getNodesNumber()];
         Arrays.fill(initialTemperatureVector, GlobalData.initialTemp);
@@ -124,7 +119,8 @@ public class App {
                     globalAggregationVectorP[j] += (globalAggregationMatrixC[j][k] / simulationStepTime) * initialTemperatureVector[k];
                 }
             }
-            initialTemperatureVector = GaussianEliminationService.findSolutionForSystemOfEquations(globalAggregationH_plus_HBC, globalAggregationVectorP);
+            initialTemperatureVector = GaussianEliminationService.findSolutionForSystemOfEquations(
+                    globalAggregationH_plus_HBC, globalAggregationVectorP);
             for (int f = 0; f < grid.getNodesNumber(); f++) {
                 globalAggregationVectorP[f] = copyOfGlobalAggregationVectorP[f];
             }
@@ -133,22 +129,9 @@ public class App {
                     globalAggregationH_plus_HBC[f][l] = copyOfGlobalAggregationH_plus_HBC[f][l];
                 }
             }
-//            System.out.println("\ninitialTemperatureVector");
-//            MatrixService.showTable1D(initialTemperatureVector);
             double min = Arrays.stream(initialTemperatureVector).min().getAsDouble();
             double max = Arrays.stream(initialTemperatureVector).max().getAsDouble();
             System.out.println(i + "\t\t\t" + min + "\t\t" + max);
         }
-
-
-        // HBC += C/steptime
-        //kopia vector P i HBC bo sie zmieni pozniej
-        //zczytac wszystkie temperatury z pliku do wektora temperatury początkowe
-        //w petli od zera do maskymalnego czasu co krok
-        //vector p+=(matrixC/simulationsteptime )* vectorTemperatur[nodesize]
-        //rozwiazac eleminacja gausa(borderconditionmatrixh, global vectorP)
-
     }
-
-
 }

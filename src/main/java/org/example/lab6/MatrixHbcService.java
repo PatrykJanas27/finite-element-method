@@ -20,41 +20,8 @@ public class MatrixHbcService {
         globalAggregationHBC = new double[grid.getNodesNumber()][grid.getNodesNumber()];
         globalAggregationVectorP = new double[grid.getNodesNumber()];
         int length = numberOfPoints * numberOfPoints;
-        double[][] ksiEta = new double[length][2];
-        if (numberOfPoints != 3) {
-            ksiEta = new double[][]{
-                    {-(1 / Math.sqrt(3)), -1},   // pc11 str 13/17 "generacja macierzy H oraz wektora P"
-                    {(1 / Math.sqrt(3)), -1},   // pc12
+        double[][] ksiEta = getCoordinatesKsiEta(numberOfPoints);
 
-                    {1, -(1 / Math.sqrt(3))},   // pc21
-                    {1, (1 / Math.sqrt(3))},    // pc22
-
-                    {-(1 / Math.sqrt(3)), 1},   // pc31
-                    {(1 / Math.sqrt(3)), 1},    // pc32
-
-                    {-1, -(1 / Math.sqrt(3))},  // pc41
-                    {-1, (1 / Math.sqrt(3))},   // pc42
-            };
-        }
-        if (numberOfPoints == 3) {
-            ksiEta = new double[][]{
-                    {-sqrt(3.0 / 5), -1},
-                    {0, -1},
-                    {sqrt(3.0 / 5), -1},
-
-                    {1, -sqrt(3.0 / 5)},
-                    {1, 0},
-                    {1, sqrt(3.0 / 5)},
-
-                    {-sqrt(3.0 / 5), 1},
-                    {0, 1},
-                    {sqrt(3.0 / 5), 1},
-
-                    {-1, -sqrt(3.0 / 5)},
-                    {-1, 0},
-                    {-1, sqrt(3.0 / 5)},
-            };
-        }
 
         // Wartości dla funkcji kształtu
         double[][] beforeHbc1 = new double[numberOfPoints][4]; // for wall 1
@@ -92,35 +59,25 @@ public class MatrixHbcService {
             }
         }
 
-//        System.out.println("Before Hbc 4: ");
-//        MatrixService.showTable2D(beforeHbc4);
         List<Element> elements = grid.getElements();
         List<Node> nodes = grid.getNodes();
 
-
-//        double detJ = 0.0166667;
         double alfaFactor = GlobalData.alfa; // here alfa factor has to be read from file
         double tot = GlobalData.tot; // 1200 from file
-        double[][][] BCwall1E1 = new double[9][4][4]; //pow1
-        double[][][] BCwall2E1 = new double[9][4][4]; //pow1
-        double[][][] BCwall3E1 = new double[9][4][4]; //pow1
-        double[][][] BCwall4E1 = new double[9][4][4]; //pow1
+        double[][][] BCwall1 = new double[9][4][4];
+        double[][][] BCwall2 = new double[9][4][4];
+        double[][][] BCwall3 = new double[9][4][4];
+        double[][][] BCwall4 = new double[9][4][4];
 
-//        double[] weights = new double[]{1.0, 1.0}; //FIXME for number of pc
         double[] weights = GlobalData.getWeightsArray(numberOfPoints);
-        for (int e = 0; e < 9; e++) { //FIXME for number of elements
-            for (int n = 0; n < numberOfPoints; n++) { // here is a loop for pc1 and pc2 //FIXME for numberOfElements
+        for (int e = 0; e < 9; e++) {
+            for (int n = 0; n < numberOfPoints; n++) {
                 for (int i = 0; i < 4; i++) {
                     for (int j = 0; j < 4; j++) { // Integral -> alfa*({N}*{N}^T)dS
-//                        BCwall1E1[e][i][j] += weights[n] * beforeHbc1[n][i] * weights[n] * beforeHbc1[n][j];
-//                        BCwall2E1[e][i][j] += weights[n] * beforeHbc2[n][i] * weights[n] * beforeHbc2[n][j];
-//                        BCwall3E1[e][i][j] += weights[n] * beforeHbc3[n][i] * weights[n] * beforeHbc3[n][j];
-//                        BCwall4E1[e][i][j] += weights[n] * beforeHbc4[n][i] * weights[n] * beforeHbc4[n][j];
-                        //FIXME top or bellow??
-                        BCwall1E1[e][i][j] += weights[n] * beforeHbc1[n][i] * beforeHbc1[n][j];
-                        BCwall2E1[e][i][j] += weights[n] * beforeHbc2[n][i] * beforeHbc2[n][j];
-                        BCwall3E1[e][i][j] += weights[n] * beforeHbc3[n][i] * beforeHbc3[n][j];
-                        BCwall4E1[e][i][j] += weights[n] * beforeHbc4[n][i] * beforeHbc4[n][j];
+                        BCwall1[e][i][j] += weights[n] * beforeHbc1[n][i] * beforeHbc1[n][j];
+                        BCwall2[e][i][j] += weights[n] * beforeHbc2[n][i] * beforeHbc2[n][j];
+                        BCwall3[e][i][j] += weights[n] * beforeHbc3[n][i] * beforeHbc3[n][j];
+                        BCwall4[e][i][j] += weights[n] * beforeHbc4[n][i] * beforeHbc4[n][j];
                     }
                 }
             }
@@ -133,31 +90,32 @@ public class MatrixHbcService {
         for (int i = 0; i < 9; i++) {
             for (int n = 0; n < numberOfPoints; n++) {
                 for (int j = 0; j < 4; j++) {
-                    if(numberOfPoints==2){
-                        localP1[i][j] =   (weights[0] * (beforeHbc1[0][j] * tot) + weights[1] * (beforeHbc1[1][j] * tot));
-                        localP2[i][j] =   (weights[0] * (beforeHbc2[0][j] * tot) + weights[1] * (beforeHbc2[1][j] * tot));
-                        localP3[i][j] =   (weights[0] * (beforeHbc3[0][j] * tot) + weights[1] * (beforeHbc3[1][j] * tot));
-                        localP4[i][j] =   (weights[0] * (beforeHbc4[0][j] * tot) + weights[1] * (beforeHbc4[1][j] * tot));
+                    if (numberOfPoints == 2) {
+                        localP1[i][j] = (weights[0] * (beforeHbc1[0][j] * tot) + weights[1] * (beforeHbc1[1][j] * tot));
+                        localP2[i][j] = (weights[0] * (beforeHbc2[0][j] * tot) + weights[1] * (beforeHbc2[1][j] * tot));
+                        localP3[i][j] = (weights[0] * (beforeHbc3[0][j] * tot) + weights[1] * (beforeHbc3[1][j] * tot));
+                        localP4[i][j] = (weights[0] * (beforeHbc4[0][j] * tot) + weights[1] * (beforeHbc4[1][j] * tot));
                     }
-                    if(numberOfPoints==3){
-                        localP1[i][j] =   (weights[0] * (beforeHbc1[0][j] * tot) + weights[1] * (beforeHbc1[1][j] * tot)+ weights[2] * (beforeHbc1[2][j] * tot));
-                        localP2[i][j] =   (weights[0] * (beforeHbc2[0][j] * tot) + weights[1] * (beforeHbc2[1][j] * tot)+ weights[2] * (beforeHbc2[2][j] * tot));
-                        localP3[i][j] =   (weights[0] * (beforeHbc3[0][j] * tot) + weights[1] * (beforeHbc3[1][j] * tot)+ weights[2] * (beforeHbc3[2][j] * tot));
-                        localP4[i][j] =   (weights[0] * (beforeHbc4[0][j] * tot) + weights[1] * (beforeHbc4[1][j] * tot)+ weights[2] * (beforeHbc4[2][j] * tot));
+                    if (numberOfPoints == 3) {
+                        localP1[i][j] = (weights[0] * (beforeHbc1[0][j] * tot) + weights[1] * (beforeHbc1[1][j] * tot) + weights[2] * (beforeHbc1[2][j] * tot));
+                        localP2[i][j] = (weights[0] * (beforeHbc2[0][j] * tot) + weights[1] * (beforeHbc2[1][j] * tot) + weights[2] * (beforeHbc2[2][j] * tot));
+                        localP3[i][j] = (weights[0] * (beforeHbc3[0][j] * tot) + weights[1] * (beforeHbc3[1][j] * tot) + weights[2] * (beforeHbc3[2][j] * tot));
+                        localP4[i][j] = (weights[0] * (beforeHbc4[0][j] * tot) + weights[1] * (beforeHbc4[1][j] * tot) + weights[2] * (beforeHbc4[2][j] * tot));
                     }
                 }
             }
         }
+        // ************** Main loop for 9 elements **************
         int elementMax = 9;
-        for (int element = 0; element < elementMax; element++) { // loop for 9 elements
+        for (int element = 0; element < elementMax; element++) {
             Element element1 = elements.get(element);
             double[] detJWallElement1 = calculateDetJForElement(nodes, element1);
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
-                    BCwall1E1[element][i][j] *= detJWallElement1[0] * alfaFactor;
-                    BCwall2E1[element][i][j] *= detJWallElement1[1] * alfaFactor;
-                    BCwall3E1[element][i][j] *= detJWallElement1[2] * alfaFactor;
-                    BCwall4E1[element][i][j] *= detJWallElement1[3] * alfaFactor;
+                    BCwall1[element][i][j] *= detJWallElement1[0] * alfaFactor;
+                    BCwall2[element][i][j] *= detJWallElement1[1] * alfaFactor;
+                    BCwall3[element][i][j] *= detJWallElement1[2] * alfaFactor;
+                    BCwall4[element][i][j] *= detJWallElement1[3] * alfaFactor;
                 }
             }
 
@@ -167,42 +125,59 @@ public class MatrixHbcService {
                 localP3[element][j] *= detJWallElement1[2] * alfaFactor;
                 localP4[element][j] *= detJWallElement1[3] * alfaFactor;
             }
-            //calculating border conditions for elements
-            //**** check which node has border condition (BC) for first element***
-//            for (int i = 0; i < 9; i++) {
-//                System.out.println("element " + (i + 1) + ": ");
-//                for (int j = 0; j < 4; j++) {
-//                    System.out.println(nodes.get((elements.get(i).getIDs().get(j)) - 1).isBC());
-//                }
-//            }
-            //***** Element 1 and his IDs
-//            List<Integer> e1IDs = element1.getIDs();
-            List<Integer> e1IDs = elements.get(elementMax - 1 - element).getIDs(); // FIXME here is a big change!!!!!!!
-            // FIXME element9 licz dla niego H lokalne + HBC lokalne, a weights agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
 
-//            System.out.println("element " + (element + 1) + ": " + e1IDs); // 1, 2, 6, 5
-
-            //***** Here is localHBC for -> first element
+            List<Integer> e1IDs = elements.get(elementMax - 1 - element).getIDs();
             double[][] localHbcForElement = calculateAndGetLocalHbc(
-                    BCwall1E1[element], BCwall2E1[element], BCwall3E1[element], BCwall4E1[element], nodes, e1IDs);
-//            System.out.println("localHbcForElement: ");
-//            MatrixService.showTable2Dshort(localHbcForElement);
+                    BCwall1[element], BCwall2[element], BCwall3[element], BCwall4[element], nodes, e1IDs);
             double[] localVectorP = calculateAndGetLocalVectorP(
                     localP1[element], localP2[element], localP3[element], localP4[element], nodes, e1IDs);
-//            System.out.println("localVectorP for element " + (element + 1) + ": ");
-//            MatrixService.showTable1D(localVectorP);
-            e1IDs = element1.getIDs(); // FIXME here is a big change!!!!!!!!!!!!!!!!!!!!!!!!
-            // FIXME  // element9 licz dla niego H lokalne + HBC lokalne, a weights agregacji dla tego elementu 9 bierz ID węzłów tak jak dla elementu 1
-
-            // here is aggregation
+            e1IDs = element1.getIDs();
+            // ********************* here is aggregation *********************
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
-                    globalAggregationHBC[e1IDs.get(i) - 1][e1IDs.get(j) - 1] += localHbcForElement[i][j]; // without + !!! just = ??????
+                    globalAggregationHBC[e1IDs.get(i) - 1][e1IDs.get(j) - 1] += localHbcForElement[i][j];
                 }
+                globalAggregationVectorP[e1IDs.get(i) - 1] += localVectorP[i];
             }
-            for (int i = 0; i < 4; i++) {
-                globalAggregationVectorP[e1IDs.get(i) - 1] += localVectorP[i]; // without + !!! just =
-            }
+        }
+    }
+
+    private static double[][] getCoordinatesKsiEta(int numberOfPoints) {
+        if (numberOfPoints == 2) {
+            return new double[][]{
+                    {-(1 / Math.sqrt(3)), -1},   // pc11 str 13/17 "generacja macierzy H oraz wektora P"
+                    {(1 / Math.sqrt(3)), -1},   // pc12
+
+                    {1, -(1 / Math.sqrt(3))},   // pc21
+                    {1, (1 / Math.sqrt(3))},    // pc22
+
+                    {-(1 / Math.sqrt(3)), 1},   // pc31
+                    {(1 / Math.sqrt(3)), 1},    // pc32
+
+                    {-1, -(1 / Math.sqrt(3))},  // pc41
+                    {-1, (1 / Math.sqrt(3))},   // pc42
+            };
+        }
+        if (numberOfPoints == 3) {
+            return new double[][]{
+                    {-sqrt(3.0 / 5), -1},
+                    {0, -1},
+                    {sqrt(3.0 / 5), -1},
+
+                    {1, -sqrt(3.0 / 5)},
+                    {1, 0},
+                    {1, sqrt(3.0 / 5)},
+
+                    {-sqrt(3.0 / 5), 1},
+                    {0, 1},
+                    {sqrt(3.0 / 5), 1},
+
+                    {-1, -sqrt(3.0 / 5)},
+                    {-1, 0},
+                    {-1, sqrt(3.0 / 5)},
+            };
+        } else {
+            throw new IllegalArgumentException("numberOfPoints must be 2 or 3");
         }
     }
 

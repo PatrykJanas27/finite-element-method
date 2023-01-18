@@ -30,7 +30,7 @@ public class InputHandler {
         } catch (FileNotFoundException e) {
             throw new FileNotFoundException("File not found! " + e.getMessage());
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Bad data format, can not parse string to integer/double");
+            throw new NumberFormatException("Bad data format, can not parse string");
         }
         System.out.println(grid);
         return grid;
