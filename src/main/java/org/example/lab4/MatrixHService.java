@@ -45,8 +45,8 @@ public class MatrixHService {
             double[] eta = GlobalData.getEtaCoordinates(numberOfNodes);
             // geometrix models for matrix C **************** (ksi, eta) -> 0.25 * (1 - ksi) * (1 - eta))
             // Wartości dla funkcji kształtu // Values for geometric models         //{N}*{N}^T
-            double[][] geometricModelsValues = new double[4][4];
-            for (int i = 0; i < 4; i++) { // funkcje kształtów
+            double[][] geometricModelsValues = new double[length][4];
+            for (int i = 0; i < 4; i++) { // funkcje kształtów //
                 for (int j = 0; j < 4; j++) {
                     geometricModelsValues[i][j] = MatrixHbcService.geometricModelsN(j, ksi[i], eta[i]);
                 }
@@ -59,7 +59,7 @@ public class MatrixHService {
                 for (int i = 0; i < 4; i++) {
                     for (int j = 0; j < 4; j++) {
                         matrixCForFourPoints[pc][i][j] =
-                                geometricModelsValues[pc][i] * geometricModelsValues[pc][j]; //FIXME is it correct?
+                                geometricModelsValues[pc][i] * geometricModelsValues[pc][j]; //FIXME is it correct for pc=3???
                     }
                 }
 //                System.out.println("matrixCForFourPoints " + pc);
@@ -147,20 +147,22 @@ public class MatrixHService {
                             localMatrixCForElement[i][j] = specificHeat * density * determinants[0] * matrixCForFourPoints[0][i][j] // sum for one element
                                     + specificHeat * density * determinants[1] * matrixCForFourPoints[1][i][j]
                                     + specificHeat * density * determinants[2] * matrixCForFourPoints[2][i][j]
-                                    + specificHeat * density * determinants[3] * matrixCForFourPoints[3][i][j]; //FIXME for different pc!!!!!!
+                                    + specificHeat * density * determinants[3] * matrixCForFourPoints[3][i][j];
+                                //FIXME for different pc!!!!!!
 
                         }
                         if(numberOfNodes==3){
-                            localMatrixCForElement[i][j] = specificHeat * density * determinants[pc] * matrixCForFourPoints[0][i][j] // sum for one element
-                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[1][i][j]
-                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[2][i][j]
-                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[3][i][j]
-                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[4][i][j]
-                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[5][i][j]
-                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[6][i][j]
-                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[7][i][j]
-                                    + specificHeat * density * determinants[pc] * matrixCForFourPoints[8][i][j]; //FIXME for different pc!!!!!!
-
+                            localMatrixCForElement[i][j] =
+                                    specificHeat * density * determinants[0] * matrixCForFourPoints[0][i][j]*weightsOfPoints[0]*weightsOfPoints[0]  // sum for one element
+                                    + specificHeat * density * determinants[1] * matrixCForFourPoints[1][i][j]*weightsOfPoints[1]*weightsOfPoints[0]
+                                    + specificHeat * density * determinants[2] * matrixCForFourPoints[2][i][j]*weightsOfPoints[2]*weightsOfPoints[0]
+                                    + specificHeat * density * determinants[3] * matrixCForFourPoints[3][i][j]*weightsOfPoints[0]*weightsOfPoints[1]
+                                    + specificHeat * density * determinants[4] * matrixCForFourPoints[4][i][j]*weightsOfPoints[1]*weightsOfPoints[1]
+                                    + specificHeat * density * determinants[5] * matrixCForFourPoints[5][i][j]*weightsOfPoints[2]*weightsOfPoints[1]
+                                    + specificHeat * density * determinants[6] * matrixCForFourPoints[6][i][j]*weightsOfPoints[0]*weightsOfPoints[2]
+                                    + specificHeat * density * determinants[7] * matrixCForFourPoints[7][i][j]*weightsOfPoints[1]*weightsOfPoints[2]
+                                    + specificHeat * density * determinants[8] * matrixCForFourPoints[8][i][j]*weightsOfPoints[2]*weightsOfPoints[2];
+                                        //FIXME for different pc!!!!!!
                         }
                          }
                 }
