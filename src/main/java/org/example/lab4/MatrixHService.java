@@ -93,8 +93,8 @@ public class MatrixHService {
             for (int pc = 0; pc < length; pc++) {
                 jakobianMatrixMultipliedByReverseDetJ[pc][0][0] = reverseDeterminants[pc] * jakobianMatrix[pc][1][1];
                 jakobianMatrixMultipliedByReverseDetJ[pc][0][1] = reverseDeterminants[pc] * (-jakobianMatrix[pc][0][1]); // have to be a minus
-                jakobianMatrixMultipliedByReverseDetJ[pc][1][0] = reverseDeterminants[pc] * jakobianMatrix[pc][1][0];
-                jakobianMatrixMultipliedByReverseDetJ[pc][1][1] = reverseDeterminants[pc] * (-jakobianMatrix[pc][0][0]);
+                jakobianMatrixMultipliedByReverseDetJ[pc][1][0] = reverseDeterminants[pc] * (-jakobianMatrix[pc][1][0]);
+                jakobianMatrixMultipliedByReverseDetJ[pc][1][1] = reverseDeterminants[pc] * jakobianMatrix[pc][0][0];
             }
 
             double[][] dNiDividedByDx = new double[length][4];
