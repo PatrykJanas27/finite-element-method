@@ -16,6 +16,10 @@ public class MatrixHbcService {
 
 
     public static void calculateMatrixHbc_andVectorP(Grid grid, int numberOfPoints) {
+        if (numberOfPoints < 2 || numberOfPoints > 4) {
+            throw new IllegalArgumentException(
+                    "There is no method to calculate matrix Hbc and Vector P with number for nodes = " + numberOfPoints);
+        }
         globalAggregationHBC = new double[grid.getNodesNumber()][grid.getNodesNumber()];
         globalAggregationVectorP = new double[grid.getNodesNumber()];
         int length = numberOfPoints * numberOfPoints;

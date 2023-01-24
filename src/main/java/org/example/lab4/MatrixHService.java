@@ -15,8 +15,9 @@ public class MatrixHService {
     public static double[][] globalAggregationMatrixC;
 
     public static void calculate_MatrixH_and_MatrixC(Grid grid, int numberOfNodes) {
-        if (numberOfNodes < 2 || numberOfNodes > 5) {
-            throw new IllegalArgumentException("There is no method to calculate matrix with number fo nodes = " + numberOfNodes);
+        if (numberOfNodes < 2 || numberOfNodes > 4) {
+            throw new IllegalArgumentException("" +
+                    "There is no method to calculate matrixH and matrixC with number for nodes = " + numberOfNodes);
         }
         int density = GlobalData.density; // gestosc
         int specificHeat = GlobalData.specificHeat; // ciepło wlasciwe
