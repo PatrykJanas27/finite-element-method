@@ -6,7 +6,7 @@ package org.example.lab6;
  * https://introcs.cs.princeton.edu/java/95linear/GaussianElimination.java.html
  */
 public class GaussianEliminationService {
-    private static final double EPSILON = 1e-20;
+    private static final double EPSILON = 1e-10;
 
     public static double[] findSolutionForSystemOfEquations(double[][] globalAggregationHplusHBC, double[] globalAggregationVectorP) {
         double[][] A = new double[16][16];
