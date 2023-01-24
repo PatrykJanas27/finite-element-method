@@ -25,7 +25,7 @@ public class MatrixHService {
 
         List<Element> elements = grid.getElements();
         List<Node> nodes = grid.getNodes();
-        int length = numberOfNodes * numberOfNodes;
+        int length = numberOfNodes * numberOfNodes; //for numberOfNodes=4 length is 16
         double[][][] Hpcs = new double[length][4][4];
         double[] weightsOfPoints = GlobalData.getWeightsArray(numberOfNodes);
 
@@ -145,6 +145,25 @@ public class MatrixHService {
                                             + specificHeat * density * determinants[6] * matrixCForFourPoints[6][i][j] * weightsOfPoints[0] * weightsOfPoints[2]
                                             + specificHeat * density * determinants[7] * matrixCForFourPoints[7][i][j] * weightsOfPoints[1] * weightsOfPoints[2]
                                             + specificHeat * density * determinants[8] * matrixCForFourPoints[8][i][j] * weightsOfPoints[2] * weightsOfPoints[2];
+                        }
+                        if(numberOfNodes == 4){
+                            localMatrixCForElement[i][j] =
+                                    specificHeat * density * determinants[0] * matrixCForFourPoints[0][i][j] * weightsOfPoints[0] * weightsOfPoints[0]  // sum for one element
+                                            + specificHeat * density * determinants[1] * matrixCForFourPoints[1][i][j] * weightsOfPoints[1] * weightsOfPoints[0]
+                                            + specificHeat * density * determinants[2] * matrixCForFourPoints[2][i][j] * weightsOfPoints[2] * weightsOfPoints[0]
+                                            + specificHeat * density * determinants[3] * matrixCForFourPoints[3][i][j] * weightsOfPoints[3] * weightsOfPoints[0]
+                                            + specificHeat * density * determinants[4] * matrixCForFourPoints[4][i][j] * weightsOfPoints[0] * weightsOfPoints[1]
+                                            + specificHeat * density * determinants[5] * matrixCForFourPoints[5][i][j] * weightsOfPoints[1] * weightsOfPoints[1]
+                                            + specificHeat * density * determinants[6] * matrixCForFourPoints[6][i][j] * weightsOfPoints[2] * weightsOfPoints[1]
+                                            + specificHeat * density * determinants[7] * matrixCForFourPoints[7][i][j] * weightsOfPoints[3] * weightsOfPoints[1]
+                                            + specificHeat * density * determinants[8] * matrixCForFourPoints[8][i][j] * weightsOfPoints[0] * weightsOfPoints[2]
+                                            + specificHeat * density * determinants[9] * matrixCForFourPoints[9][i][j] * weightsOfPoints[1] * weightsOfPoints[2]
+                                            + specificHeat * density * determinants[10] * matrixCForFourPoints[10][i][j] * weightsOfPoints[2] * weightsOfPoints[2]
+                                            + specificHeat * density * determinants[11] * matrixCForFourPoints[11][i][j] * weightsOfPoints[3] * weightsOfPoints[2]
+                                            + specificHeat * density * determinants[12] * matrixCForFourPoints[12][i][j] * weightsOfPoints[0] * weightsOfPoints[3]
+                                            + specificHeat * density * determinants[13] * matrixCForFourPoints[13][i][j] * weightsOfPoints[1] * weightsOfPoints[3]
+                                            + specificHeat * density * determinants[14] * matrixCForFourPoints[14][i][j] * weightsOfPoints[2] * weightsOfPoints[3]
+                                            + specificHeat * density * determinants[15] * matrixCForFourPoints[15][i][j] * weightsOfPoints[3] * weightsOfPoints[3];
                         }
                     }
                 }

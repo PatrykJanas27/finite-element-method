@@ -55,6 +55,29 @@ public class MatrixHbcService {
                 geometricModelsValues4[2][i] = geometricModelsN(i, ksiEta[11][0], ksiEta[11][1]);
             }
         }
+        if (numberOfPoints == 4) {
+            for (int i = 0; i < 4; i++) {
+                geometricModelsValues1[0][i] = geometricModelsN(i, ksiEta[0][0], ksiEta[0][1]);
+                geometricModelsValues1[1][i] = geometricModelsN(i, ksiEta[1][0], ksiEta[1][1]);
+                geometricModelsValues1[2][i] = geometricModelsN(i, ksiEta[2][0], ksiEta[2][1]);
+                geometricModelsValues1[3][i] = geometricModelsN(i, ksiEta[3][0], ksiEta[3][1]);
+
+                geometricModelsValues2[0][i] = geometricModelsN(i, ksiEta[4][0], ksiEta[4][1]);
+                geometricModelsValues2[1][i] = geometricModelsN(i, ksiEta[5][0], ksiEta[5][1]);
+                geometricModelsValues2[2][i] = geometricModelsN(i, ksiEta[6][0], ksiEta[6][1]);
+                geometricModelsValues2[3][i] = geometricModelsN(i, ksiEta[7][0], ksiEta[7][1]);
+
+                geometricModelsValues3[0][i] = geometricModelsN(i, ksiEta[8][0], ksiEta[8][1]);
+                geometricModelsValues3[1][i] = geometricModelsN(i, ksiEta[9][0], ksiEta[9][1]);
+                geometricModelsValues3[2][i] = geometricModelsN(i, ksiEta[10][0], ksiEta[10][1]);
+                geometricModelsValues3[3][i] = geometricModelsN(i, ksiEta[11][0], ksiEta[11][1]);
+
+                geometricModelsValues4[0][i] = geometricModelsN(i, ksiEta[12][0], ksiEta[12][1]);
+                geometricModelsValues4[1][i] = geometricModelsN(i, ksiEta[13][0], ksiEta[13][1]);
+                geometricModelsValues4[2][i] = geometricModelsN(i, ksiEta[14][0], ksiEta[14][1]);
+                geometricModelsValues4[3][i] = geometricModelsN(i, ksiEta[15][0], ksiEta[15][1]);
+            }
+        }
 
         List<Element> elements = grid.getElements();
         List<Node> nodes = grid.getNodes();
@@ -98,6 +121,24 @@ public class MatrixHbcService {
                         localP2[i][j] = (weights[0] * (geometricModelsValues2[0][j] * tot) + weights[1] * (geometricModelsValues2[1][j] * tot) + weights[2] * (geometricModelsValues2[2][j] * tot));
                         localP3[i][j] = (weights[0] * (geometricModelsValues3[0][j] * tot) + weights[1] * (geometricModelsValues3[1][j] * tot) + weights[2] * (geometricModelsValues3[2][j] * tot));
                         localP4[i][j] = (weights[0] * (geometricModelsValues4[0][j] * tot) + weights[1] * (geometricModelsValues4[1][j] * tot) + weights[2] * (geometricModelsValues4[2][j] * tot));
+                    }
+                    if (numberOfPoints == 4) {
+                        localP1[i][j] = (weights[0] * (geometricModelsValues1[0][j] * tot)
+                                + weights[1] * (geometricModelsValues1[1][j] * tot)
+                                + weights[2] * (geometricModelsValues1[2][j] * tot)
+                                + weights[3] * (geometricModelsValues1[3][j] * tot));
+                        localP2[i][j] = (weights[0] * (geometricModelsValues2[0][j] * tot)
+                                + weights[1] * (geometricModelsValues2[1][j] * tot)
+                                + weights[2] * (geometricModelsValues2[2][j] * tot)
+                                + weights[3] * (geometricModelsValues2[3][j] * tot));
+                        localP3[i][j] = (weights[0] * (geometricModelsValues3[0][j] * tot)
+                                + weights[1] * (geometricModelsValues3[1][j] * tot)
+                                + weights[2] * (geometricModelsValues3[2][j] * tot)
+                                + weights[3] * (geometricModelsValues3[3][j] * tot));
+                        localP4[i][j] = (weights[0] * (geometricModelsValues4[0][j] * tot)
+                                + weights[1] * (geometricModelsValues4[1][j] * tot)
+                                + weights[2] * (geometricModelsValues4[2][j] * tot)
+                                + weights[3] * (geometricModelsValues4[3][j] * tot));
                     }
                 }
             }
@@ -173,6 +214,28 @@ public class MatrixHbcService {
                     {-1, 0},
                     {-1, sqrt(3.0 / 5)},
             };
+        }
+        if (numberOfPoints == 4) {
+            return new double[][]{
+                    {-0.861136, -1},
+                    {-0.339981, -1},
+                    {0.339981, -1},
+                    {0.861136, -1},
+
+                    {1, -0.861136},
+                    {1, -0.339981},
+                    {1, 0.339981},
+                    {1, 0.861136},
+
+                    {-0.861136, 1},
+                    {-0.339981, 1},
+                    {0.339981, 1},
+                    {0.861136, 1},
+
+                    {-1, -0.861136},
+                    {-1, -0.339981},
+                    {-1, 0.339981},
+                    {-1, 0.861136}};
         } else {
             throw new IllegalArgumentException("numberOfPoints must be 2 or 3");
         }
