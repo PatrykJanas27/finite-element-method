@@ -19,8 +19,8 @@ public class MatrixHService {
             throw new IllegalArgumentException("" +
                     "There is no method to calculate matrixH and matrixC with number for nodes = " + numberOfNodes);
         }
-        int density = GlobalData.density; // gestosc
-        int specificHeat = GlobalData.specificHeat; // ciepło wlasciwe
+        int density = GlobalData.density;
+        int specificHeat = GlobalData.specificHeat;
         globalAggregationH = new double[grid.getNodesNumber()][grid.getNodesNumber()];
         globalAggregationMatrixC = new double[grid.getNodesNumber()][grid.getNodesNumber()];
 
@@ -60,7 +60,7 @@ public class MatrixHService {
                     }
                 }
             }
-            double[][] dNdKsiTable = new double[length][4]; // table1 - strona 13 calkowanie macierzy H
+            double[][] dNdKsiTable = new double[length][4];
             double[][] dNdEtaTable = new double[length][4];
             List<Function<Double, Double>> functions_dNdEta = GlobalData.getFunctions_dNdEta();
             List<Function<Double, Double>> functions_dNdKsi = GlobalData.getFunctions_dNdKsi();

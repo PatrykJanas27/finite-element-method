@@ -22,7 +22,6 @@ public class MatrixHbcService {
         }
         globalAggregationHBC = new double[grid.getNodesNumber()][grid.getNodesNumber()];
         globalAggregationVectorP = new double[grid.getNodesNumber()];
-        int length = numberOfPoints * numberOfPoints;
         double[][] ksiEta = getCoordinatesKsiEta(numberOfPoints);
 
         double[][] geometricModelsValues1 = new double[numberOfPoints][4]; // for wall 1
@@ -86,7 +85,7 @@ public class MatrixHbcService {
         List<Element> elements = grid.getElements();
         List<Node> nodes = grid.getNodes();
 
-        double alfaFactor = GlobalData.alfa; // here alfa factor has to be read from file
+        double alfaFactor = GlobalData.alfa;
         double tot = GlobalData.tot; // 1200 from file
         double[][][] BCwall1 = new double[9][4][4];
         double[][][] BCwall2 = new double[9][4][4];
@@ -187,7 +186,7 @@ public class MatrixHbcService {
     private static double[][] getCoordinatesKsiEta(int numberOfPoints) {
         if (numberOfPoints == 2) {
             return new double[][]{
-                    {-(1 / Math.sqrt(3)), -1},   // pc11 str 13/17 "generacja macierzy H oraz wektora P"
+                    {-(1 / Math.sqrt(3)), -1},  // pc11
                     {(1 / Math.sqrt(3)), -1},   // pc12
 
                     {1, -(1 / Math.sqrt(3))},   // pc21
@@ -252,7 +251,7 @@ public class MatrixHbcService {
         Integer id2 = element1IDs.get(1);
         Integer id3 = element1IDs.get(2);
         Integer id4 = element1IDs.get(3);
-        Node node1 = nodes.get(id1 - 1); // has to be id minus 1
+        Node node1 = nodes.get(id1 - 1);
         Node node2 = nodes.get(id2 - 1);
         Node node3 = nodes.get(id3 - 1);
         Node node4 = nodes.get(id4 - 1);
@@ -302,59 +301,36 @@ public class MatrixHbcService {
         double[][] localBC1 = new double[4][4];
         if (nodes.get((eIDs.get(0)) - 1).isBC() && nodes.get((eIDs.get(1)) - 1).isBC()) { //top right && top left ^^
             for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    localBC1[i][j] = BCwall3[i][j];
-                }
+                System.arraycopy(BCwall3[i], 0, localBC1[i], 0, 4);
             }
         }
 
         double[][] localBC2 = new double[4][4];
         if (nodes.get((eIDs.get(1)) - 1).isBC() && nodes.get((eIDs.get(2)) - 1).isBC()) { //top left && bottom left |<- |
             for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    localBC2[i][j] = BCwall4[i][j];
-                }
+                System.arraycopy(BCwall4[i], 0, localBC2[i], 0, 4);
             }
         }
 
         double[][] localBC3 = new double[4][4];
         if (nodes.get((eIDs.get(2)) - 1).isBC() && nodes.get((eIDs.get(3)) - 1).isBC()) { //bottom left && bottom right __
             for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    localBC3[i][j] = BCwall1[i][j];
-                }
+                System.arraycopy(BCwall1[i], 0, localBC3[i], 0, 4);
             }
         }
 
         double[][] localBC4 = new double[4][4];
         if (nodes.get((eIDs.get(3)) - 1).isBC() && nodes.get((eIDs.get(0)) - 1).isBC()) { //bottom right && top right | ->|
             for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    localBC4[i][j] = BCwall2[i][j];
-                }
+                System.arraycopy(BCwall2[i], 0, localBC4[i], 0, 4);
             }
         }
-//        System.out.println("Hbc wall local1: ");
-//        MatrixService.showTable2Dshort(localBC1);
-//        System.out.println("Hbc wall local2: ");
-//        MatrixService.showTable2Dshort(localBC2);
-//        System.out.println("Hbc wall local3: ");
-//        MatrixService.showTable2Dshort(localBC3);
-//        System.out.println("Hbc wall local4: ");
-//        MatrixService.showTable2Dshort(localBC4);
-        //************************ now we have 4 matrix, every for one side of wall
-
-        //*******
         double[][] localHbc = new double[4][4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 localHbc[i][j] += localBC1[i][j] + localBC2[i][j] + localBC3[i][j] + localBC4[i][j];
             }
         }
-//        System.out.println("Hbc local: ");
-//        MatrixService.showTable2Dshort(localHbc);
-        //*******
-
         return localHbc;
     }
 
@@ -365,50 +341,28 @@ public class MatrixHbcService {
         //Conditions, check if node has border condition ***********************
         double[] localBC1 = new double[4];
         if (nodes.get((eIDs.get(0)) - 1).isBC() && nodes.get((eIDs.get(1)) - 1).isBC()) { //top right && top left ^^
-            for (int i = 0; i < 4; i++) {
-                localBC1[i] = localP3[i]; //FIXME here how to do that?
-            }
+            System.arraycopy(localP3, 0, localBC1, 0, 4);
         }
 
         double[] localBC2 = new double[4];
         if (nodes.get((eIDs.get(1)) - 1).isBC() && nodes.get((eIDs.get(2)) - 1).isBC()) { //top left && bottom left |<- |
-            for (int i = 0; i < 4; i++) {
-                localBC2[i] = localP4[i];
-            }
+            System.arraycopy(localP4, 0, localBC2, 0, 4);
         }
 
         double[] localBC3 = new double[4];
         if (nodes.get((eIDs.get(2)) - 1).isBC() && nodes.get((eIDs.get(3)) - 1).isBC()) { //bottom left && bottom right __
-            for (int i = 0; i < 4; i++) {
-                localBC3[i] = localP1[i];
-            }
+            System.arraycopy(localP1, 0, localBC3, 0, 4);
         }
 
         double[] localBC4 = new double[4];
         if (nodes.get((eIDs.get(3)) - 1).isBC() && nodes.get((eIDs.get(0)) - 1).isBC()) { //bottom right && top right | ->|
-            for (int i = 0; i < 4; i++) {
-                localBC4[i] = localP2[i];
-            }
+            System.arraycopy(localP2, 0, localBC4, 0, 4);
         }
-//        System.out.println("Hbc wall local1: ");
-//        MatrixService.showTable2Dshort(localBC1);
-//        System.out.println("Hbc wall local2: ");
-//        MatrixService.showTable2Dshort(localBC2);
-//        System.out.println("Hbc wall local3: ");
-//        MatrixService.showTable2Dshort(localBC3);
-//        System.out.println("Hbc wall local4: ");
-//        MatrixService.showTable2Dshort(localBC4);
-        //************************ now we have 4 matrix, every for one side of wall
 
-        //*******
         double[] localVectorP = new double[4];
         for (int j = 0; j < 4; j++) {
             localVectorP[j] += localBC1[j] + localBC2[j] + localBC3[j] + localBC4[j];
         }
-//        System.out.println("Hbc local: ");
-//        MatrixService.showTable2Dshort(localHbc);
-        //*******
-
         return localVectorP;
     }
 }
