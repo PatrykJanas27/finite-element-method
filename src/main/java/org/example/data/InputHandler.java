@@ -1,10 +1,10 @@
 package org.example.data;
 
 import lombok.CustomLog;
-import org.example.lab1.Element;
-import org.example.lab1.GlobalData;
-import org.example.lab1.Grid;
-import org.example.lab1.Node;
+import org.example.model.Element;
+import org.example.model.GlobalData;
+import org.example.model.Grid;
+import org.example.model.Node;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-//@Slf4j(topic = "InputHandler")
 @CustomLog(topic = "InputHandler")
 public class InputHandler {
     public static Grid readFile(String fileName) throws FileNotFoundException {
