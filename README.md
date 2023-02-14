@@ -24,10 +24,7 @@ To conduct such a simulation, it was necessary to calculate the temperature at e
 and by interpolation, a continuous distribution can be obtained. We read the finite element meshes and basic data 
 related to the simulation, which determined, among other things, the minimum ambient temperature, 
 the heat transfer coefficient, density, initial temperature, simulation time, etc. from .txt files provided by 
-the laboratory exercise instructor. Fourier's equation, which describes thermal phenomena occurring in a steady state, 
-can be written in two forms:
-
-![](https://i.imgur.com/ECK5GPR.jpg)
+the laboratory exercise instructor. 
 
 During the course, it was necessary to calculate the appropriate matrices, i.e. the [H] matrix, the [HBC] matrix, 
 the [C] matrix, the {P} vector, and introduce time into the solutions to finally obtain specific results. 
